@@ -1,5 +1,5 @@
-export const base_url = ''
+export const base_url = 'http://localhost:5050/api'
 
 export const endPoint = {
-  login : ''
+  login : '/auth/login'
 }
