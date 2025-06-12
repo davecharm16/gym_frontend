@@ -52,21 +52,21 @@ export default function Sidebar({ open, onClose, onLogout, onNavigate }: Sidebar
       <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
         <List sx={{ mt: 8 }}>
           <ListItem disablePadding>
-            <ListItemButton onClick={() => handleNavigate('/dashboard')}>
+            <ListItemButton onClick={() => handleNavigate('/')}>
               <ListItemIcon><DashboardIcon /></ListItemIcon>
               <ListItemText primary="Dashboard" />
             </ListItemButton>
           </ListItem>
 
           <ListItem disablePadding>
-            <ListItemButton onClick={() => handleNavigate('/profile')}>
+            <ListItemButton onClick={() => handleNavigate('/profile-management')}>
               <ListItemIcon><AccountBoxIcon /></ListItemIcon>
               <ListItemText primary="Profile Management" />
             </ListItemButton>
           </ListItem>
 
           <ListItem disablePadding>
-            <ListItemButton onClick={() => handleNavigate('/attendance')}>
+            <ListItemButton onClick={() => handleNavigate('/attendance-log')}>
               <ListItemIcon><BadgeIcon /></ListItemIcon>
               <ListItemText primary="Attendance Logs" />
             </ListItemButton>

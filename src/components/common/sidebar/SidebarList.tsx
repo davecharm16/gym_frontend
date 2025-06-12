@@ -4,7 +4,6 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import DashboardIcon from '@mui/icons-material/Dashboard';
 import PersonIcon from '@mui/icons-material/Person';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -19,7 +18,7 @@ export default function SidebarList({ onLogout, onNavigate }: SidebarListProps) 
     <List>
       <ListItem disablePadding>
         <ListItemButton onClick={() => onNavigate('/dashboard')}>
-          <ListItemIcon><DashboardIcon /></ListItemIcon>
+
           <ListItemText primary="Dashboard" />
         </ListItemButton>
       </ListItem>
