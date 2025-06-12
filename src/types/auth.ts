@@ -1,3 +1,5 @@
+import type { UserRole } from "../constant/roles";
+
 export interface LoginRequest {
   email: string;
   password: string;
@@ -12,4 +14,6 @@ export interface LoginResponse {
 export interface User {
   id: string;
   email: string;
+  role: UserRole;
 }
+
