@@ -4,6 +4,9 @@ import HomeLayout from "../components/layout/HomeLayout";
 import Dashboard from "../pages/Dashboard";
 import ProfileManagement from "../pages/ProfileManagement";
 import AttendanceLog from "../pages/AttendanceLog";
+import Login from "../pages/Login";
+import ProtectedRoute from "../components/ProtectedRoute";
+
 
 export const MainRoutes = createBrowserRouter([
   {
@@ -12,8 +15,13 @@ export const MainRoutes = createBrowserRouter([
   },
 
   {
+    path: "/login",
+    element: <Login />,
+  },
+
+  {
     path: "/",
-    element: <HomeLayout />,
+    element: <ProtectedRoute allowedRoles={['student']}> <HomeLayout/> </ProtectedRoute>,
     children: [
       {
         index: true,
