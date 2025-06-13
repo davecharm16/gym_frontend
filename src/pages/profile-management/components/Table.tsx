@@ -1,0 +1,116 @@
+import {
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Paper,
+  IconButton,
+  Chip,
+  CircularProgress,
+  Typography,
+  Box,
+} from "@mui/material";
+import { Visibility, Edit, Delete } from "@mui/icons-material";
+import { useEffect } from "react";
+import { Category } from "../../../utils/category";
+import { useStudentStore } from "../../../store/student/studentStore";
+
+export default function ProfileTable() {
+  const { students, getStudents, loading, error } = useStudentStore();
+
+  useEffect(() => {
+    getStudents();
+  }, [getStudents]);
+
+  const calculateAge = (birthdate: string): number => {
+    const birth = new Date(birthdate);
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const m = today.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" mt={4}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Typography color="error" align="center" mt={4}>
+        {error}
+      </Typography>
+    );
+  }
+
+  if (students.length === 0) {
+    return (
+      <Typography align="center" mt={4}>
+        No students found.
+      </Typography>
+    );
+  }
+
+  return (
+    <TableContainer component={Paper}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell><strong>Name</strong></TableCell>
+            <TableCell><strong>Address</strong></TableCell>
+            <TableCell><strong>Age</strong></TableCell>
+            <TableCell><strong>Category</strong></TableCell>
+            <TableCell><strong>Subscription Date</strong></TableCell>
+            <TableCell><strong>Payment Method</strong></TableCell>
+            <TableCell><strong>Action</strong></TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {students.map((student) => (
+            <TableRow key={student.id}>
+              <TableCell>{`${student.first_name} ${student.middle_name} ${student.last_name}`}</TableCell>
+              <TableCell>{student.address}</TableCell>
+              <TableCell>{calculateAge(student.birthdate)}</TableCell>
+              <TableCell>
+                <Chip
+                  label={student.subscription_type_name ?? "N/A"}
+                  color={Category(student.subscription_type_name ?? "default")}
+                  size="small"
+                />
+              </TableCell>
+              <TableCell>
+                {student.enrollment_date
+                  ? new Date(student.enrollment_date).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })
+                  : "N/A"}
+              </TableCell>
+              <TableCell>{student.subscription_fee ? "Paid" : "N/A"}</TableCell>
+              <TableCell>
+                <IconButton color="primary" aria-label="view">
+                  <Visibility />
+                </IconButton>
+                <IconButton color="secondary" aria-label="edit">
+                  <Edit />
+                </IconButton>
+                <IconButton color="error" aria-label="delete">
+                  <Delete />
+                </IconButton>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+}

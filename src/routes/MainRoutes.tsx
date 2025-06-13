@@ -21,11 +21,11 @@ export const MainRoutes = createBrowserRouter([
 
   {
     path: "/",
-    element: <ProtectedRoute allowedRoles={['student']}> <HomeLayout/> </ProtectedRoute>,
+    element: <ProtectedRoute allowedRoles={['admin']}> <HomeLayout/> </ProtectedRoute>,
     children: [
       {
         index: true,
-        element: <Dashboard/>,
+        element: <Dashboard />,
       },
 
       {
