@@ -9,10 +9,8 @@ import {
   Divider,
   Box,
 } from '@mui/material';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import AccountBoxIcon from '@mui/icons-material/AccountBox';
-import BadgeIcon from '@mui/icons-material/Badge';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import SidebarList from './SidebarList';
 
 interface SidebarProps {
   open: boolean;
@@ -49,30 +47,10 @@ export default function Sidebar({ open, onClose, onLogout, onNavigate }: Sidebar
         },
       }}
     >
-      <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-        <List sx={{ mt: 8 }}>
-          <ListItem disablePadding>
-            <ListItemButton onClick={() => handleNavigate('/')}>
-              <ListItemIcon><DashboardIcon /></ListItemIcon>
-              <ListItemText primary="Dashboard" />
-            </ListItemButton>
-          </ListItem>
-
-          <ListItem disablePadding>
-            <ListItemButton onClick={() => handleNavigate('/profile-management')}>
-              <ListItemIcon><AccountBoxIcon /></ListItemIcon>
-              <ListItemText primary="Profile Management" />
-            </ListItemButton>
-          </ListItem>
-
-          <ListItem disablePadding>
-            <ListItemButton onClick={() => handleNavigate('/attendance-log')}>
-              <ListItemIcon><BadgeIcon /></ListItemIcon>
-              <ListItemText primary="Attendance Logs" />
-            </ListItemButton>
-          </ListItem>
-        </List>
-
+      <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', paddingTop: 8 }}>
+        <SidebarList
+          onNavigate={handleNavigate}
+        />
         <Box>
           <Divider />
           <List>

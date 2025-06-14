@@ -24,7 +24,7 @@ interface AuthState {
   loading: boolean;
   error: string | null;
 
-  login: (creds: LoginRequest) => Promise<void>;
+  login: (creds: LoginRequest) => Promise<User | null >;
   logout: () => void;
   isAuthenticated: () => boolean;
   hasRole: (roles: UserRole[]) => boolean;
@@ -71,21 +71,24 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           loading: false,
           error: null,
         });
+        return newUser; // Return user on successful login
       } else {
         set({ error: res.message || "Login failed", loading: false });
       }
+      return null; // Return null if login failed
     } catch (err: unknown) {
       console.error("Login error:", err);
       set({ error: "An unexpected error occurred", loading: false });
+      return null;
     }
   },
 
   logout: () => {
+    set({ user: null, token: null, refreshToken: null });
     localStorage.removeItem("token");
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("user");
     clearTimeout(logoutTimer);
-    set({ user: null, token: null, refreshToken: null });
   },
 
   isAuthenticated: () => !!get().user && !!get().token,
