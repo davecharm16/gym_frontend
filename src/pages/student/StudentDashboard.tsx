@@ -2,19 +2,20 @@
 import { useState } from "react";
 import { Avatar, Button, TextField } from "@mui/material";
 import CheckInModal from "./CheckInModal";
+import { InfoOutlined } from "@mui/icons-material";
 
 export default function StudentDashboard() {
   const [openCheckIn, setOpenCheckIn] = useState(false);
 
   const student = {
     avatarUrl: "https://randomuser.me/api/portraits/men/75.jpg",
-    fullName: "Juan Dela Cruz",
+    firstName: "Juan",
+    middleName: "Santos",
+    lastName: "Dela Cruz",
+    address: "Malabago, Mangaldan, Pangasinan",
     email: "juan@example.com",
-    phone: "+639171234567",
-    street: "",
-    apt: "",
-    city: "",
-    state: "",
+    subscription: "Monthly",
+    category: "Crossfit",
   };
 
   const handleCheckIn = () => {
@@ -34,32 +35,45 @@ export default function StudentDashboard() {
   return (
     <div className="min-h-screen w-full flex flex-col items-center mt-20 px-4">
       <h1 className="text-xl font-bold self-start mb-6">
-        Personal Informations
+        Personal Information
       </h1>
 
       <div className="bg-white border rounded-xl w-full max-w-3xl p-8 flex flex-col gap-8">
         <div className="flex items-center gap-5">
-          <Avatar
-            src={student.avatarUrl}
-            alt={student.fullName}
-            sx={{ width: 72, height: 72 }}
-          />
-          <h2 className="text-2xl font-semibold">{student.fullName}</h2>
+          <Avatar src={student.avatarUrl} sx={{ width: 82, height: 82 }} />
+          <h2 className="text-3xl font-bold">
+            {student.firstName} {student.middleName} {student.lastName}
+          </h2>
         </div>
 
         <div className="flex flex-col gap-4">
-          <FieldRow label="Full Name" defaultValue={student.fullName} />
-          <FieldRow label="Email" defaultValue={student.email} />
-          <FieldRow label="Phone" defaultValue={student.phone} />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <FieldRow label="Last Name" defaultValue={student.lastName} />
+            <FieldRow label="First Name" defaultValue={student.firstName} />
+            <FieldRow label="Middle Name" defaultValue={student.middleName} />
+          </div>
+          <FieldRow label="Address" defaultValue={student.address} />
+          <FieldRow label="Email Address" defaultValue={student.email} />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <FieldRow label="Street Number" defaultValue={student.street} />
-            <FieldRow label="Apt / House Number" defaultValue={student.apt} />
+            <FieldRow
+              label="Subscription"
+              defaultValue={student.subscription}
+            />
+
+            <FieldRow
+              label="Date Subscription"
+              defaultValue={student.subscription}
+            />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <FieldRow label="City" defaultValue={student.city} />
-            <FieldRow label="State" defaultValue={student.state} />
+          <div className="border border-gray-300 rounded-md p-4 bg-white flex items-start gap-3">
+            <InfoOutlined className="text-blue-500 mt-0.5" />
+            <p className="text-sm text-gray-700">
+              <strong>Note:</strong> Your subscription will expire soon. Please
+              ensure to renew before the due date to continue accessing all
+              services without interruption.
+            </p>
           </div>
         </div>
       </div>
