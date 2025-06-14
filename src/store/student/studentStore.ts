@@ -7,13 +7,19 @@ interface StudentState {
   students: Student[];
   loading: boolean;
   error: string | null;
+  searchQuery?: string;
+  selectedCategory?: string;
   getStudents: () => Promise<void>;
+  setSearchQuery: (query: string) => void;
+  setSelectedCategory: (category: string) => void;
 }
 
 export const useStudentStore = create<StudentState>((set) => ({
   students: [],
   loading: false,
   error: null,
+  searchQuery: "",
+  selectedCategory: "All",
 
   getStudents: async () => {
     set({ loading: true, error: null });
@@ -29,4 +35,6 @@ export const useStudentStore = create<StudentState>((set) => ({
       set({ error: "An error occurred while fetching students", loading: false });
     }
   },
+  setSearchQuery: (query: string) => set({ searchQuery: query }),
+  setSelectedCategory: (category: string) => set({ selectedCategory: category}),
 }));

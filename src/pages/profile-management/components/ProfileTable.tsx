@@ -11,23 +11,15 @@ import {
   CircularProgress,
   Typography,
   Box,
-  TextField,
-  MenuItem,
-  Button,
-  Stack,
 } from "@mui/material";
 import { Visibility, Edit, Delete } from "@mui/icons-material";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Category } from "../../../utils/category";
 import { useStudentStore } from "../../../store/student/studentStore";
 
-const categoryOptions = ["All", "Premium", "Standard", "Free"];
 
 export default function ProfileTable() {
-  const { students, getStudents, loading, error } = useStudentStore();
-
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  const { students, getStudents, loading, error, searchQuery, selectedCategory } = useStudentStore();
 
   useEffect(() => {
     getStudents();
@@ -47,7 +39,7 @@ export default function ProfileTable() {
   const filteredStudents = students.filter((student) => {
     const fullName =
       `${student.first_name} ${student.middle_name} ${student.last_name}`.toLowerCase();
-    const matchesSearch = fullName.includes(searchQuery.toLowerCase());
+    const matchesSearch = fullName.includes(searchQuery?.toLowerCase() ?? '');
     const matchesCategory =
       selectedCategory === "All" ||
       student.subscription_type_name === selectedCategory;
@@ -74,40 +66,6 @@ export default function ProfileTable() {
   return (
     <Box>
       {/* Toolbar */}
-      <Stack
-        direction={{ xs: "column", sm: "row" }}
-        spacing={2}
-        justifyContent="space-between"
-        alignItems="center"
-        mb={2}
-      >
-        <Stack direction="row" spacing={2}>
-          <TextField
-            label="Search by name"
-            variant="outlined"
-            size="small"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <TextField
-            label="Category"
-            select
-            size="small"
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            sx={{ width: 200 }} // Set specific width here
-          >
-            {categoryOptions.map((option) => (
-              <MenuItem key={option} value={option}>
-                {option}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Stack>
-        <Button variant="contained" color="primary">
-          Register
-        </Button>
-      </Stack>
 
       {/* Table */}
       {filteredStudents.length === 0 ? (
