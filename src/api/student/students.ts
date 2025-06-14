@@ -1,8 +1,10 @@
-import type { RegisterFormInputs } from "../../pages/profile-management/components/RegisterModal";
 import type { ApiResponse } from "../../types/api_response";
 import type { Student } from "../../types/students";
+import type { RegisterStudentFormSchema } from "../../utils/schema/registerStudentSchema";
 import { endPoint } from "../api";
 import { apiClient } from "../apiClient";
+import { toCreateStudentDTO, toStudentModel } from "../commercial/adapter/student_adapter";
+import type { CreateStudentRequestDTO, CreateStudentResponseDTO } from "../commercial/dto/student_dto";
 
 
 export const getStudents = async (): Promise<ApiResponse<Student[]>> => {
@@ -16,11 +18,18 @@ export const getStudents = async (): Promise<ApiResponse<Student[]>> => {
 };
 
 export const registerStudent = async (
-  data: RegisterFormInputs
-): Promise<ApiResponse<Student>> => {
+  data: RegisterStudentFormSchema
+): Promise<ApiResponse<Partial<Student>>> => {
   try {
-    const res = await apiClient.post<Student>(endPoint.students, data);
-    return res;
+    const res = await apiClient.post<CreateStudentResponseDTO, CreateStudentRequestDTO>(
+      endPoint.students,
+      toCreateStudentDTO(data)
+    );
+
+    return {
+      ...res,
+      data: toStudentModel(res.data!),
+    };
   } catch (error) {
     console.error("register student failed:", error);
     throw error;

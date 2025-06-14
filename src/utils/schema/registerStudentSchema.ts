@@ -33,7 +33,7 @@ export const registerStudentSchema = yup.object({
     .typeError("Enrollment date must be a valid date")
     .required("Enrollment date is required"),
 
-  subscription_type_id: yup.number().nullable(), // Can be null
+  subscription_type_id: yup.string().nullable(), // Can be null
 
   // picture_url: yup
   //   .string()
@@ -42,4 +42,4 @@ export const registerStudentSchema = yup.object({
 });
 
 
-export type RegisterStudentFOrmSchema = yup.InferType<typeof registerStudentSchema>;
+export type RegisterStudentFormSchema = yup.InferType<typeof registerStudentSchema>;
