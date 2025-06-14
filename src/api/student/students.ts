@@ -1,9 +1,9 @@
 import type { ApiResponse } from "../../types/api_response";
-import type { Student } from "../../types/students";
+import type { Student, StudentCheckIn } from "../../types/students";
 import type { RegisterStudentFormSchema } from "../../utils/schema/registerStudentSchema";
 import { endPoint } from "../api";
 import { apiClient } from "../apiClient";
-import { toCreateStudentDTO, toStudentModel } from "../commercial/adapter/student_adapter";
+import { toCreateStudentDTO, toStudentCheckInDTO, toStudentModel } from "../commercial/adapter/student_adapter";
 import type { CreateStudentRequestDTO, CreateStudentResponseDTO } from "../commercial/dto/student_dto";
 
 
@@ -35,3 +35,13 @@ export const registerStudent = async (
     throw error;
   }
 };
+
+export const checkInStudentApi = async(data: StudentCheckIn): Promise<ApiResponse<null>> => {
+  try {
+    const res = await apiClient.post<null>(endPoint.checkIn, toStudentCheckInDTO(data));
+    return res; 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return error.response.data; // Let caller decide how to handle it
+  }
+}

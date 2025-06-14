@@ -23,6 +23,7 @@ export default function CheckInModal({
   onConfirm,
   email,
 }: CheckInModalProps) {
+
   const [formData, setFormData] = useState({
     email: "",
     date: "",

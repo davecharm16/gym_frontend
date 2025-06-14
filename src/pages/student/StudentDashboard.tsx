@@ -2,9 +2,14 @@
 import { useState } from "react";
 import { Avatar, Button, TextField } from "@mui/material";
 import CheckInModal from "./CheckInModal";
+import { useStudentStore } from "../../store/student/studentStore";
+import { useToastStore } from "../../store/toastStore";
 
 export default function StudentDashboard() {
   const [openCheckIn, setOpenCheckIn] = useState(false);
+  const { checkInStudent, } = useStudentStore();
+  const { showToast } = useToastStore();
+
 
   const student = {
     avatarUrl: "https://randomuser.me/api/portraits/men/75.jpg",
@@ -17,16 +22,38 @@ export default function StudentDashboard() {
     state: "",
   };
 
-  const handleCheckIn = () => {
+  const handleCheckIn = async () => {
     const now = new Date();
-    const date = now.toLocaleDateString();
-    const time = now.toLocaleTimeString();
+    const date = now;
+    const time = now;
 
     console.log("Checked in:", {
       email: student.email,
       date,
       time,
     });
+
+    try {
+      const res = await checkInStudent({
+        email: 'davecharm.official@gmail.com',
+        date,
+        time,
+      });
+      if(res?.success === true) {
+        showToast("Check-in successful!", "success");
+      }
+      else{
+        showToast("Check-in failed. " + res?.message, "error");
+      }
+    } catch (error) {
+      console.error("Check-in failed:", error);
+      // Optionally, you can show an error message to the user
+      showToast(
+        "Check-in failed. " + error + " Please try again.",
+        "error"
+      );
+    }
+   
 
     setOpenCheckIn(false);
   };
