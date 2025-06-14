@@ -5,7 +5,7 @@ import HomeLayout from './layout/HomeLayout';
 
 export type ProtectedRouteProps = {
   allowedRoles: UserRole[];
-  children: React.ReactNode; // 👈 add this
+  children: React.ReactNode; 
 };
 
 const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
