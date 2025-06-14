@@ -20,7 +20,7 @@ export default function Dashboard() {
           Make Payment
         </Button>
       </div>
-      <div className="p-6 flex flex-wrap gap-4 items-center justify-center">
+      <div className="p-8 flex flex-wrap gap-4 items-center justify-center">
         <StatCard
           icon={<VerifiedIcon sx={{ fontSize: 52 }} />} // 48px is a common large size
           label="Total Membership"

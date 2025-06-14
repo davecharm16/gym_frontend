@@ -24,12 +24,24 @@ const Login = () => {
 
   const handleLogin = async () => {
     try {
-      await login({ email, password });
-      navigate("/");
+      const response = await login({ email, password });
+
+      if (response) {
+        // Redirect based on user role
+        const userRole = response.role; // Assuming the response contains the user role
+        if (userRole === "admin") {
+          navigate("/");
+        } else if (userRole === "student") {
+          navigate("/student");
+        } else {
+          alert("Unauthorized role");
+        }
+      }
     } catch {
       alert("Login failed");
     }
   };
+  
 
   return (
     <Box

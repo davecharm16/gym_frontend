@@ -1,48 +1,37 @@
-
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import PersonIcon from '@mui/icons-material/Person';
-import EventNoteIcon from '@mui/icons-material/EventNote';
-import LogoutIcon from '@mui/icons-material/Logout';
+import { useAuthStore } from '../../../store/auth/authStore';
+import { sidebarRoutes } from '../../../routes/SidebarRoutes';
+
+
 
 interface SidebarListProps {
-  onLogout: () => void;
   onNavigate: (path: string) => void;
 }
 
-export default function SidebarList({ onLogout, onNavigate }: SidebarListProps) {
+export default function SidebarList({onNavigate }: SidebarListProps) {
+  const role = useAuthStore((state) => state.user?.role); // 'admin' | 'student'
+
   return (
     <List>
-      <ListItem disablePadding>
-        <ListItemButton onClick={() => onNavigate('/dashboard')}>
-
-          <ListItemText primary="Dashboard" />
-        </ListItemButton>
-      </ListItem>
-
-      <ListItem disablePadding>
-        <ListItemButton onClick={() => onNavigate('/profile-management')}>
-          <ListItemIcon><PersonIcon /></ListItemIcon>
-          <ListItemText primary="Profile Management" />
-        </ListItemButton>
-      </ListItem>
-
-      <ListItem disablePadding>
-        <ListItemButton onClick={() => onNavigate('/attendance-log')}>
-          <ListItemIcon><EventNoteIcon /></ListItemIcon>
-          <ListItemText primary="Attendance Log" />
-        </ListItemButton>
-      </ListItem>
-
-      <ListItem disablePadding>
-        <ListItemButton onClick={onLogout}>
-          <ListItemIcon><LogoutIcon /></ListItemIcon>
-          <ListItemText primary="Logout" />
-        </ListItemButton>
-      </ListItem>
+      {sidebarRoutes
+        .filter((item) => item.roles.includes(role!))
+        .map((item) => (
+          console.log(item.label),
+          <ListItem key={item.label} disablePadding>
+            <ListItemButton
+              onClick={
+                () => item.path && onNavigate(item.path)
+              }
+            >
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemText primary={item.label} />
+            </ListItemButton>
+          </ListItem>
+        ))}
     </List>
   );
 }
