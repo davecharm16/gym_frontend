@@ -1,8 +1,9 @@
 // store/student/studentStore.ts
 import { create } from "zustand";
-import type { Student } from "../../types/students";
-import { getStudents as fetchStudentsAPI, registerStudent, } from "../../api/student/students";
+import type { Student, StudentCheckIn } from "../../types/students";
+import { checkInStudentApi, getStudents as fetchStudentsAPI, registerStudent, } from "../../api/student/students";
 import type { RegisterStudentFormSchema } from "../../utils/schema/registerStudentSchema";
+import type { ApiResponse } from "../../types/api_response";
 
 interface StudentState {
   students: Student[];
@@ -18,6 +19,7 @@ interface StudentState {
   registerStudent: (payload: RegisterStudentFormSchema) => Promise<void>;
   setSearchQuery: (query: string) => void;
   setSelectedCategory: (category: string) => void;
+  checkInStudent: (studentCheckInData: StudentCheckIn) => Promise<ApiResponse<null> | null>;
 }
 
 export const useStudentStore = create<StudentState>((set, get) => ({
@@ -64,6 +66,27 @@ export const useStudentStore = create<StudentState>((set, get) => ({
     } finally {
       set({ loading: false });
     }
+  },
+
+  checkInStudent: async (studentCheckInData: StudentCheckIn) => {
+    set({ loading: true, error: null });
+    try {
+      const response = await checkInStudentApi(studentCheckInData);
+      console.log("check-in response:", response);
+      if (response.success) {
+        console.log("Student checked in successfully");
+        return response; // Return data if needed
+      } else {
+        set({ error: response.message || "Check-in failed" });
+        return response;
+      }
+    } catch (err) {
+      console.error("check-in student failed:", err);
+      set({ error: "An error occurred while checking in student" });
+    } finally {
+      set({ loading: false });
+    }
+    return null; 
   },
 
   setSearchQuery: (query) => set({ searchQuery: query }),

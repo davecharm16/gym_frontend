@@ -15,3 +15,10 @@ export interface Student {
   subscription_type_name: string | null;
   subscription_fee: number | null;
 }
+
+
+export interface StudentCheckIn {
+  email: string;
+  date: Date;
+  time: Date;
+}
