@@ -32,11 +32,7 @@ export default function HomeLayout() {
         onLogout={handleLogout}
         onNavigate={handleNavigate}
       />
-     
-      <div>
         <Outlet />
-      </div>
-
       <FooterLayout />
     </div>
   );
