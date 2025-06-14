@@ -10,18 +10,10 @@ import {
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { registerStudentSchema, type RegisterStudentFOrmSchema } from "../../../utils/schema/registerStudentSchema";
+import { registerStudentSchema,  } from "../../../utils/schema/registerStudentSchema";
+import type { RegisterStudentFormSchema } from "../../../utils/schema/registerStudentSchema";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-
-export type RegisterFormInputs = {
-  first_name: string;
-  last_name: string;
-  middle_name?: string;
-  gender: string;
-  address: string;
-  birthdate: string;
-  enrollment_date: string;
-};
+import { useStudentStore } from "../../../store/student/studentStore";
 
 export type RegisterModalProps = {
   open: boolean;
@@ -29,18 +21,23 @@ export type RegisterModalProps = {
 };
 
 const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
+  const registerStudent = useStudentStore((state) => state.registerStudent);
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors, },
-  } = useForm<RegisterStudentFOrmSchema>({
+  } = useForm<RegisterStudentFormSchema>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: yupResolver(registerStudentSchema as any),
   });
 
-  const onSubmit = (data: RegisterStudentFOrmSchema) => {
-    console.log("Form Data:", data);
+  const onSubmit = async (data: RegisterStudentFormSchema) => {
+    try {
+      await registerStudent(data);
+    } catch (error) {
+      console.error("Registration failed:", error);
+    }
     onClose();
   };
 
@@ -130,6 +127,25 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
               {...register("enrollment_date")}
               error={!!errors.enrollment_date}
               helperText={errors.enrollment_date?.message}
+            />
+          </Stack>
+
+          <Stack direction="row" spacing={2} mb={2}>
+            <TextField
+              fullWidth
+              label="Email"
+              {...register("email")}
+              error={!!errors.email}
+              helperText={errors.email?.message}
+            />
+            <TextField
+              fullWidth
+              label="Password"
+              type="password"
+              InputLabelProps={{ shrink: true }}
+              {...register("password")}
+              error={!!errors.password}
+              helperText={errors.password?.message}
             />
           </Stack>
 
