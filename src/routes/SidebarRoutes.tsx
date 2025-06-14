@@ -27,7 +27,7 @@ export const sidebarRoutes: SidebarRoute[] = [
     roles: ["admin"],
   },
   {
-    path: "/attendance-log",
+    path: "/attendance-logs",
     label: "Attendance Log",
     icon: <AssignmentIcon />,
     roles: ["admin"],
@@ -37,6 +37,13 @@ export const sidebarRoutes: SidebarRoute[] = [
   {
     path: "/student",
     label: "My Dashboard",
+    icon: <SchoolIcon />,
+    roles: ["student"],
+  },
+
+   {
+    path: "/student/student-logs",
+    label: "My Logs",
     icon: <SchoolIcon />,
     roles: ["student"],
   },

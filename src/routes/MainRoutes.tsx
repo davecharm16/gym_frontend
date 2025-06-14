@@ -8,7 +8,7 @@ import AttendanceLog from "../pages/attendance/AttendanceLog";
 import Login from "../pages/Login";
 import ProtectedRoute from "../components/ProtectedRoute";
 import StudentDashboard from "../pages/student/StudentDashboard";
-
+import StudentLogs from "../pages/student/StudentLogs";
 
 export const MainRoutes = createBrowserRouter([
   {
@@ -20,32 +20,32 @@ export const MainRoutes = createBrowserRouter([
     path: "/login",
     element: <Login />,
   },
-    {
-    path: '/',
+  {
+    path: "/",
     element: (
-      <ProtectedRoute allowedRoles={['admin']}>
+      <ProtectedRoute allowedRoles={["admin"]}>
         <HomeLayout />
       </ProtectedRoute>
     ),
     children: [
       { index: true, element: <Dashboard /> },
-      { path: 'profile-management', element: <ProfileManagement /> },
-      { path: 'attendance-log',     element: <AttendanceLog /> },
+      { path: "profile-management", element: <ProfileManagement /> },
+      { path: "attendance-log", element: <AttendanceLog /> },
     ],
   },
 
   /* ------------ STUDENT FLOW -------- */
   {
-    path: '/student',
+    path: "/student",
     element: (
-      <ProtectedRoute allowedRoles={['student']}>
-        <StudentLAyout />           {/* has its own sidebar */}
+      <ProtectedRoute allowedRoles={["student"]}>
+        <StudentLAyout /> {/* has its own sidebar */}
       </ProtectedRoute>
     ),
-    children: [
+   children: [
       { index: true, element: <StudentDashboard /> },
+      { path: "/student/student-logs", element: <StudentLogs /> },
       /* add more student pages here */
     ],
   },
-
 ]);

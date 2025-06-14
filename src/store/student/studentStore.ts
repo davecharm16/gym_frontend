@@ -14,7 +14,7 @@ interface StudentState {
 
   /* actions */
   getStudents: () => Promise<void>;
-  registerStudent: (payload: any) => Promise<void>;
+  registerStudent: (payload: string) => Promise<void>;
   setSearchQuery: (query: string) => void;
   setSelectedCategory: (category: string) => void;
 }
