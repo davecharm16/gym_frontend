@@ -1,12 +1,11 @@
 // src/pages/ProfileManagement.tsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Monthly from "./screens/Monthly";
 import Session from "./screens/Session";
 import RegisterModal from "./components/RegisterModal";
 import { Stack, TextField, MenuItem, Button } from "@mui/material";
 import { useStudentStore } from "../../store/student/studentStore";
-
-const categoryOptions = ["All", "Premium", "Standard", "Free"];
+import { useSubscriptionStore } from "../../store/subscriptions/subscriptionsStore";
 
 const ProfileManagement = () => {
   // Set default tab to 'session' instead of 'monthly'
@@ -14,6 +13,11 @@ const ProfileManagement = () => {
   const [openRegisterModal, setOpenRegisterModal] = useState(false);
   const { searchQuery, selectedCategory, setSearchQuery, setSelectedCategory } =
     useStudentStore();
+  const { subscriptions, getSubscriptionTypes } = useSubscriptionStore();
+  
+  useEffect(() => {
+    getSubscriptionTypes();
+  }, [getSubscriptionTypes]);
 
   return (
     <div className="mt-12 flex flex-col min-h-screen px-12 pt-6">
@@ -66,9 +70,12 @@ const ProfileManagement = () => {
             onChange={(e) => setSelectedCategory(e.target.value)}
             sx={{ width: 150 }} // Set specific width here
           >
-            {categoryOptions.map((option) => (
-              <MenuItem key={option} value={option}>
-                {option}
+              <MenuItem key={'all'} value={'All'}>
+                {"All"}
+              </MenuItem>
+            {subscriptions.map((option) => (
+              <MenuItem key={option.id} value={option.name}>
+                {option.name}
               </MenuItem>
             ))}
           </TextField>
