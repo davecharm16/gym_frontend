@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Modal,
   Box,
@@ -14,6 +14,7 @@ import { registerStudentSchema,  } from "../../../utils/schema/registerStudentSc
 import type { RegisterStudentFormSchema } from "../../../utils/schema/registerStudentSchema";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useStudentStore } from "../../../store/student/studentStore";
+import { useSubscriptionStore } from "../../../store/subscriptions/subscriptionsStore";
 
 export type RegisterModalProps = {
   open: boolean;
@@ -22,6 +23,8 @@ export type RegisterModalProps = {
 
 const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
   const registerStudent = useStudentStore((state) => state.registerStudent);
+  const subscriptions = useSubscriptionStore((state) => state.subscriptions);
+
   const {
     register,
     handleSubmit,
@@ -40,6 +43,18 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
     }
     onClose();
   };
+
+  useEffect(() => {
+    // Fetch subscriptions when the modal opens
+    if (open) {
+      useSubscriptionStore.getState().getSubscriptionTypes();
+    }
+  }, [open]);
+
+
+  useEffect(() => {
+    console.log("Available subscriptions:", subscriptions);
+  }, [subscriptions]);
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -131,6 +146,25 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
           </Stack>
 
           <Stack direction="row" spacing={2} mb={2}>
+          <TextField
+            select
+            fullWidth
+            label="Subscription Type"
+            {...register("subscription_type_id")}
+            error={!!errors.subscription_type_id}
+            helperText={errors.subscription_type_id?.message}
+            onChange={(e) => {
+              const value = e.target.value;
+              console.log("Selected Subscription ID:", value);
+              setValue("subscription_type_id", value);
+            }}
+          >
+            {subscriptions.map((sub) => (
+              <MenuItem key={sub.id} value={sub.id}>
+                {sub.name} - ₱{sub.amount ?? "N/A"}
+              </MenuItem>
+            ))}
+          </TextField>
             <TextField
               fullWidth
               label="Email"
