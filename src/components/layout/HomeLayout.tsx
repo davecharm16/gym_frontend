@@ -29,9 +29,9 @@ export default function HomeLayout() {
         onNavigate={handleNavigate}
       />
      
-    <div>
-      <Outlet />
-    </div>
+      <div>
+        <Outlet />
+      </div>
 
       <FooterLayout />
     </div>
