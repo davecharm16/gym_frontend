@@ -1,17 +1,7 @@
-// pages/StudentDashboard.tsx
-import { useState } from "react";
-import { Avatar, Button, TextField } from "@mui/material";
-import CheckInModal from "./CheckInModal";
+import { Avatar, TextField } from "@mui/material";
 import { InfoOutlined } from "@mui/icons-material";
-import { useStudentStore } from "../../store/student/studentStore";
-import { useToastStore } from "../../store/toastStore";
 
 export default function StudentDashboard() {
-  const [openCheckIn, setOpenCheckIn] = useState(false);
-  const { checkInStudent, } = useStudentStore();
-  const { showToast } = useToastStore();
-
-
   const student = {
     avatarUrl: "https://randomuser.me/api/portraits/men/75.jpg",
     firstName: "Juan",
@@ -23,52 +13,12 @@ export default function StudentDashboard() {
     category: "Crossfit",
   };
 
-  const handleCheckIn = async () => {
-    const now = new Date();
-    const date = now;
-    const time = now;
-
-    console.log("Checked in:", {
-      email: student.email,
-      date,
-      time,
-    });
-
-    try {
-      const res = await checkInStudent({
-        email: 'davecharm.official@gmail.com',
-        date,
-        time,
-      });
-      if(res?.success === true) {
-        showToast("Check-in successful!", "success");
-      }
-      else{
-        showToast("Check-in failed. " + res?.message, "error");
-      }
-    } catch (error) {
-      console.error("Check-in failed:", error);
-      // Optionally, you can show an error message to the user
-      showToast(
-        "Check-in failed. " + error + " Please try again.",
-        "error"
-      );
-    }
-   
-
-    setOpenCheckIn(false);
-  };
-
   return (
-    <div className="min-h-screen w-full flex flex-col items-center mt-20 px-4">
-      <h1 className="text-xl font-bold self-start mb-6">
-        Personal Information
-      </h1>
-
+    <div className="min-h-screen flex items-center justify-center px-4">
       <div className="bg-white border rounded-xl w-full max-w-3xl p-8 flex flex-col gap-8">
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-2">
           <Avatar src={student.avatarUrl} sx={{ width: 82, height: 82 }} />
-          <h2 className="text-3xl font-bold">
+          <h2 className="text-3xl font-extrabold">
             {student.firstName} {student.middleName} {student.lastName}
           </h2>
         </div>
@@ -87,16 +37,15 @@ export default function StudentDashboard() {
               label="Subscription"
               defaultValue={student.subscription}
             />
-
             <FieldRow
               label="Date Subscription"
               defaultValue={student.subscription}
             />
           </div>
 
-          <div className="border border-gray-300 rounded-md p-4 bg-white flex items-start gap-3">
+          <div className="border-2 border-blue-500 rounded-md p-4 bg-blue-50 flex items-start gap-3">
             <InfoOutlined className="text-blue-500 mt-0.5" />
-            <p className="text-sm text-gray-700">
+            <p className="text-sm text-blue-500">
               <strong>Note:</strong> Your subscription will expire soon. Please
               ensure to renew before the due date to continue accessing all
               services without interruption.
@@ -104,31 +53,6 @@ export default function StudentDashboard() {
           </div>
         </div>
       </div>
-
-      <Button
-        variant="contained"
-        fullWidth
-        sx={{
-          mt: 6,
-          maxWidth: "48rem",
-          backgroundColor: "#414545",
-          textTransform: "none",
-          fontSize: "1rem",
-          py: 1.5,
-          "&:hover": { backgroundColor: "#333" },
-        }}
-        onClick={() => setOpenCheckIn(true)}
-      >
-        Check In
-      </Button>
-
-      {/* Modal Component */}
-      <CheckInModal
-        open={openCheckIn}
-        onClose={() => setOpenCheckIn(false)}
-        onConfirm={handleCheckIn}
-        email={student.email}
-      />
     </div>
   );
 }

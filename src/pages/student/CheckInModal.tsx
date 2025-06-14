@@ -6,6 +6,8 @@ import {
   TextField,
   Button,
   InputAdornment,
+  Box,
+  Typography,
 } from "@mui/material";
 import { Email } from "@mui/icons-material";
 import { useState, useEffect } from "react";
@@ -23,7 +25,6 @@ export default function CheckInModal({
   onConfirm,
   email,
 }: CheckInModalProps) {
-
   const [formData, setFormData] = useState({
     email: "",
     date: "",
@@ -48,55 +49,54 @@ export default function CheckInModal({
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
-      <DialogTitle className="text-center text-2xl font-semibold">
-        Check in
+      <DialogTitle>
+        <Typography variant="h6" align="center" fontWeight="bold">
+          Student Check-In
+        </Typography>
       </DialogTitle>
 
-      <DialogContent className="flex flex-col gap-6 mt-2">
-        <TextField
-          label="Email"
-          placeholder="Enter Email"
-          fullWidth
-          value={formData.email}
-          onChange={handleChange("email")}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <Email fontSize="small" className="text-gray-500" />
-              </InputAdornment>
-            ),
-          }}
-        />
+      <DialogContent>
+        <Box display="flex" flexDirection="column" gap={3} mt={1}>
+          <TextField
+            label="Email"
+            placeholder="Enter email"
+            fullWidth
+            value={formData.email}
+            onChange={handleChange("email")}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Email fontSize="small" sx={{ color: "gray" }} />
+                </InputAdornment>
+              ),
+            }}
+          />
 
-        <TextField
-          label="Date"
-          type="date"
-          placeholder="MM/DD/YYYY"
-          fullWidth
-          value={formData.date}
-          onChange={handleChange("date")}
-          InputLabelProps={{ shrink: true }}
-        />
+          <TextField
+            label="Date"
+            type="date"
+            fullWidth
+            value={formData.date}
+            onChange={handleChange("date")}
+            InputLabelProps={{ shrink: true }}
+          />
 
-        <TextField
-          label="Time"
-          type="time"
-          placeholder="HH:MM"
-          fullWidth
-          value={formData.time}
-          onChange={handleChange("time")}
-          InputLabelProps={{ shrink: true }}
-        />
+          <TextField
+            label="Time"
+            type="time"
+            fullWidth
+            value={formData.time}
+            onChange={handleChange("time")}
+            InputLabelProps={{ shrink: true }}
+          />
+        </Box>
       </DialogContent>
 
-      <DialogActions
-        className="flex flex-row gap-x-4 py-4 px-6"
-        sx={{ justifyContent: "center" }}
-      >
+      <DialogActions sx={{ justifyContent: "center", pb: 3 }}>
         <Button
           variant="outlined"
           onClick={onClose}
-          sx={{ textTransform: "none", width: "150px" }}
+          sx={{ textTransform: "none", width: 120 }}
         >
           Cancel
         </Button>
@@ -105,9 +105,9 @@ export default function CheckInModal({
           variant="contained"
           onClick={handleConfirm}
           sx={{
-            width: "150px",
-            backgroundColor: "#414545",
             textTransform: "none",
+            width: 120,
+            backgroundColor: "#414545",
             "&:hover": { backgroundColor: "#333a3a" },
           }}
         >
