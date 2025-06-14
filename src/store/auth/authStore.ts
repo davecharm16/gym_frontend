@@ -1,7 +1,14 @@
 import { create } from "zustand";
+import { jwtDecode } from "jwt-decode";
 import { loginUser } from "../../api/auth/auth";
 import type { LoginRequest, User } from "../../types/auth";
 import type { UserRole } from "../../constant/roles";
+
+let logoutTimer: ReturnType<typeof setTimeout>;
+
+interface DecodedToken {
+  exp: number;
+}
 
 const getInitialToken = () => localStorage.getItem("token");
 const getInitialRefreshToken = () => localStorage.getItem("refreshToken");
@@ -19,7 +26,6 @@ interface AuthState {
 
   login: (creds: LoginRequest) => Promise<void>;
   logout: () => void;
-
   isAuthenticated: () => boolean;
   hasRole: (roles: UserRole[]) => boolean;
 }
@@ -36,15 +42,27 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       const res = await loginUser(creds);
       if (res.success && res.data) {
+        const { token, refresh_token } = res.data;
         const newUser: User = {
           ...res.data.user,
           role: res.data.user.role.toLowerCase() as UserRole,
         };
-        const { token, refresh_token } = res.data;
 
         localStorage.setItem("token", token);
         localStorage.setItem("refreshToken", refresh_token);
-        localStorage.setItem("user", JSON.stringify(newUser)); // Persist user
+        localStorage.setItem("user", JSON.stringify(newUser));
+
+        // Decode token to find expiry (exp is in seconds)
+        const decoded = jwtDecode<DecodedToken>(token);
+        const expiryTime = decoded.exp * 1000;
+        const currentTime = Date.now();
+        const timeLeft = expiryTime - currentTime;
+
+        // Auto logout after expiry time
+        clearTimeout(logoutTimer);
+        logoutTimer = setTimeout(() => {
+          get().logout();
+        }, timeLeft);
 
         set({
           user: newUser,
@@ -66,6 +84,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     localStorage.removeItem("token");
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("user");
+    clearTimeout(logoutTimer);
     set({ user: null, token: null, refreshToken: null });
   },
 
