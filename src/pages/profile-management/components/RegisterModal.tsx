@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Modal,
   Box,
@@ -10,18 +10,11 @@ import {
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { registerStudentSchema, type RegisterStudentFOrmSchema } from "../../../utils/schema/registerStudentSchema";
+import { registerStudentSchema,  } from "../../../utils/schema/registerStudentSchema";
+import type { RegisterStudentFormSchema } from "../../../utils/schema/registerStudentSchema";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-
-export type RegisterFormInputs = {
-  first_name: string;
-  last_name: string;
-  middle_name?: string;
-  gender: string;
-  address: string;
-  birthdate: string;
-  enrollment_date: string;
-};
+import { useStudentStore } from "../../../store/student/studentStore";
+import { useSubscriptionStore } from "../../../store/subscriptions/subscriptionsStore";
 
 export type RegisterModalProps = {
   open: boolean;
@@ -29,20 +22,39 @@ export type RegisterModalProps = {
 };
 
 const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
+  const registerStudent = useStudentStore((state) => state.registerStudent);
+  const subscriptions = useSubscriptionStore((state) => state.subscriptions);
+
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors, },
-  } = useForm<RegisterStudentFOrmSchema>({
+  } = useForm<RegisterStudentFormSchema>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: yupResolver(registerStudentSchema as any),
   });
 
-  const onSubmit = (data: RegisterStudentFOrmSchema) => {
-    console.log("Form Data:", data);
+  const onSubmit = async (data: RegisterStudentFormSchema) => {
+    try {
+      await registerStudent(data);
+    } catch (error) {
+      console.error("Registration failed:", error);
+    }
     onClose();
   };
+
+  useEffect(() => {
+    // Fetch subscriptions when the modal opens
+    if (open) {
+      useSubscriptionStore.getState().getSubscriptionTypes();
+    }
+  }, [open]);
+
+
+  useEffect(() => {
+    console.log("Available subscriptions:", subscriptions);
+  }, [subscriptions]);
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -130,6 +142,44 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
               {...register("enrollment_date")}
               error={!!errors.enrollment_date}
               helperText={errors.enrollment_date?.message}
+            />
+          </Stack>
+
+          <Stack direction="row" spacing={2} mb={2}>
+          <TextField
+            select
+            fullWidth
+            label="Subscription Type"
+            {...register("subscription_type_id")}
+            error={!!errors.subscription_type_id}
+            helperText={errors.subscription_type_id?.message}
+            onChange={(e) => {
+              const value = e.target.value;
+              console.log("Selected Subscription ID:", value);
+              setValue("subscription_type_id", value);
+            }}
+          >
+            {subscriptions.map((sub) => (
+              <MenuItem key={sub.id} value={sub.id}>
+                {sub.name} - ₱{sub.amount ?? "N/A"}
+              </MenuItem>
+            ))}
+          </TextField>
+            <TextField
+              fullWidth
+              label="Email"
+              {...register("email")}
+              error={!!errors.email}
+              helperText={errors.email?.message}
+            />
+            <TextField
+              fullWidth
+              label="Password"
+              type="password"
+              InputLabelProps={{ shrink: true }}
+              {...register("password")}
+              error={!!errors.password}
+              helperText={errors.password?.message}
             />
           </Stack>
 

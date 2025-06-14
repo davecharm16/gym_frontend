@@ -30,7 +30,7 @@ export const MainRoutes = createBrowserRouter([
     children: [
       { index: true, element: <Dashboard /> },
       { path: "profile-management", element: <ProfileManagement /> },
-      { path: "attendance-log", element: <AttendanceLog /> },
+      { path: "attendance-logs", element: <AttendanceLog /> },
     ],
   },
 
