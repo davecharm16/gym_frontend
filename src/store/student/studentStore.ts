@@ -20,7 +20,7 @@ interface StudentState {
   setSelectedCategory: (category: string) => void;
 }
 
-export const useStudentStore = create<StudentState>((set) => ({
+export const useStudentStore = create<StudentState>((set, get) => ({
   /* --- state --- */
   students: [],
   loading: false,
@@ -52,6 +52,7 @@ export const useStudentStore = create<StudentState>((set) => ({
       const res = await registerStudent(payload);
       if (res.success) {
        console.log("Student registered successfully:", res.data);
+       get().getStudents(); // Refresh student list after registration
       } else {
         set({ error: res.message || "Registration failed" });
         throw new Error(res.message || "Registration failed");

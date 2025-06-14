@@ -22,7 +22,7 @@ export const registerStudent = async (
 ): Promise<ApiResponse<Partial<Student>>> => {
   try {
     const res = await apiClient.post<CreateStudentResponseDTO, CreateStudentRequestDTO>(
-      endPoint.students,
+      endPoint.register,
       toCreateStudentDTO(data)
     );
 

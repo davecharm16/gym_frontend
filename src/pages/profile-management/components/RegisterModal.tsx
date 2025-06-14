@@ -13,6 +13,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { registerStudentSchema,  } from "../../../utils/schema/registerStudentSchema";
 import type { RegisterStudentFormSchema } from "../../../utils/schema/registerStudentSchema";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { useStudentStore } from "../../../store/student/studentStore";
 
 export type RegisterModalProps = {
   open: boolean;
@@ -20,6 +21,7 @@ export type RegisterModalProps = {
 };
 
 const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
+  const registerStudent = useStudentStore((state) => state.registerStudent);
   const {
     register,
     handleSubmit,
@@ -30,8 +32,12 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
     resolver: yupResolver(registerStudentSchema as any),
   });
 
-  const onSubmit = (data: RegisterStudentFormSchema) => {
-    console.log("Form Data:", data);
+  const onSubmit = async (data: RegisterStudentFormSchema) => {
+    try {
+      await registerStudent(data);
+    } catch (error) {
+      console.error("Registration failed:", error);
+    }
     onClose();
   };
 
