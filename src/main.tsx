@@ -6,11 +6,15 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { CssBaseline } from '@mui/material';
 import { RouterProvider } from 'react-router-dom';
 import { MainRoutes } from './routes/MainRoutes';
+import { lightTheme } from './theme/theme';
+import { ThemeProvider } from '@mui/material/styles';
 
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <CssBaseline />
-    <RouterProvider router={MainRoutes} />
+    <ThemeProvider theme={lightTheme}>
+      <CssBaseline />
+      <RouterProvider router={MainRoutes} />
+    </ThemeProvider>
   </StrictMode>,
 )

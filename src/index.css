@@ -1,3 +1,4 @@
+@import "tailwindcss";
 :root {
   /* Typography */
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -8,10 +9,9 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  /* Theme Colors */
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  /* Theme Colors - Enforced Light Theme */
+  color: #213547;
+  background-color: #ffffff;
 
   /* Custom Variables */
   --primary-color: #1976d2;
@@ -32,13 +32,11 @@ a:hover {
 
 /* Global Body */
 body {
-margin: 0;
-padding: 0
-;
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff;
+  color: #213547;
 }
-
-/* Headings */
-
 
 /* Buttons */
 button {
@@ -48,7 +46,7 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: #f9f9f9;
   cursor: pointer;
   transition: border-color 0.25s;
 }
@@ -58,18 +56,4 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
-}
-
-/* Light Mode Overrides */
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
 }

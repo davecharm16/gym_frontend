@@ -3,10 +3,8 @@ import { loginUser } from "../../api/auth/auth";
 import type { LoginRequest, User } from "../../types/auth";
 import type { UserRole } from "../../constant/roles";
 
-// Helper to get user from localStorage if needed (optional)
 const getInitialToken = () => localStorage.getItem("token");
 const getInitialRefreshToken = () => localStorage.getItem("refreshToken");
-// You might optionally store the user object too
 const getInitialUser = (): User | null => {
   const user = localStorage.getItem("user");
   return user ? JSON.parse(user) : null;
