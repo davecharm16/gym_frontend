@@ -2,10 +2,18 @@
 import { useState } from "react";
 import Monthly from "./profile-management/screens/Monthly";
 import Session from "./profile-management/screens/Session";
+import RegisterModal from "./profile-management/components/RegisterModal";
+import { Stack, TextField, MenuItem, Button } from "@mui/material";
+import { useStudentStore } from "../store/student/studentStore";
+
+const categoryOptions = ["All", "Premium", "Standard", "Free"];
 
 const ProfileManagement = () => {
   // Set default tab to 'session' instead of 'monthly'
   const [activeTab, setActiveTab] = useState<"monthly" | "session">("session");
+  const [openRegisterModal, setOpenRegisterModal] = useState(false);
+  const { searchQuery, selectedCategory, setSearchQuery, setSelectedCategory} = useStudentStore();
+  
 
   return (
     <div className="p-3 mt-12">
@@ -34,8 +42,45 @@ const ProfileManagement = () => {
         </button>
       </div>
 
+      <Stack
+        direction={{ xs: "column", sm: "row" }}
+        spacing={2}
+        justifyContent="space-between"
+        alignItems="center"
+        mb={2}
+      >
+        <Stack direction="row" spacing={2}>
+          <TextField
+            label="Search by name"
+            variant="outlined"
+            size="small"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <TextField
+            label="Category"
+            select
+            size="small"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            sx={{ width: 200 }} // Set specific width here
+          >
+            {categoryOptions.map((option) => (
+              <MenuItem key={option} value={option}>
+                {option}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Stack>
+        <Button variant="contained" color="primary"  onClick={() => setOpenRegisterModal(true)}>
+          Register
+        </Button>
+      </Stack>
+
       {activeTab === "session" && <Session />}
       {activeTab === "monthly" && <Monthly />}
+      
+      <RegisterModal open={openRegisterModal} onClose={() => setOpenRegisterModal(false)} />
     </div>
   );
 };
