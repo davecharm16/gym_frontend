@@ -3,6 +3,15 @@ import { loginUser } from "../../api/auth/auth";
 import type { LoginRequest, User } from "../../types/auth";
 import type { UserRole } from "../../constant/roles";
 
+// Helper to get user from localStorage if needed (optional)
+const getInitialToken = () => localStorage.getItem("token");
+const getInitialRefreshToken = () => localStorage.getItem("refreshToken");
+// You might optionally store the user object too
+const getInitialUser = (): User | null => {
+  const user = localStorage.getItem("user");
+  return user ? JSON.parse(user) : null;
+};
+
 interface AuthState {
   user: User | null;
   token: string | null;
@@ -18,14 +27,14 @@ interface AuthState {
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
-  user: null,
-  token: null,
-  refreshToken: null,
+  user: getInitialUser(),
+  token: getInitialToken(),
+  refreshToken: getInitialRefreshToken(),
   loading: false,
   error: null,
 
   login: async (creds) => {
-    set({ loading: true, error: null }); // Start loading and clear previous errors
+    set({ loading: true, error: null });
     try {
       const res = await loginUser(creds);
       if (res.success && res.data) {
@@ -37,6 +46,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
         localStorage.setItem("token", token);
         localStorage.setItem("refreshToken", refresh_token);
+        localStorage.setItem("user", JSON.stringify(newUser)); // Persist user
 
         set({
           user: newUser,
@@ -57,6 +67,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   logout: () => {
     localStorage.removeItem("token");
     localStorage.removeItem("refreshToken");
+    localStorage.removeItem("user");
     set({ user: null, token: null, refreshToken: null });
   },
 
