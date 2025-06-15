@@ -20,5 +20,7 @@ export interface CreateStudentResponseDTO {
   paid_until: string; // ISO timestamp (e.g., "2025-07-14T10:34:48.296Z")
 }
 
-
-
+export interface StudentCheckInDTO {
+  student_email: string;
+  checkin_time: string; // ISO format: "YYYY-MM-DDTHH:mm:ss.sssZ"
+}
