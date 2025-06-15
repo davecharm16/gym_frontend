@@ -19,6 +19,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
       sx={{
         zIndex: (theme) => theme.zIndex.drawer + 1,
         boxShadow: 'none',
+        
       }}
     >
       <Toolbar>
