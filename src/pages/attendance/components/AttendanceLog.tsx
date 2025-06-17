@@ -8,11 +8,10 @@ import {
   TableHead,
   TableRow,
   Typography,
-  Paper,
-  TablePagination,
   TextField,
   MenuItem,
-  Stack,
+  Chip,
+  Pagination,
 } from "@mui/material";
 import { useState } from "react";
 
@@ -31,28 +30,18 @@ const rows: AttendanceRow[] = Array.from({ length: 25 }).map((_, i) => ({
   name: "Dela Cruz, Juan A.",
   address: "Malabago, Mangaldan, Pangasinan",
   age: 18,
-  type: i % 2 === 0 ? "Monthly" : "Weekly",
+  type: i % 2 === 0 ? "Monthly" : "Session",
   date: "07/06/2025",
   time: "11:55 AM",
   avatarUrl: "https://randomuser.me/api/portraits/men/75.jpg",
 }));
 
+const rowsPerPage = 5;
+
 const AttendanceTable = () => {
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState("All");
-
-  const handleChangePage = (_: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
 
   const filteredRows = rows.filter((row) => {
     const matchesSearch = row.name
@@ -62,58 +51,80 @@ const AttendanceTable = () => {
     return matchesSearch && matchesType;
   });
 
-  return (
-    <Paper sx={{ borderRadius: 0, p: 2, boxShadow: "none", border: "none" }}>
-      <Stack direction={{ xs: "column", sm: "row" }} spacing={2} mb={2}>
-        <TextField
-          label="Search Name"
-          variant="outlined"
-          size="small"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-        <TextField
-          label="Filter by Type"
-          variant="outlined"
-          size="small"
-          select
-          value={selectedType}
-          onChange={(e) => setSelectedType(e.target.value)}
-        >
-          <MenuItem value="All">All</MenuItem>
-          <MenuItem value="Monthly">Monthly</MenuItem>
-          <MenuItem value="Session">Session</MenuItem>
-        </TextField>
-      </Stack>
+  const paginatedRows = filteredRows.slice(
+    (page - 1) * rowsPerPage,
+    page * rowsPerPage
+  );
 
-      <TableContainer>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>
-                <strong>Member Name</strong>
-              </TableCell>
-              <TableCell>
-                <strong>Address</strong>
-              </TableCell>
-              <TableCell>
-                <strong>Age</strong>
-              </TableCell>
-              <TableCell>
-                <strong>Type</strong>
-              </TableCell>
-              <TableCell>
-                <strong>Subscription Date</strong>
-              </TableCell>
-              <TableCell>
-                <strong>Time</strong>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredRows
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row, idx) => (
+  const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+
+  const handleChangePage = (_: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  return (
+    <Box display="flex" flexDirection="column" alignItems="center" mt={4}>
+      <Box
+        sx={{
+          border: "1px solid #ccc",
+          borderRadius: 1,
+          width: "100%",
+          overflowX: "auto",
+        }}
+      >
+        <Box
+          p={2}
+          display="flex"
+          flexDirection={{ xs: "column", sm: "row" }}
+          gap={2}
+        >
+          <TextField
+            label="Search Name"
+            variant="outlined"
+            size="small"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <TextField
+            label="Filter by Type"
+            variant="outlined"
+            size="small"
+            select
+            value={selectedType}
+            onChange={(e) => setSelectedType(e.target.value)}
+          >
+            <MenuItem value="All">All</MenuItem>
+            <MenuItem value="Monthly">Monthly</MenuItem>
+            <MenuItem value="Session">Session</MenuItem>
+          </TextField>
+        </Box>
+
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ fontWeight: "bold", fontSize: "14px" }}>
+                  Member Name
+                </TableCell>
+                <TableCell sx={{ fontWeight: "bold", fontSize: "14px" }}>
+                  Address
+                </TableCell>
+                <TableCell sx={{ fontWeight: "bold", fontSize: "14px" }}>
+                  Age
+                </TableCell>
+                <TableCell sx={{ fontWeight: "bold", fontSize: "14px" }}>
+                  Type
+                </TableCell>
+                <TableCell sx={{ fontWeight: "bold", fontSize: "14px" }}>
+                  Subscription Date
+                </TableCell>
+                <TableCell sx={{ fontWeight: "bold", fontSize: "14px" }}>
+                  Time
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {paginatedRows.map((row, idx) => (
                 <TableRow key={idx}>
                   <TableCell>
                     <Box display="flex" alignItems="center" gap={1}>
@@ -126,25 +137,33 @@ const AttendanceTable = () => {
                   </TableCell>
                   <TableCell>{row.address}</TableCell>
                   <TableCell>{row.age}</TableCell>
-                  <TableCell>{row.type}</TableCell>
+                  <TableCell>
+                    <Chip
+                      label={row.type}
+                      color={row.type === "Monthly" ? "primary" : "secondary"}
+                      size="small"
+                    />
+                  </TableCell>
                   <TableCell>{row.date}</TableCell>
                   <TableCell>{row.time}</TableCell>
                 </TableRow>
               ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableBody>
+          </Table>
+        </TableContainer>
 
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={filteredRows.length}
-        page={page}
-        rowsPerPage={rowsPerPage}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-    </Paper>
+        <Box display="flex" justifyContent="flex-start" px={2} py={2}>
+          <Pagination
+            count={totalPages}
+            page={page}
+            onChange={handleChangePage}
+            color="primary"
+            variant="outlined"
+            shape="rounded"
+          />
+        </Box>
+      </Box>
+    </Box>
   );
 };
 

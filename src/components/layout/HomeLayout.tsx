@@ -25,7 +25,7 @@ export default function HomeLayout() {
   };
 
   return (
-    <Box sx={{ display: "", minHeight: "100vh" }}>
+    <Box sx={{ minHeight: "100vh" }}>
       {/* Sidebar */}
       <Sidebar
         open={sidebarOpen}

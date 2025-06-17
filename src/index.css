@@ -1,7 +1,10 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap");
 @import "tailwindcss";
+
+
 :root {
   /* Typography */
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Poppins", sans-serif;
   line-height: 1.5;
   font-weight: 400;
   font-synthesis: none;
@@ -10,24 +13,25 @@
   -moz-osx-font-smoothing: grayscale;
 
   /* Theme Colors - Enforced Light Theme */
-  color: #213547;
+  color: #3c3d37;
   background-color: #ffffff;
 
   /* Custom Variables */
-  --primary-color: #1976d2;
+  --primary-color: #3c3d37;
+  --hover-color: #181c14;
   --secondary-color: #f4f4f4;
-  --text-color: #333;
+  --text-color: #3c3d37;
   --drawer-width: 240px;
 }
 
 /* Links */
 a {
   font-weight: 500;
-  color: #646cff;
+  color: var(--primary-color);
   text-decoration: none;
 }
 a:hover {
-  color: #535bf2;
+  color: var(--hover-color);
 }
 
 /* Global Body */
@@ -35,7 +39,7 @@ body {
   margin: 0;
   padding: 0;
   background-color: #ffffff;
-  color: #213547;
+  color: var(--text-color);
 }
 
 /* Buttons */
@@ -45,13 +49,15 @@ button {
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
-  font-family: inherit;
-  background-color: #f9f9f9;
+  font-family: "Poppins", sans-serif;
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: border-color 0.25s, background-color 0.25s;
 }
 button:hover {
-  border-color: #646cff;
+  border-color: var(--hover-color);
+  background-color: #e6e6e6;
 }
 button:focus,
 button:focus-visible {

@@ -17,7 +17,7 @@ const ProfileManagement = () => {
   }, [getSubscriptionTypes]);
 
   return (
-    <div className="mt-12 flex flex-col min-h-screen px-12 pt-6">
+    <div className="mt-12 flex flex-col  px-12 pt-6">
       <h1 className="text-sm font-extrabold pb-8">Profile Management</h1>
 
       <Stack
@@ -87,11 +87,11 @@ const ProfileManagement = () => {
             fontSize: "16px",
             width: 120,
             textTransform: "none",
-            backgroundColor: "#000",
+            backgroundColor: "#3C3D37",
             color: "#fff",
-            borderColor: "#000",
+
             "&:hover": {
-              backgroundColor: "#1a1a1a",
+              backgroundColor: "#181C14",
               borderColor: "#1a1a1a",
             },
           }}
