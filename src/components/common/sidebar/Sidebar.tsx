@@ -1,4 +1,3 @@
-
 import {
   Drawer,
   List,
@@ -13,51 +12,83 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import SidebarList from './SidebarList';
 
 interface SidebarProps {
-  open: boolean;
-  onClose: () => void;
+  open: boolean; // true = expanded with text, false = mini with icons only
   onLogout: () => void;
   onNavigate: (path: string) => void;
+  onClose?: () => void; // Optional, if you want to handle closing the sidebar
 }
 
 const drawerWidth = 240;
+const miniDrawerWidth = 60;
 
-export default function Sidebar({ open, onClose, onLogout, onNavigate }: SidebarProps) {
+export default function Sidebar({
+  open,
+  onLogout,
+  onNavigate,
+}: SidebarProps) {
   const handleNavigate = (path: string) => {
     onNavigate(path);
-    onClose(); // Close drawer after navigation
   };
 
   const handleLogout = () => {
     onLogout();
-    onClose(); // Close drawer after logout
   };
 
   return (
     <Drawer
-      anchor="left"
-      open={open}
-      onClose={onClose}
-      variant="temporary"
-      ModalProps={{ keepMounted: true }}
+      variant="permanent"
       sx={{
+        width: open ? drawerWidth : miniDrawerWidth,
+        flexShrink: 0,
+        whiteSpace: 'nowrap',
+        boxSizing: 'border-box',
+        transition: 'width 0.3s',
         '& .MuiDrawer-paper': {
-          width: drawerWidth,
+          width: open ? drawerWidth : miniDrawerWidth,
+          transition: 'width 0.3s',
+          overflowX: 'hidden',
           boxSizing: 'border-box',
-          borderRight: 'none',
         },
       }}
     >
-      <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', paddingTop: 8 }}>
-        <SidebarList
-          onNavigate={handleNavigate}
-        />
+      <Box
+        sx={{
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          paddingTop: 8,
+        }}
+      >
+        {/* Your Sidebar List */}
+        <SidebarList onNavigate={handleNavigate} isOpen={open} />
+
+        {/* Sign Out */}
         <Box>
           <Divider />
           <List>
-            <ListItem disablePadding>
-              <ListItemButton onClick={handleLogout}>
-                <ListItemIcon><ExitToAppIcon /></ListItemIcon>
-                <ListItemText primary="Sign Out" />
+            <ListItem disablePadding sx={{ display: 'block' }}>
+              <ListItemButton
+                onClick={handleLogout}
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? 'initial' : 'center',
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : 'auto',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <ExitToAppIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primary="Sign Out"
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
               </ListItemButton>
             </ListItem>
           </List>
