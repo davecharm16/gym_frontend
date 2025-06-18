@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 type StatCardProps = {
   icon?: React.ReactNode;
@@ -8,10 +8,10 @@ type StatCardProps = {
 
 const StatCard: React.FC<StatCardProps> = ({ icon, label, value }) => {
   return (
-    <div className="flex flex-col items-center justify-center border border-gray-300 rounded-lg px-6 py-4 w-full max-w-xs text-center shadow-sm">
-      <div className="text-gray-700 mb-1">{icon}</div>
-      <p className="text-sm text-gray-600">{label}</p>
-      <p className="text-xl font-bold text-gray-800">{value}</p>
+    <div className="flex flex-col items-center justify-center border-2 border-gray-300 rounded-md px-6 py-8 w-[400px] text-center bg-white space-y-3">
+      <div className="text-gray-700">{icon}</div>
+      <p className="text-md text-gray-600 tracking-wide">{label}</p>
+      <p className="text-4xl font-extrabold text-gray-900">{value}</p>
     </div>
   );
 };

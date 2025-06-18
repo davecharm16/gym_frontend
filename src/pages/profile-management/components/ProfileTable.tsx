@@ -1,20 +1,24 @@
 import {
-  TableContainer,
+
+  Box,
   Table,
+  TableBody,
+  TableCell,
+  TableContainer,
   TableHead,
   TableRow,
-  TableCell,
-  TableBody,
-  IconButton,
-  Chip,
-  CircularProgress,
   Typography,
-  Box,
+  Chip,
   Pagination,
+  Paper,
+  IconButton,
+  CircularProgress,
 } from "@mui/material";
-import { Visibility, Edit, Delete } from "@mui/icons-material";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useEffect, useState } from "react";
-import { Category } from "../../../utils/category";
+import { Visibility, Edit, Delete } from "@mui/icons-material";
+
 import { useStudentStore } from "../../../store/student/studentStore";
 
 export default function ProfileTable() {
@@ -34,10 +38,7 @@ export default function ProfileTable() {
     getStudents();
   }, [getStudents]);
 
-  const handleChangePage = (
-    _event: React.ChangeEvent<unknown>,
-    newPage: number
-  ) => {
+  const handleChangePage = (_event: React.ChangeEvent<unknown>, newPage: number) => {
     setPage(newPage);
   };
 
@@ -53,22 +54,13 @@ export default function ProfileTable() {
   };
 
   const filteredStudents = students.filter((student) => {
-    const fullName =
-      `${student.first_name} ${student.middle_name} ${student.last_name}`.toLowerCase();
+    const fullName = `${student.first_name} ${student.middle_name} ${student.last_name}`.toLowerCase();
     const matchesSearch = fullName.includes(searchQuery?.toLowerCase() ?? "");
-    const matchesCategory =
-      selectedCategory === "All" ||
-      student.subscription_type_name === selectedCategory;
-
+    const matchesCategory = selectedCategory === "All" || student.subscription_type_name === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
-  // Pagination logic
-  const paginatedStudents = filteredStudents.slice(
-    (page - 1) * rowsPerPage,
-    page * rowsPerPage
-  );
-
+  const paginatedStudents = filteredStudents.slice((page - 1) * rowsPerPage, page * rowsPerPage);
   const totalPages = Math.ceil(filteredStudents.length / rowsPerPage);
 
   if (loading) {
@@ -88,107 +80,97 @@ export default function ProfileTable() {
   }
 
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" mt={4}>
-      {filteredStudents.length === 0 ? (
-        <Typography align="center" mt={4}>
-          No students found.
-        </Typography>
-      ) : (
-        <Box
-          sx={{
-            border: "1px solid #ccc",
-            borderRadius: 1,
-            width: "100%",
-            overflowX: "auto",
-          }}
-        >
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell sx={{ fontSize: "16px", fontWeight: "700" }}>
-                    Name
-                  </TableCell>
-                  <TableCell sx={{ fontSize: "16px", fontWeight: "700" }}>
-                    Address
-                  </TableCell>
-                  <TableCell sx={{ fontSize: "16px", fontWeight: "700" }}>
-                    Age
-                  </TableCell>
-                  <TableCell sx={{ fontSize: "16px", fontWeight: "700" }}>
-                    Category
-                  </TableCell>
-                  <TableCell sx={{ fontSize: "16px", fontWeight: "700" }}>
-                    Subscription Date
-                  </TableCell>
-                  <TableCell sx={{ fontSize: "16px", fontWeight: "700" }}>
-                    Payment Method
-                  </TableCell>
-                  <TableCell sx={{ fontSize: "16px", fontWeight: "700" }}>
-                    Action
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {paginatedStudents.map((student) => (
-                  <TableRow key={student.id}>
-                    <TableCell>{`${student.first_name} ${student.middle_name} ${student.last_name}`}</TableCell>
-                    <TableCell>{student.address}</TableCell>
-                    <TableCell>{calculateAge(student.birthdate)}</TableCell>
-                    <TableCell>
-                      <Chip
-                        label={student.subscription_type_name ?? "N/A"}
-                        color={Category(
-                          student.subscription_type_name ?? "default"
-                        )}
-                        size="small"
-                      />
-                    </TableCell>
-                    <TableCell>
-                      {student.enrollment_date
-                        ? new Date(student.enrollment_date).toLocaleDateString(
-                            "en-US",
-                            {
-                              month: "short",
-                              day: "numeric",
-                              year: "numeric",
-                            }
-                          )
-                        : "N/A"}
-                    </TableCell>
-                    <TableCell>
-                      {student.subscription_fee ? "Paid" : "N/A"}
-                    </TableCell>
-                    <TableCell>
-                      <IconButton color="primary">
-                        <Visibility />
-                      </IconButton>
-                      <IconButton color="secondary">
-                        <Edit />
-                      </IconButton>
-                      <IconButton color="error">
-                        <Delete />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+    <Box
+      width="100%"
+      border={1}
+      borderColor="#e0e0e0"
+      overflow="hidden"
+      borderRadius={1}
+      bgcolor="#fafafa"
+    >
+      <TableContainer component={Paper} elevation={0}>
+        <Table>
+          <TableHead sx={{ bgcolor: "#f0f0f0" }}>
+            <TableRow>
+              {["Name", "Address", "Age", "Category", "Subscription Date", "Payment Method", "Action"].map((label, index) => (
+                <TableCell key={index} sx={{ fontWeight: "bold", fontSize: 14 }}>
+                  <Box display="flex" alignItems="center">
+                    {label}
+                    <Box display="inline-flex" flexDirection="column" ml={1}>
+                      <ExpandLessIcon sx={{ fontSize: 16, color: "grey.500" }} />
+                      <ExpandMoreIcon sx={{ fontSize: 16, color: "grey.500" }} />
+                    </Box>
+                  </Box>
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
 
-          {/* Pagination Controls */}
-          <Box display="flex" justifyContent="flex-start" my={2} px={2}>
-            <Pagination
-              count={totalPages}
-              page={page}
-              onChange={handleChangePage}
-              color="primary"
-              variant="outlined"
-              shape="rounded"
-            />
-          </Box>
-        </Box>
-      )}
+          <TableBody>
+            {paginatedStudents.map((student) => (
+              <TableRow key={student.id} hover>
+                <TableCell>
+                  <Typography variant="body2">
+                    {`${student.first_name} ${student.middle_name} ${student.last_name}`}
+                  </Typography>
+                </TableCell>
+                <TableCell>{student.address}</TableCell>
+                <TableCell>{calculateAge(student.birthdate)}</TableCell>
+                <TableCell>
+                  <Chip
+                    label={student.subscription_type_name ?? "N/A"}
+                    variant="outlined"
+                    sx={{
+                      color:
+                        student.subscription_type_name === "Monthly" ? "#FFB22C" : "#379777",
+                      borderColor:
+                        student.subscription_type_name === "Monthly" ? "#FFB22C" : "#379777",
+                      fontWeight: 600,
+                      fontSize: "14px",
+                      px: 1.5,
+                      py: 0.5,
+                      borderWidth: 1.5,
+                      backgroundColor: "transparent",
+                    }}
+                  />
+                </TableCell>
+                <TableCell>
+                  {student.enrollment_date
+                    ? new Date(student.enrollment_date).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })
+                    : "N/A"}
+                </TableCell>
+                <TableCell>{student.subscription_fee ? "Paid" : "N/A"}</TableCell>
+                <TableCell>
+                  <IconButton color="primary">
+                    <Visibility />
+                  </IconButton>
+                  <IconButton color="secondary">
+                    <Edit />
+                  </IconButton>
+                  <IconButton color="error">
+                    <Delete />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      <Box display="flex" justifyContent="flex-start" px={2} py={2}>
+        <Pagination
+          count={totalPages}
+          page={page}
+          onChange={handleChangePage}
+          color="primary"
+          variant="outlined"
+          shape="rounded"
+        />
+      </Box>
     </Box>
   );
 }

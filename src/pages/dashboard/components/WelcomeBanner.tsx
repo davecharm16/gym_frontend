@@ -1,5 +1,3 @@
-import React from 'react';
-
 const WelcomeBanner = ({ name }: { name: string }) => {
   const currentDate = new Date().toLocaleString(undefined, {
     weekday: 'long',
@@ -11,7 +9,7 @@ const WelcomeBanner = ({ name }: { name: string }) => {
   });
 
   return (
-    <div className="px-10 mb-2 flex flex-col">
+    <div className="">
       <h3 className="text-lg font-bold text-gray-800">Welcome Back, {name}</h3>
       <p className="text-gray-600 mt-2">{currentDate}</p>
     </div>

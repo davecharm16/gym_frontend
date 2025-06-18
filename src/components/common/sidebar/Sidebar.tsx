@@ -18,7 +18,7 @@ interface SidebarProps {
   onClose?: () => void; // Optional, if you want to handle closing the sidebar
 }
 
-const drawerWidth = 240;
+const drawerWidth = 280;
 const miniDrawerWidth = 60;
 
 export default function Sidebar({
@@ -38,6 +38,7 @@ export default function Sidebar({
     <Drawer
       variant="permanent"
       sx={{
+        marginTop: 6,
         width: open ? drawerWidth : miniDrawerWidth,
         flexShrink: 0,
         whiteSpace: 'nowrap',
@@ -53,6 +54,7 @@ export default function Sidebar({
     >
       <Box
         sx={{
+          marginTop: 4,
           height: '100%',
           display: 'flex',
           flexDirection: 'column',

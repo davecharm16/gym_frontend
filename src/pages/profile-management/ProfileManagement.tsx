@@ -17,7 +17,7 @@ const ProfileManagement = () => {
   }, [getSubscriptionTypes]);
 
   return (
-    <div className="mt-12 flex flex-col  px-12 pt-6">
+    <div className="mt-12 flex flex-col  px-12 pt-12">
       <h1 className="text-sm font-extrabold pb-8">Profile Management</h1>
 
       <Stack
@@ -25,7 +25,7 @@ const ProfileManagement = () => {
         spacing={2}
         justifyContent="space-between"
         alignItems="center"
-        mb={2}
+        mb={4}
       >
         <Stack direction="row" spacing={2}>
           <TextField
@@ -35,7 +35,7 @@ const ProfileManagement = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             sx={{
-              width: 300,
+              width: 300,  
               height: 50,
               fontSize: "18px",
               "& .MuiInputBase-root": {

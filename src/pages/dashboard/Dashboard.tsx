@@ -11,11 +11,23 @@ export default function Dashboard() {
   const { user } = useAuthStore();
   return (
     <div className="flex flex-col min-h-screen pt-20">
-      <div className="flex flex-row pr-10 align-items-center justify-between">
+      <div className="flex flex-row  align-self-center  w-full max-w-12/13 justify-between ">
         <WelcomeBanner name={user?.email ?? ""} />
         <Button
-          className=" rounded hover:bg-blue-600 transition-colors "
           variant="outlined"
+          sx={{
+            height: 50,
+            fontSize: "16px",
+            width: 200,
+            textTransform: "none",
+            backgroundColor: "#3C3D37",
+            color: "#fff",
+
+            "&:hover": {
+              backgroundColor: "#181C14",
+              borderColor: "#1a1a1a",
+            },
+          }}
         >
           Make Payment
         </Button>

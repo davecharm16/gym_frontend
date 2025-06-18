@@ -8,12 +8,14 @@ import {
   TableHead,
   TableRow,
   Typography,
-  TextField,
-  MenuItem,
   Chip,
   Pagination,
+  Paper,
+  IconButton,
 } from "@mui/material";
-import { useState } from "react";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { useState, useMemo } from "react";
 
 type AttendanceRow = {
   name: string;
@@ -25,7 +27,6 @@ type AttendanceRow = {
   avatarUrl: string;
 };
 
-// Sample data
 const rows: AttendanceRow[] = Array.from({ length: 25 }).map((_, i) => ({
   name: "Dela Cruz, Juan A.",
   address: "Malabago, Mangaldan, Pangasinan",
@@ -38,133 +39,195 @@ const rows: AttendanceRow[] = Array.from({ length: 25 }).map((_, i) => ({
 
 const rowsPerPage = 5;
 
-const AttendanceTable = () => {
-  const [page, setPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedType, setSelectedType] = useState("All");
+interface AttendanceTableProps {
+  searchQuery: string;
+  selectedType: string;
+}
 
-  const filteredRows = rows.filter((row) => {
-    const matchesSearch = row.name
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-    const matchesType = selectedType === "All" || row.type === selectedType;
-    return matchesSearch && matchesType;
+type SortKey = keyof AttendanceRow;
+type SortOrder = "asc" | "desc";
+
+const AttendanceLog = ({ searchQuery, selectedType }: AttendanceTableProps) => {
+  const [page, setPage] = useState(1);
+  const [sortConfig, setSortConfig] = useState<{
+    key: SortKey;
+    order: SortOrder;
+  }>({
+    key: "name",
+    order: "asc",
   });
 
-  const paginatedRows = filteredRows.slice(
+  const filteredRows = useMemo(() => {
+    return rows.filter((row) => {
+      const matchesSearch = row.name
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+      const matchesType = selectedType === "All" || row.type === selectedType;
+      return matchesSearch && matchesType;
+    });
+  }, [searchQuery, selectedType]);
+
+  const sortedRows = useMemo(() => {
+    const arr = [...filteredRows];
+    const { key, order } = sortConfig;
+
+    return arr.sort((a, b) => {
+      const aVal = a[key];
+      const bVal = b[key];
+
+      if (typeof aVal === "number" && typeof bVal === "number") {
+        return order === "asc" ? aVal - bVal : bVal - aVal;
+      }
+
+      if (key === "date") {
+        const aDate = new Date(aVal as string);
+        const bDate = new Date(bVal as string);
+        return order === "asc"
+          ? aDate.getTime() - bDate.getTime()
+          : bDate.getTime() - aDate.getTime();
+      }
+
+      if (key === "time") {
+        const aT = Date.parse(`1970/01/01 ${aVal}`);
+        const bT = Date.parse(`1970/01/01 ${bVal}`);
+        return order === "asc" ? aT - bT : bT - aT;
+      }
+
+      return order === "asc"
+        ? String(aVal).localeCompare(String(bVal))
+        : String(bVal).localeCompare(String(aVal));
+    });
+  }, [filteredRows, sortConfig]);
+
+  const paginatedRows = sortedRows.slice(
     (page - 1) * rowsPerPage,
     page * rowsPerPage
   );
-
   const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
 
-  const handleChangePage = (_: unknown, newPage: number) => {
-    setPage(newPage);
+  const toggleSort = (key: SortKey, order: SortOrder) => {
+    setSortConfig({ key, order });
+    setPage(1);
   };
 
-  return (
-    <Box display="flex" flexDirection="column" alignItems="center" mt={4}>
-      <Box
+  const renderSortIcons = (key: SortKey) => (
+    <Box display="inline-flex" flexDirection="column" ml={1}>
+      <IconButton
+        size="small"
+        onClick={() => toggleSort(key, "asc")}
         sx={{
-          border: "1px solid #ccc",
-          borderRadius: 1,
-          width: "100%",
-          overflowX: "auto",
+          color:
+            sortConfig.key === key && sortConfig.order === "asc"
+              ? "primary.main"
+              : "grey.500",
+          p: 0,
         }}
       >
-        <Box
-          p={2}
-          display="flex"
-          flexDirection={{ xs: "column", sm: "row" }}
-          gap={2}
-        >
-          <TextField
-            label="Search Name"
-            variant="outlined"
-            size="small"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <TextField
-            label="Filter by Type"
-            variant="outlined"
-            size="small"
-            select
-            value={selectedType}
-            onChange={(e) => setSelectedType(e.target.value)}
-          >
-            <MenuItem value="All">All</MenuItem>
-            <MenuItem value="Monthly">Monthly</MenuItem>
-            <MenuItem value="Session">Session</MenuItem>
-          </TextField>
-        </Box>
+        <ExpandLessIcon fontSize="inherit" />
+      </IconButton>
+      <IconButton
+        size="small"
+        onClick={() => toggleSort(key, "desc")}
+        sx={{
+          color:
+            sortConfig.key === key && sortConfig.order === "desc"
+              ? "primary.main"
+              : "grey.500",
+          p: 0,
+        }}
+      >
+        <ExpandMoreIcon fontSize="inherit" />
+      </IconButton>
+    </Box>
+  );
 
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{ fontWeight: "bold", fontSize: "14px" }}>
-                  Member Name
+  const headers: { label: string; key: SortKey }[] = [
+    { label: "Member Name", key: "name" },
+    { label: "Address", key: "address" },
+    { label: "Age", key: "age" },
+    { label: "Type", key: "type" },
+    { label: "Subscription Date", key: "date" },
+    { label: "Time", key: "time" },
+  ];
+
+  return (
+    <Box
+      width="100%"
+      border={1}
+      borderColor={"#e0e0e0"}
+      overflow="hidden"
+      borderRadius={1}
+      bgcolor="#fafafa"
+    >
+      <TableContainer component={Paper} elevation={0}>
+        <Table>
+          <TableHead sx={{ bgcolor: "#f0f0f0" }}>
+            <TableRow>
+              {headers.map(({ label, key }) => (
+                <TableCell
+                  key={label}
+                  sx={{ fontWeight: "bold", fontSize: 14 }}
+                >
+                  <Box display="flex" alignItems="center">
+                    {label}
+                    {renderSortIcons(key)}
+                  </Box>
                 </TableCell>
-                <TableCell sx={{ fontWeight: "bold", fontSize: "14px" }}>
-                  Address
-                </TableCell>
-                <TableCell sx={{ fontWeight: "bold", fontSize: "14px" }}>
-                  Age
-                </TableCell>
-                <TableCell sx={{ fontWeight: "bold", fontSize: "14px" }}>
-                  Type
-                </TableCell>
-                <TableCell sx={{ fontWeight: "bold", fontSize: "14px" }}>
-                  Subscription Date
-                </TableCell>
-                <TableCell sx={{ fontWeight: "bold", fontSize: "14px" }}>
-                  Time
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {paginatedRows.map((row, idx) => (
-                <TableRow key={idx}>
-                  <TableCell>
-                    <Box display="flex" alignItems="center" gap={1}>
-                      <Avatar
-                        src={row.avatarUrl}
-                        sx={{ width: 32, height: 32 }}
-                      />
-                      <Typography variant="body2">{row.name}</Typography>
-                    </Box>
-                  </TableCell>
-                  <TableCell>{row.address}</TableCell>
-                  <TableCell>{row.age}</TableCell>
-                  <TableCell>
-                    <Chip
-                      label={row.type}
-                      color={row.type === "Monthly" ? "primary" : "secondary"}
-                      size="small"
-                    />
-                  </TableCell>
-                  <TableCell>{row.date}</TableCell>
-                  <TableCell>{row.time}</TableCell>
-                </TableRow>
               ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+            </TableRow>
+          </TableHead>
 
-        <Box display="flex" justifyContent="flex-start" px={2} py={2}>
-          <Pagination
-            count={totalPages}
-            page={page}
-            onChange={handleChangePage}
-            color="primary"
-            variant="outlined"
-            shape="rounded"
-          />
-        </Box>
+          <TableBody>
+            {paginatedRows.map((row, idx) => (
+              <TableRow key={idx} hover>
+                <TableCell>
+                  <Box display="flex" alignItems="center" gap={1}>
+                    <Avatar
+                      src={row.avatarUrl}
+                      sx={{ width: 32, height: 32 }}
+                    />
+                    <Typography variant="body2">{row.name}</Typography>
+                  </Box>
+                </TableCell>
+                <TableCell>{row.address}</TableCell>
+                <TableCell>{row.age}</TableCell>
+                <TableCell>
+                  <Chip
+                    label={row.type}
+                    variant="outlined"
+                    sx={{
+                      color: row.type === "Monthly" ? "#FFB22C" : "#379777",
+                      borderColor:
+                        row.type === "Monthly" ? "#FFB22C" : "#379777",
+                      fontWeight: 600,
+                      fontSize: "14px",
+                      px: 1.5,
+                      py: 0.5,
+                      borderWidth: 1.5,
+                      backgroundColor: "transparent",
+                    }}
+                  />
+                </TableCell>
+                <TableCell>{row.date}</TableCell>
+                <TableCell>{row.time}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      <Box display="flex" justifyContent="flex-start" px={2} py={2}>
+        <Pagination
+          count={totalPages}
+          page={page}
+          onChange={(_, p) => setPage(p)}
+          color="primary"
+          variant="outlined"
+          shape="rounded"
+        />
       </Box>
     </Box>
   );
 };
 
-export default AttendanceTable;
+export default AttendanceLog;

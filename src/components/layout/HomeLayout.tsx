@@ -44,7 +44,7 @@ export default function HomeLayout() {
         }}
       >
         <Navbar onMenuClick={toggleSidebar} />
-        <Box sx={{ padding: 3}}>
+        <Box sx={{ paddingLeft: 6}}>
           <Outlet />
         </Box>
         <FooterLayout />
