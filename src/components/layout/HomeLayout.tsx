@@ -25,7 +25,7 @@ export default function HomeLayout() {
   };
 
   return (
-    <Box sx={{ display: "", minHeight: "100vh" }}>
+    <Box sx={{ minHeight: "100vh" }}>
       {/* Sidebar */}
       <Sidebar
         open={sidebarOpen}
@@ -44,7 +44,7 @@ export default function HomeLayout() {
         }}
       >
         <Navbar onMenuClick={toggleSidebar} />
-        <Box sx={{ padding: 3}}>
+        <Box sx={{ paddingLeft: 6}}>
           <Outlet />
         </Box>
         <FooterLayout />
