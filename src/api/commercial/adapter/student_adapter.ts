@@ -38,21 +38,22 @@ export const toCreateStudentDTO = (
   picture_url: "",
 });
 
-export const toStudentCheckInDTO = (studentCheckInData: StudentCheckIn): StudentCheckInDTO => {
-  // Extract date parts
-  const year = studentCheckInData.date.getFullYear();
-  const month = String(studentCheckInData.date.getMonth() + 1).padStart(2, "0");
-  const day = String(studentCheckInData.date.getDate()).padStart(2, "0");
+export const toStudentCheckInDTO = (
+  studentCheckInData: StudentCheckIn
+): StudentCheckInDTO => {
+  const { date, time, email } = studentCheckInData;
 
-  // Extract time parts
-  const hours = String(studentCheckInData.time.getHours()).padStart(2, "0");
-  const minutes = String(studentCheckInData.time.getMinutes()).padStart(2, "0");
-  const seconds = String(studentCheckInData.time.getSeconds()).padStart(2, "0");
+  const combined = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+    time.getHours(),
+    time.getMinutes(),
+    time.getSeconds()
+  );
 
-  // Combine into local ISO-like string
-  const localDateTimeString = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
   return {
-  student_email: studentCheckInData.email,
-  checkin_time: format(new Date(localDateTimeString), "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"),
-  }
+    student_email: email,
+    checkin_time: combined.toISOString(), // ✅ Accurate UTC with Z
+  };
 };

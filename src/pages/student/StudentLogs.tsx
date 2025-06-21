@@ -92,7 +92,8 @@ useEffect(() => {
 
       if (res?.success === true) {
         showToast("Check-in successful!", "success");
-        await fetchAttendances(user?.id);
+        await fetchAttendances(profile?.id ?? '');
+
       } else {
         showToast("Check-in failed. " + res?.message, "error");
       }
@@ -204,7 +205,7 @@ useEffect(() => {
         open={openModal}
         onClose={() => setOpenModal(false)}
         onConfirm={handleConfirmCheckIn}
-        email=""
+        email={user?.email ?? ''}
       />
     </Box>
   );
