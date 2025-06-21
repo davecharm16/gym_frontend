@@ -1,12 +1,36 @@
 import { Avatar, Box, Typography} from "@mui/material";
+import { useEffect } from "react";
+import { useAttendanceStore } from "../../../store/student_attendance/studentAttendance";
+import type { StudentAttendance } from "../../../types/student_attendance";
 
-const checkIns = Array.from({ length: 12 }).map(() => ({
-  name: "Dela Cruz, Juan",
-  time: "11:55 AM",
-  avatarUrl: "https://randomuser.me/api/portraits/men/75.jpg",
-}));
+
 
 export default function CheckInLogs() {
+
+  const { fetchAttendances, attendances, loading} = useAttendanceStore();
+
+  const checkIns = attendances.slice(0, 12).map((item: StudentAttendance) => {
+    const dateObj = new Date(item.checkinTime);
+  
+    return {
+      name: `${item.student.firstName} ${item.student.lastName}`,
+      time: dateObj.toLocaleDateString("en-US", {
+        month: "numeric",
+        day: "numeric",
+        year: "numeric",
+      }) + " • " + dateObj.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      }),
+      avatarUrl: "https://randomuser.me/api/portraits/men/75.jpg",
+    };
+  });
+  
+  useEffect(() => {
+    fetchAttendances();
+  }, [fetchAttendances]);
+
   return (
     <div className="w-full">
       <Typography
@@ -18,6 +42,13 @@ export default function CheckInLogs() {
       </Typography>
 
       <div className="flex flex-col gap-2 border border-gray-300 rounded-md p-3 bg-white">
+        {
+          loading && (
+            <Typography variant="body2" color="text.secondary">
+              Loading check-in logs...
+            </Typography>
+          )
+        }
         {checkIns.map((entry, idx) => (
           <Box
             key={idx}
