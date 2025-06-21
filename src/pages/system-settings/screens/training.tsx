@@ -21,6 +21,7 @@ type TrainingRow = {
   dateAdded: string;
 };
 
+
 export default function Training() {
   const [name, setName] = useState("");
   const [fee, setFee] = useState("");

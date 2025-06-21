@@ -15,6 +15,7 @@ import {
   Paper,
 } from "@mui/material";
 import type { SubscriptionType } from "../../../types/subscription";
+import { useSubscriptionStore } from "../../../store/subscriptions/subscriptionsStore";
 
 type SessionType = {
   name: string;
@@ -30,10 +31,11 @@ export default function Session({data} : SessionTableProps) {
 
   const [name, setName] = useState("");
   const [fee, setFee] = useState("");
-  const [sessions, setSessions] = useState<SessionType[]>([]);
+  const [sessions, setSessions] = useState<SessionType[]>([]); 
+  const {createSubscription} = useSubscriptionStore();
 
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!name || !fee) return;
 
     const today = new Date().toLocaleDateString("en-PH", {
@@ -42,8 +44,11 @@ export default function Session({data} : SessionTableProps) {
       day: "numeric",
     });
 
+  const data = await createSubscription({name,fee: parseInt(fee)})
+
     setSessions([...sessions, { name, fee: parseFloat(fee), dateAdded: today }]);
     setName("");
+    console.log(data);
     setFee("");
   };
 
