@@ -14,6 +14,7 @@ import {
   TableBody,
   Paper,
 } from "@mui/material";
+import type { SubscriptionType } from "../../../types/subscription";
 
 type SessionType = {
   name: string;
@@ -21,10 +22,16 @@ type SessionType = {
   dateAdded: string;
 };
 
-export default function Session() {
+interface SessionTableProps {
+  data: SubscriptionType[];
+}
+
+export default function Session({data} : SessionTableProps) {
+
   const [name, setName] = useState("");
   const [fee, setFee] = useState("");
   const [sessions, setSessions] = useState<SessionType[]>([]);
+
 
   const handleSave = () => {
     if (!name || !fee) return;
@@ -121,12 +128,12 @@ export default function Session() {
           </TableHead>
 
           <TableBody>
-            {sessions.length > 0 ? (
-              sessions.map((s, index) => (
+            {data?.length > 0 ? (
+              data.map((s, index) => (
                 <TableRow key={index} hover>
                   <TableCell>{s.name}</TableCell>
-                  <TableCell>₱{s.fee.toFixed(2)}</TableCell>
-                  <TableCell>{s.dateAdded}</TableCell>
+                  <TableCell>₱{s.amount?.toFixed(2)}</TableCell>
+                  <TableCell>{s.createdAt}</TableCell>
                   <TableCell align="center">
                     <IconButton
                       onClick={() => handleDelete(index)}

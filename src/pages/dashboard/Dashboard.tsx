@@ -9,8 +9,11 @@ import { Button } from "@mui/material";
 import MonthlySubscription from "./components/MonthlySubscription";
 import SessionSubscription from "./components/SessionSubscription";
 import CheckInLogs from "./components/CheckInLogs";
+import PaymentModal from "./components/PaymentModal";
+import { useState } from "react";
 
 export default function Dashboard() {
+  const [openPaymentModal, setOpenPaymentModal] = useState(false);
   const { user } = useAuthStore();
 
   return (
@@ -20,6 +23,7 @@ export default function Dashboard() {
         <WelcomeBanner name={user?.email ?? ""} />
         <Button
           variant="outlined"
+          onClick={() => setOpenPaymentModal(true)}
           sx={{
             height: 50,
             fontSize: "16px",
@@ -86,6 +90,10 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+      <PaymentModal
+        open={openPaymentModal}
+        onClose={() => setOpenPaymentModal(false)}
+      />
     </div>
   );
 }

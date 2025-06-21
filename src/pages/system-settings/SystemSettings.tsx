@@ -1,18 +1,27 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Tabs, Tab, Box, Divider } from "@mui/material";
 import Session from "./screens/Session";
 import Instructor from "./screens/Instructor";
 import Training from "./screens/training";
+import { useSubscriptionStore } from "../../store/subscriptions/subscriptionsStore";
 
 /* --- replace these paths with the real ones --- */
 
 /* --------------------------------------------- */
 
+
 export default function SystemSettings() {
   const [tab, setTab] = useState<0 | 1 | 2>(0);
+  const {getSubscriptionTypes, subscriptions} = useSubscriptionStore();
+
 
   const handleChange = (_: React.SyntheticEvent, newValue: 0 | 1 | 2) =>
     setTab(newValue);
+
+   useEffect(() => {
+    getSubscriptionTypes();
+  }, [getSubscriptionTypes]);
+   
 
   return (
     <div className="mt-12 flex flex-col  px-12 pt-12">
@@ -36,7 +45,7 @@ export default function SystemSettings() {
 
       {/* Tab panels */}
       <Box>
-        {tab === 0 && <Session />}
+        {tab === 0 && <Session data={subscriptions}/>}
         {tab === 1 && <Instructor />}
         {tab === 2 && <Training />}
       </Box>
