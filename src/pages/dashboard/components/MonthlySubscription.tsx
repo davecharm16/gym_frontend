@@ -45,7 +45,7 @@ const getBadgeColor = (c: Row["category"]) =>
 export default function MonthlySubscription() {
   return (
     <Box>
-      <Typography variant="subtitle1" fontWeight={700} mb={2}>
+      <Typography variant="h6" fontWeight={700} mb={2}>
         Monthly Subscribers
       </Typography>
 

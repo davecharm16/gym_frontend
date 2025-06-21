@@ -33,56 +33,59 @@ export default function Dashboard() {
           Make Payment
         </Button>
       </div>
-
-      {/* ───── Stat Cards ───── */}
-      <div className="px-4 mx-auto py-6">
-        <div className="d-flex flex-wrap gap-8">
-          <StatCard
-            icon={<VerifiedIcon sx={{ fontSize: 45}} />}
-            label="Total Membership"
-            value={6}
-          />
-          <StatCard
-            icon={<AttachMoneyIcon sx={{ fontSize: 45}} />}
-            label="Daily Earned"
-            value={6}
-          />
-          <StatCard
-            icon={<EventRepeatIcon sx={{ fontSize: 45}} />}
-            label="Monthly Membership"
-            value={6}
-          />
-          <StatCard
-            icon={<PersonIcon sx={{ fontSize: 45}} />}
-            label="Session Membership"
-            value={6}
-          />
+      <div className="w-full px-4 mx-auto mt-2 mb-4">
+        <div className="row gy-4">
+          <div className="col-6 col-md-4 col-lg-3">
+            <StatCard
+              icon={<VerifiedIcon sx={{ fontSize: 42 }} />}
+              label="Total Membership"
+              value={6}
+            />
+          </div>
+          <div className="col-6 col-md-4 col-lg-3">
+            <StatCard
+              icon={<AttachMoneyIcon sx={{ fontSize: 42 }} />}
+              label="Daily Earned"
+              value={6}
+            />
+          </div>
+          <div className="col-6 col-md-4 col-lg-3">
+            <StatCard
+              icon={<EventRepeatIcon sx={{ fontSize: 42 }} />}
+              label="Monthly Membership"
+              value={6}
+            />
+          </div>
+          <div className="col-6 col-md-4 col-lg-3">
+            <StatCard
+              icon={<PersonIcon sx={{ fontSize: 42 }} />}
+              label="Session Membership"
+              value={6}
+            />
+          </div>
         </div>
       </div>
 
-      {/* ───── Main Content: Subscriptions and Logs ───── */}
- 
-<div className="w-full px-4 mx-auto mt-2">
-  <div className="row gy-4">
-    {/* Left column */}
-    <div className="col-12 col-lg-8">
-      <div className="mb-4">
-        <MonthlySubscription />
-      </div>
-      <div className="mb-4">
-        <SessionSubscription />
-      </div>
-    </div>
+      <div className="w-full px-4 mx-auto mt-2">
+        <div className="row gy-4">
+          {/* Left column */}
+          <div className="col-12 col-lg-8">
+            <div className="mb-4">
+              <MonthlySubscription />
+            </div>
+            <div className="mb-4">
+              <SessionSubscription />
+            </div>
+          </div>
 
-    {/* Right column */}
-    <div className="col-12 col-lg-4">
-      <div className="mb-4">
-        <CheckInLogs />
+          {/* Right column */}
+          <div className="col-12 col-lg-4">
+            <div className="mb-4">
+              <CheckInLogs />
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
-
     </div>
   );
 }
