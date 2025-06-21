@@ -6,3 +6,18 @@ export interface SubscriptionTypeDTO {
     amount: number;
   };
 }
+
+export interface CreateSubscriptionTypeRequestDTO {
+  name: string;
+  amount: number;
+}
+
+
+// subscription_response_dto.ts
+
+export interface CreateSubscriptionResponseDTO {
+  id: string;
+  name: string;
+  amount: number;
+}
+

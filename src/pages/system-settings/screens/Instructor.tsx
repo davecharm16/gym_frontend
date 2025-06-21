@@ -14,17 +14,17 @@ import {
   IconButton,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import type { InstructorType } from "../../../types/instructor";
 
-type InstructorRow = {
-  instructor: string;
-  training: string;
-  dateAdded: string;
-};
 
-export default function Instructor() {
+interface InstructorTableProp  {
+  instructors: InstructorType[];
+}
+
+export default function Instructor({instructors} : InstructorTableProp) {
   const [instructor, setInstructor] = useState("");
   const [training, setTraining] = useState("");
-  const [rows, setRows] = useState<InstructorRow[]>([]);
+  const [rows, setRows] = useState<InstructorType[]>(instructors);
 
   const handleSave = () => {
     if (!instructor || !training) return;
@@ -33,13 +33,15 @@ export default function Instructor() {
       month: "short",
       day: "numeric",
     });
-    setRows([...rows, { instructor, training, dateAdded }]);
+    setRows([...rows, { name:instructor, createdAt:dateAdded }]);
     setInstructor("");
     setTraining("");
   };
 
   const handleDelete = (idx: number) =>
     setRows(rows.filter((_, i) => i !== idx));
+
+  
 
   return (
     <div className="mx-auto p-4">
@@ -98,7 +100,7 @@ export default function Instructor() {
           <TableHead sx={{ backgroundColor: "#f5f5f5" }}>
             <TableRow>
               <TableCell sx={{ fontWeight: 700 }}>Instructor</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Training</TableCell>
+
               <TableCell sx={{ fontWeight: 700 }}>Date Added</TableCell>
               <TableCell align="center" sx={{ fontWeight: 700 }}>
                 Actions
@@ -106,12 +108,11 @@ export default function Instructor() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.length ? (
+            {rows?.length > 0 ? (
               rows.map((r, idx) => (
                 <TableRow key={idx} hover>
-                  <TableCell>{r.instructor}</TableCell>
-                  <TableCell>{r.training}</TableCell>
-                  <TableCell>{r.dateAdded}</TableCell>
+                  <TableCell>{r.name}</TableCell>
+                  <TableCell>{r.createdAt}</TableCell>
                   <TableCell align="center">
                     <IconButton
                       size="small"

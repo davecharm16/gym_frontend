@@ -71,7 +71,7 @@ const AttendanceLog = ({ searchQuery, selectedType, data}: AttendanceTableProps)
       const matchesType = selectedType === "All" || row.type === selectedType;
       return matchesSearch && matchesType;
     });
-  }, [searchQuery, selectedType]);
+  }, [rows, searchQuery, selectedType]);
 
   const sortedRows = useMemo(() => {
     const arr = [...filteredRows];
