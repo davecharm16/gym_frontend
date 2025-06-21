@@ -1,12 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TextField, MenuItem, Stack } from "@mui/material";
 import AttendanceTable from "./components/AttendanceLog"; // path unchanged
 import { Search } from "@mui/icons-material";
+import { useAttendanceStore } from "../../store/student_attendance/studentAttendance";
 
 export default function AttendanceLog() {
   /* local UI state */
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState<string>("All");
+
+  const { fetchAttendances, attendances, loading} = useAttendanceStore();
+
+  useEffect(() => {
+    fetchAttendances();
+  }, [fetchAttendances]);
+  
 
   return (
     <div className="mt-12 flex flex-col px-12 pt-12">
@@ -69,7 +77,14 @@ export default function AttendanceLog() {
       </Stack>
 
       {/* table now receives the filter props */}
-      <AttendanceTable searchQuery={searchQuery} selectedType={selectedType} />
+      {loading ? 
+        <div className="flex justify-center items-center h-64">
+          <p className="text-gray-500">Loading...</p>
+
+        </div>
+        :
+        <AttendanceTable searchQuery={searchQuery} selectedType={selectedType} data={attendances}/>
+      }
     </div>
   );
 }

@@ -16,6 +16,7 @@ import {
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useState, useMemo } from "react";
+import type { StudentAttendance } from "../../../types/student_attendance";
 
 type AttendanceRow = {
   name: string;
@@ -27,27 +28,17 @@ type AttendanceRow = {
   avatarUrl: string;
 };
 
-const rows: AttendanceRow[] = Array.from({ length: 25 }).map((_, i) => ({
-  name: "Dela Cruz, Juan A.",
-  address: "Malabago, Mangaldan, Pangasinan",
-  age: 18,
-  type: i % 2 === 0 ? "Monthly" : "Session",
-  date: "07/06/2025",
-  time: "11:55 AM",
-  avatarUrl: "https://randomuser.me/api/portraits/men/75.jpg",
-}));
-
-const rowsPerPage = 5;
 
 interface AttendanceTableProps {
   searchQuery: string;
   selectedType: string;
+  data: StudentAttendance[];
 }
 
 type SortKey = keyof AttendanceRow;
 type SortOrder = "asc" | "desc";
 
-const AttendanceLog = ({ searchQuery, selectedType }: AttendanceTableProps) => {
+const AttendanceLog = ({ searchQuery, selectedType, data}: AttendanceTableProps) => {
   const [page, setPage] = useState(1);
   const [sortConfig, setSortConfig] = useState<{
     key: SortKey;
@@ -56,6 +47,21 @@ const AttendanceLog = ({ searchQuery, selectedType }: AttendanceTableProps) => {
     key: "name",
     order: "asc",
   });
+
+  const rowsPerPage = 5;
+
+  const rows: AttendanceRow[] = data.map((item) => ({
+    name: `${item.student.lastName}, ${item.student.firstName}`,
+    address: item.student.address,
+    age: item.student.age,
+    type: item.student.subscriptionTypeId ? "Monthly" : "Session",
+    date: new Date(item.checkinTime).toLocaleDateString(),
+    time: new Date(item.checkinTime).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    }),
+    avatarUrl: `https://randomuser.me/api/portraits/men/${item.studentId[3]}${item.studentId[4]}.jpg`,
+  }));
 
   const filteredRows = useMemo(() => {
     return rows.filter((row) => {

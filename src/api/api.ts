@@ -8,4 +8,5 @@ export const endPoint = {
   subscriptions: '/subscriptions',
   subscription: (id: string) => `/subscriptions/${id}`,
   checkIn: `/checkIn`,
+  attendance: `/attendance`,
 }
