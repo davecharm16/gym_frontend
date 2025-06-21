@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { TextField, MenuItem, Stack } from "@mui/material";
 import AttendanceTable from "./components/AttendanceLog"; // path unchanged
 import { Search } from "@mui/icons-material";
-import { useAttendanceStore } from "../../store/student_attendance/studentAttendance";
+import { useAttendanceStore } from "../../store/student_attendance/studentAttendanceStore";
 
 export default function AttendanceLog() {
   /* local UI state */

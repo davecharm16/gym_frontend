@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Box,
   Table,
@@ -16,6 +16,9 @@ import {
 import CheckInModal from "./CheckInModal";
 import { useStudentStore } from "../../store/student/studentStore";
 import { useToastStore } from "../../store/toastStore";
+import { useAuthStore } from "../../store/auth/authStore";
+import { useAttendanceStore } from "../../store/student_attendance/studentAttendanceStore";
+import { useProfileStore } from "../../store/profile/profileStore";
 
 type LogRow = {
   name: string;
@@ -24,29 +27,47 @@ type LogRow = {
   time: string;
 };
 
-const initialRows: LogRow[] = [
-  {
-    name: "Juan Dela Cruz",
-    email: "juan@example.com",
-    date: "06/10/2025",
-    time: "09:30 AM",
-  },
-  {
-    name: "Maria Santos",
-    email: "maria@example.com",
-    date: "06/11/2025",
-    time: "10:00 AM",
-  },
-];
 
 export default function StudentLogs() {
-  const [rows, setRows] = useState(initialRows);
   const [query, setQuery] = useState("");
   const [openModal, setOpenModal] = useState(false);
 
   const { checkInStudent } = useStudentStore();
+  const { fetchProfile, profile } = useProfileStore();
   const { showToast } = useToastStore();
+  const { user } = useAuthStore();
+  const {fetchAttendances} = useAttendanceStore();
+  const { attendances } = useAttendanceStore();
 
+const rows: LogRow[] = attendances.map((item) => {
+  const dateObj = new Date(item.checkinTime);
+  return {
+    name: `${item.student.firstName} ${item.student.lastName}`,
+    email: item.student.email,
+    date: dateObj.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    }),
+    time: dateObj.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    }),
+  };
+});
+
+useEffect(() => {
+  fetchProfile();
+}, [fetchProfile]);
+
+
+  useEffect(() => {
+    if (user?.id && profile) {
+      fetchAttendances(profile.id);
+    }
+  }, [user?.id, fetchAttendances, profile]);
+  
   const filteredRows = useMemo(
     () =>
       rows.filter(
@@ -71,10 +92,8 @@ export default function StudentLogs() {
 
       if (res?.success === true) {
         showToast("Check-in successful!", "success");
-        setRows((prev) => [
-          ...prev,
-          { ...data, name: "New Checked In Student" },
-        ]);
+        await fetchAttendances(profile?.id ?? '');
+
       } else {
         showToast("Check-in failed. " + res?.message, "error");
       }
@@ -186,7 +205,7 @@ export default function StudentLogs() {
         open={openModal}
         onClose={() => setOpenModal(false)}
         onConfirm={handleConfirmCheckIn}
-        email=""
+        email={user?.email ?? ''}
       />
     </Box>
   );
