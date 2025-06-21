@@ -1,9 +1,12 @@
 import type { ApiResponse } from "../../types/api_response";
+import type { StudentAttendance } from "../../types/student_attendance";
 import type { Student, StudentCheckIn } from "../../types/students";
 import type { RegisterStudentFormSchema } from "../../utils/schema/registerStudentSchema";
 import { endPoint } from "../api";
 import { apiClient } from "../apiClient";
+import { toStudentAttendanceModel } from "../commercial/adapter/attendance_adapter";
 import { toCreateStudentDTO, toStudentCheckInDTO, toStudentModel } from "../commercial/adapter/student_adapter";
+import type { AttendanceDTO } from "../commercial/dto/attendance_dto";
 import type { CreateStudentRequestDTO, CreateStudentResponseDTO } from "../commercial/dto/student_dto";
 
 
@@ -45,3 +48,24 @@ export const checkInStudentApi = async(data: StudentCheckIn): Promise<ApiRespons
     return error.response.data; // Let caller decide how to handle it
   }
 }
+
+
+export const getStudenAttendance = async (
+  studentId?: string
+): Promise<ApiResponse<StudentAttendance[]>> => {
+  try {
+    const url = studentId
+      ? `${endPoint.attendance}?student_id=${studentId}`
+      : endPoint.attendance;
+
+    const res = await apiClient.get<AttendanceDTO[]>(url);
+
+    return {
+      ...res,
+      data: res.data?.map(toStudentAttendanceModel) ?? [],
+    };
+  } catch (error) {
+    console.error("get student attendance failed:", error);
+    throw error;
+  }
+};
