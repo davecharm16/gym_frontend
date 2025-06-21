@@ -8,10 +8,10 @@ type StatCardProps = {
 
 const StatCard: React.FC<StatCardProps> = ({ icon, label, value }) => {
   return (
-    <div className="flex flex-col items-center justify-center border-2 border-gray-300 rounded-md px-6 py-8 w-[400px] text-center bg-white space-y-3">
+    <div className="flex flex-col items-center justify-center border border-gray-300 rounded-md px-4 py-5 w-[440px] h-[180px] text-center bg-white space-y-2">
       <div className="text-gray-700">{icon}</div>
-      <p className="text-md text-gray-600 tracking-wide">{label}</p>
-      <p className="text-4xl font-extrabold text-gray-900">{value}</p>
+      <p className="text-sm text-gray-600 tracking-wide">{label}</p>
+      <p className="text-2xl font-extrabold text-gray-900">{value}</p>
     </div>
   );
 };
