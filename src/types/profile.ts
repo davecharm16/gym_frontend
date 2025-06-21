@@ -12,6 +12,7 @@ export type StudentProfile = {
   id: string;
   firstName: string;
   lastName: string;
+  middleName?: string;
   email: string;
   address: string;
   birthdate: string;

@@ -11,6 +11,7 @@ export const getProfileAdapter = (dto: GetProfileResponseDTO): ProfileModel => {
       return {
         id: dto.id,
         firstName: dto.first_name,
+        middleName: dto?.middle_name ?? undefined,
         lastName: dto.last_name,
         email: dto.email,
         address: dto.address,
