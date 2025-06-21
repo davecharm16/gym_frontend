@@ -1,6 +1,6 @@
 import { Avatar, Box, Typography} from "@mui/material";
 import { useEffect } from "react";
-import { useAttendanceStore } from "../../../store/student_attendance/studentAttendance";
+import { useAttendanceStore } from "../../../store/student_attendance/studentAttendanceStore";
 import type { StudentAttendance } from "../../../types/student_attendance";
 
 

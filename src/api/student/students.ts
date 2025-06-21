@@ -54,6 +54,7 @@ export const getStudenAttendance = async (
   studentId?: string
 ): Promise<ApiResponse<StudentAttendance[]>> => {
   try {
+    console.log(studentId);
     const url = studentId
       ? `${endPoint.attendance}?student_id=${studentId}`
       : endPoint.attendance;
@@ -69,3 +70,4 @@ export const getStudenAttendance = async (
     throw error;
   }
 };
+
