@@ -3,38 +3,52 @@ import { Outlet, useNavigate } from "react-router-dom";
 import Navbar from "../common/navbar/Navbar";
 import Sidebar from "../common/sidebar/Sidebar";
 import FooterLayout from "./FooterLayout";
+import { Box } from "@mui/material";
+
+const drawerWidth = 240;
 
 export default function HomeLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const navigate = useNavigate(); // ✅ Enables programmatic navigation
+  const navigate = useNavigate();
+
+  const toggleSidebar = () => {
+    setSidebarOpen((prev) => !prev);
+  };
 
   const handleLogout = () => {
-    console.log("Logging out...");
-    // Add your logout logic here, like clearing auth tokens
-    navigate("/login"); // Redirect to login page
+    navigate("/login");
   };
 
   const handleNavigate = (path: string) => {
-    navigate(path); 
-    setSidebarOpen(false); 
+    navigate(path);
+    setSidebarOpen(false); // optional: close drawer after navigating
   };
 
   return (
-    <div>
-      <Navbar onMenuClick={() => setSidebarOpen(true)} />
+    <Box sx={{ minHeight: "100vh" }}>
+      {/* Sidebar */}
       <Sidebar
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
         onLogout={handleLogout}
         onNavigate={handleNavigate}
       />
-     
-      <div>
-        
-        <Outlet />
-      </div>
 
-      <FooterLayout />
-    </div>
+      {/* Main Content */}
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          marginLeft: sidebarOpen ? `${drawerWidth}px` : "60px", // 60px for mini drawer
+          transition: "margin 0.3s ease-in-out",
+        }}
+      >
+        <Navbar onMenuClick={toggleSidebar} />
+        <Box sx={{ paddingLeft: 6}}>
+          <Outlet />
+        </Box>
+        <FooterLayout />
+      </Box>
+    </Box>
   );
 }

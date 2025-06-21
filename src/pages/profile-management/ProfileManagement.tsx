@@ -1,78 +1,77 @@
-// src/pages/ProfileManagement.tsx
 import { useEffect, useState } from "react";
-import Monthly from "./screens/Monthly";
-import Session from "./screens/Session";
 import RegisterModal from "./components/RegisterModal";
 import { Stack, TextField, MenuItem, Button } from "@mui/material";
 import { useStudentStore } from "../../store/student/studentStore";
 import { useSubscriptionStore } from "../../store/subscriptions/subscriptionsStore";
+import ProfileTable from "./components/ProfileTable";
+import { Search } from "@mui/icons-material";
 
 const ProfileManagement = () => {
-  // Set default tab to 'session' instead of 'monthly'
-  const [activeTab, setActiveTab] = useState<"monthly" | "session">("session");
   const [openRegisterModal, setOpenRegisterModal] = useState(false);
   const { searchQuery, selectedCategory, setSearchQuery, setSelectedCategory } =
     useStudentStore();
   const { subscriptions, getSubscriptionTypes } = useSubscriptionStore();
-  
+
   useEffect(() => {
     getSubscriptionTypes();
   }, [getSubscriptionTypes]);
 
   return (
-    <div className="mt-12 flex flex-col min-h-screen px-12 pt-6">
-      <h2 className="text-sm font-bold mb-6">Profile Management</h2>
-
-      <div className="flex gap-6 border-b pb-2 m-6">
-        <button
-          className={`pb-1 ${
-            activeTab === "session"
-              ? "border-b-2 border-blue-500 text-blue-600"
-              : "text-gray-600"
-          }`}
-          onClick={() => setActiveTab("session")}
-        >
-          Session
-        </button>
-        <button
-          className={`pb-1 ${
-            activeTab === "monthly"
-              ? "border-b-2 border-blue-500 text-blue-600"
-              : "text-gray-600"
-          }`}
-          onClick={() => setActiveTab("monthly")}
-        >
-          Monthly
-        </button>
-      </div>
+    <div className="mt-12 flex flex-col  px-12 pt-12">
+      <h1 className="text-sm font-extrabold pb-8">Profile Management</h1>
 
       <Stack
         direction={{ xs: "column", sm: "row" }}
         spacing={2}
         justifyContent="space-between"
         alignItems="center"
-        sx={{ mx: "20px" }}
-        mb={2}
+        mb={4}
       >
         <Stack direction="row" spacing={2}>
           <TextField
             label="Search by name"
             variant="outlined"
-            size="small"
+            size="medium"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            sx={{
+              width: 300,  
+              height: 50,
+              fontSize: "18px",
+              "& .MuiInputBase-root": {
+                height: 50,
+                fontSize: "16px",
+              },
+              "& .MuiInputLabel-root": {
+                fontSize: "16px",
+              },
+            }}
+            InputProps={{
+              endAdornment: <Search sx={{ color: "#757575", ml: 1 }} />,
+            }}
           />
           <TextField
             label="Category"
             select
-            size="small"
+            size="medium"
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            sx={{ width: 150 }} // Set specific width here
+            sx={{
+              width: 200,
+              height: 50,
+              fontSize: "18px",
+              "& .MuiInputBase-root": {
+                height: 50,
+                fontSize: "16px",
+              },
+              "& .MuiInputLabel-root": {
+                fontSize: "16px",
+              },
+            }}
           >
-              <MenuItem key={'all'} value={'All'}>
-                {"All"}
-              </MenuItem>
+            <MenuItem key="all" value="All">
+              All
+            </MenuItem>
             {subscriptions.map((option) => (
               <MenuItem key={option.id} value={option.name}>
                 {option.name}
@@ -84,17 +83,24 @@ const ProfileManagement = () => {
           variant="outlined"
           onClick={() => setOpenRegisterModal(true)}
           sx={{
+            height: 50,
+            fontSize: "16px",
+            width: 120,
             textTransform: "none",
-            border: "1px solid black", // Optional: use your desired color
-            color: "#000", // Match border color for text
+            backgroundColor: "#3C3D37",
+            color: "#fff",
+
+            "&:hover": {
+              backgroundColor: "#181C14",
+              borderColor: "#1a1a1a",
+            },
           }}
         >
           Register
         </Button>
       </Stack>
 
-      {activeTab === "session" && <Session />}
-      {activeTab === "monthly" && <Monthly />}
+      <ProfileTable />
 
       <RegisterModal
         open={openRegisterModal}
