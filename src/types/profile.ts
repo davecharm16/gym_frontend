@@ -12,6 +12,8 @@ export type StudentProfile = {
   id: string;
   firstName: string;
   lastName: string;
+  middleName?: string;
+  subscriptionName: string;
   email: string;
   address: string;
   birthdate: string;
