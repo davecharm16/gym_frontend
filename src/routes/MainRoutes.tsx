@@ -9,6 +9,7 @@ import Login from "../pages/Login";
 import ProtectedRoute from "../components/ProtectedRoute";
 import StudentDashboard from "../pages/student/StudentDashboard";
 import StudentLogs from "../pages/student/StudentLogs";
+import SystemSettings from "../pages/system-settings/SystemSettings";
 
 export const MainRoutes = createBrowserRouter([
   {
@@ -31,6 +32,7 @@ export const MainRoutes = createBrowserRouter([
       { index: true, element: <Dashboard /> },
       { path: "profile-management", element: <ProfileManagement /> },
       { path: "attendance-logs", element: <AttendanceLog /> },
+      { path: "system-settings", element: <SystemSettings />},
     ],
   },
 

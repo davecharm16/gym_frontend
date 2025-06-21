@@ -3,6 +3,7 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import PersonIcon from "@mui/icons-material/Person";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import SchoolIcon from "@mui/icons-material/School";
+import SettingsIcon from '@mui/icons-material/Settings';
 import type { UserRole } from "../constant/roles";
 
 export interface SidebarRoute {
@@ -30,6 +31,13 @@ export const sidebarRoutes: SidebarRoute[] = [
     path: "/attendance-logs",
     label: "Attendance Log",
     icon: <AssignmentIcon />,
+    roles: ["admin"],
+  },
+
+   {
+    path: "/system-settings",
+    label: "System Settings",
+    icon: <SettingsIcon />,
     roles: ["admin"],
   },
 
