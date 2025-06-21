@@ -22,6 +22,27 @@ This project follows a clean and scalable architecture for frontend applications
 - Handles `request` and `response` transformation via **DTOs**
 - Implements **adapter functions** to map raw data to frontend-friendly models
 
+## 🧱 State Layer (Zustand)
+
+Centralized state store via **Zustand**
+
+**Manages:**
+- Loading states  
+- Data collections (e.g., attendance list)  
+- Business logic (e.g., filter by student)  
+- Triggers API calls and updates normalized state
+
+---
+
+## 🎨 Presentation Layer
+
+Pure **UI components**
+
+**Responsibilities:**
+- Subscribes to Zustand state  
+- Dispatches actions (e.g., `fetchAttendances()`)  
+- Displays user-facing data using **model types** (not DTOs)
+
 ```ts
 AttendanceDTO → mapToStudentAttendance() → StudentAttendance
 [ UI Component ]
