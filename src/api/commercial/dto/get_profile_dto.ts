@@ -17,6 +17,7 @@ export type StudentProfileDTO = {
   address: string;
   birthdate: string;
   subscription_type_id: string;
+  subscription_type: {name: string} | null;
   paid_until: string;
   created_at: string;
   trainings: TrainingDTO[];

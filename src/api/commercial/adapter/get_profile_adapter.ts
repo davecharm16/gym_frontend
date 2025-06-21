@@ -17,6 +17,7 @@ export const getProfileAdapter = (dto: GetProfileResponseDTO): ProfileModel => {
         address: dto.address,
         birthdate: dto.birthdate,
         subscriptionTypeId: dto.subscription_type_id,
+        subscriptionName: dto.subscription_type?.name ?? '-',
         paidUntil: dto.paid_until,
         createdAt: dto.created_at,
         trainings: dto.trainings?.map(t => ({

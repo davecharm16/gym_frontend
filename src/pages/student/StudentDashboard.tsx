@@ -39,7 +39,7 @@ export default function StudentDashboard() {
           <FieldRow label="Email" defaultValue={profile.email} />
           <FieldRow
             label="Subscription Type"
-            defaultValue={profile.id || "-"}
+            defaultValue={profile.subscriptionName || "-"}
           />
           <FieldRow
             label="Due Date"

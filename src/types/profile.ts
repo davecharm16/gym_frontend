@@ -13,6 +13,7 @@ export type StudentProfile = {
   firstName: string;
   lastName: string;
   middleName?: string;
+  subscriptionName: string;
   email: string;
   address: string;
   birthdate: string;
