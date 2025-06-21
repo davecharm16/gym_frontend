@@ -1,54 +1,62 @@
-# React + TypeScript + Vite
+# 🧩 React Frontend Architecture – Zustand + Axios + DTO + Adapter Pattern
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project follows a clean and scalable architecture for frontend applications using **React**, **Zustand** for state management, **Axios** for API calls, and a clear separation between **DTOs**, **Models**, and **Adapters**.
 
-Currently, two official plugins are available:
+![image](https://github.com/user-attachments/assets/85bcba0f-64a3-460b-974e-58ef47a269e6)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🗂️ Layered Architecture
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+### 1. 📡 API - Backend
+- Exposes RESTful endpoints
+- Consumes and returns **DTO-formatted JSON**
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### 2. 🧠 Frontend Application - React
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+#### 📘 Service Layer
+- Uses **Axios** to perform HTTP requests
+- Handles `request` and `response` transformation via **DTOs**
+- Implements **adapter functions** to map raw data to frontend-friendly models
+
+## 🧱 State Layer (Zustand)
+
+Centralized state store via **Zustand**
+
+**Manages:**
+- Loading states  
+- Data collections (e.g., attendance list)  
+- Business logic (e.g., filter by student)  
+- Triggers API calls and updates normalized state
+
+---
+
+## 🎨 Presentation Layer
+
+Pure **UI components**
+
+**Responsibilities:**
+- Subscribes to Zustand state  
+- Dispatches actions (e.g., `fetchAttendances()`)  
+- Displays user-facing data using **model types** (not DTOs)
+
+```ts
+AttendanceDTO → mapToStudentAttendance() → StudentAttendance
+[ UI Component ]
+      ⬇
+[ Zustand Action ]
+      ⬇
+[ API Service with Adapter ]
+      ⬇
+[ Axios Request → Backend API ]
+      ⬆
+[ DTO Response ]
+      ⬇
+[ Adapter → Normalized Model ]
+      ⬇
+[ Zustand State Update ]
+      ⬇
+[ UI Re-renders ]

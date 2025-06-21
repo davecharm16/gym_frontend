@@ -33,14 +33,10 @@ export default function CheckInLogs() {
 
   return (
     <div className="w-full">
-      <Typography
-        variant="subtitle1"
-        fontWeight={700}
-        className="mb-2 pl-2 text-[15px]"
-      >
+      
+      <Typography variant="h6" fontWeight={700} mb={2}>
         Latest Check-in Logs
       </Typography>
-
       <div className="flex flex-col gap-2 border border-gray-300 rounded-md p-3 bg-white">
         {
           loading && (
