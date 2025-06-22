@@ -5,15 +5,13 @@ import EventRepeatIcon from "@mui/icons-material/EventRepeat";
 import PersonIcon from "@mui/icons-material/Person";
 import WelcomeBanner from "./components/WelcomeBanner";
 import { useAuthStore } from "../../store/auth/authStore";
-import { Button } from "@mui/material";
 import MonthlySubscription from "./components/MonthlySubscription";
 import SessionSubscription from "./components/SessionSubscription";
 import CheckInLogs from "./components/CheckInLogs";
-import PaymentModal from "./components/PaymentModal";
-import { useState } from "react";
+
 
 export default function Dashboard() {
-  const [openPaymentModal, setOpenPaymentModal] = useState(false);
+ 
   const { user } = useAuthStore();
 
   return (
@@ -21,21 +19,6 @@ export default function Dashboard() {
       {/* ───── Header row ───── */}
       <div className="flex flex-row w-full justify-between items-center px-4 mx-auto">
         <WelcomeBanner name={user?.email ?? ""} />
-        <Button
-          variant="outlined"
-          onClick={() => setOpenPaymentModal(true)}
-          sx={{
-            height: 50,
-            fontSize: "16px",
-            width: 200,
-            textTransform: "none",
-            backgroundColor: "#3C3D37",
-            color: "#fff",
-            "&:hover": { backgroundColor: "#181C14" },
-          }}
-        >
-          Make Payment
-        </Button>
       </div>
       <div className="w-full px-4 mx-auto mt-2 mb-4">
         <div className="row gy-4">
@@ -90,10 +73,6 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-      <PaymentModal
-        open={openPaymentModal}
-        onClose={() => setOpenPaymentModal(false)}
-      />
-    </div>
+       </div>
   );
 }

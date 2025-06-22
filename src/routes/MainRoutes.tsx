@@ -10,6 +10,7 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import StudentDashboard from "../pages/student/StudentDashboard";
 import StudentLogs from "../pages/student/StudentLogs";
 import SystemSettings from "../pages/system-settings/SystemSettings";
+import PaymentsLogs from "../pages/payments/PaymentsLogs";
 
 export const MainRoutes = createBrowserRouter([
   {
@@ -31,8 +32,9 @@ export const MainRoutes = createBrowserRouter([
     children: [
       { index: true, element: <Dashboard /> },
       { path: "profile-management", element: <ProfileManagement /> },
+      { path: "payment-logs", element: <PaymentsLogs /> },
       { path: "attendance-logs", element: <AttendanceLog /> },
-      { path: "system-settings", element: <SystemSettings />},
+      { path: "system-settings", element: <SystemSettings /> },
     ],
   },
 
@@ -44,7 +46,7 @@ export const MainRoutes = createBrowserRouter([
         <StudentLAyout /> {/* has its own sidebar */}
       </ProtectedRoute>
     ),
-   children: [
+    children: [
       { index: true, element: <StudentDashboard /> },
       { path: "/student/student-logs", element: <StudentLogs /> },
       /* add more student pages here */
