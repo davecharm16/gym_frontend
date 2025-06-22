@@ -1,16 +1,33 @@
-import { Button, MenuItem, TextField } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import PaymentModal from "./components/PaymentModal";
 import { useState } from "react";
 import StatCard from "./components/StatCard";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import EventRepeatIcon from "@mui/icons-material/EventRepeat";
 import DateRangeIcon from "@mui/icons-material/DateRange";
-import PaymentLogsTable from "./components/PaymentLogsTable"; // ✅ Import your table
+import PaymentLogsTable from "./components/PaymentLogsTable";
+import Dropdown from "./components/Dropdown";
+import DateRangePicker from "./components/DateRangePicker";
+import dayjs, { Dayjs } from "dayjs";
+
+const paymentOptions = [
+  { label: "All", value: "all" },
+  { label: "Cash", value: "cash" },
+  { label: "Online", value: "online" },
+];
+
+const paymentCategories = [
+  { label: "All", value: "all" },
+  { label: "Monthly", value: "monthly" },
+  { label: "Per Session", value: "per_session" },
+];
 
 const PaymentsLogs = () => {
   const [openPaymentModal, setOpenPaymentModal] = useState(false);
-  const [dateRange, setDateRange] = useState("daily");
   const [paymentType, setPaymentType] = useState("all");
+  const [paymentCategory, setPaymentCategory] = useState("all");
+  const [startDate, setStartDate] = useState<Dayjs | null>(dayjs());
+  const [endDate, setEndDate] = useState<Dayjs | null>(dayjs());
 
   // ───── Dummy Data ─────
   const dailyTotal = 1200;
@@ -26,56 +43,38 @@ const PaymentsLogs = () => {
       <h1 className="text-sm font-extrabold pb-8">Payment Logs</h1>
       {/* ───── Filters Left / Button Right ───── */}
       <div className="flex justify-between flex-wrap gap-4 items-center mb-6">
-        <div className="flex gap-4 flex-wrap">
-          <TextField
-            select
-            label="Date Range"
-            value={dateRange}
-            onChange={(e) => setDateRange(e.target.value)}
-            size="medium"
-            sx={{
-              width: 300,
-              height: 50,
-              fontSize: "18px",
-              "& .MuiInputBase-root": {
-                height: 50,
-                fontSize: "16px",
-              },
-              "& .MuiInputLabel-root": {
-                fontSize: "16px",
-              },
-            }}
-          >
-            <MenuItem value="daily">Daily</MenuItem>
-            <MenuItem value="weekly">Weekly</MenuItem>
-            <MenuItem value="monthly">Monthly</MenuItem>
-          </TextField>
+        <Box display="flex" flexWrap="wrap" gap={2} alignItems="flex-end">
+          <Box>
+            <Typography variant="h6" gutterBottom>
+              Filter by Date Range
+            </Typography>
+            <DateRangePicker
+              startDate={startDate}
+              endDate={endDate}
+              onStartDateChange={setStartDate}
+              onEndDateChange={setEndDate}
+              enforceBidirectionalConstraint
+            />
+          </Box>
 
-          <TextField
-            select
-            label="Payment Type"
-            value={paymentType}
-            onChange={(e) => setPaymentType(e.target.value)}
-            size="medium"
-            sx={{
-              width: 300,
-              height: 50,
-              fontSize: "18px",
-              "& .MuiInputBase-root": {
-                height: 50,
-                fontSize: "16px",
-              },
-              "& .MuiInputLabel-root": {
-                fontSize: "16px",
-              },
-            }}
-          >
-            <MenuItem value="all">All</MenuItem>
-            <MenuItem value="monthly">Monthly</MenuItem>
-            <MenuItem value="session">Session</MenuItem>
-          </TextField>
-        </div>
+          <Box minWidth={200}>
+            <Dropdown
+              label="Payment Type"
+              value={paymentType}
+              onChange={setPaymentType}
+              options={paymentOptions}
+            />
+          </Box>
 
+          <Box minWidth={200}>
+            <Dropdown
+              label="Payment Category"
+              value={paymentCategory}
+              onChange={setPaymentCategory}
+              options={paymentCategories}
+            />
+          </Box>
+        </Box>
         <Button
           variant="outlined"
           onClick={() => setOpenPaymentModal(true)}
