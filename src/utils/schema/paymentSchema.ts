@@ -2,9 +2,7 @@
 import * as yup from 'yup';
 
 export const paymentSchema = yup.object().shape({
-  memberName: yup
-    .string()
-    .required('Member name is required'),
+  studentId: yup.string().required('Student selection is required'),
 
   paymentFor: yup
     .string()

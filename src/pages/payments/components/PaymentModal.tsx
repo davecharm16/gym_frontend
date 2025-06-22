@@ -14,13 +14,15 @@ import { yupResolver } from "@hookform/resolvers/yup";
 
 import { useTrainingStore } from "../../../store/trainings/trainings";
 import { useSubscriptionStore } from "../../../store/subscriptions/subscriptionsStore";
+import { useStudentStore } from "../../../store/student/studentStore";
 
 import { paymentSchema } from "../../../utils/schema/paymentSchema";
 import Dropdown from "./Dropdown";
+import SearchDropdown from "../../../components/common/SearchableDropdown";
 
 type PaymentFormValues = {
-  memberName: string;
-  paymentFor: string; // training id or subscription id or 'misc'
+  studentId: string;
+  paymentFor: string;
   amountToPay: string;
   amount: string;
   paymentDate: string;
@@ -36,6 +38,7 @@ export type PaymentModalProps = {
 const PaymentModal: React.FC<PaymentModalProps> = ({ open, onClose }) => {
   const { trainings, fetchTrainings } = useTrainingStore();
   const { subscriptions, getSubscriptionTypes } = useSubscriptionStore();
+  const { students, getStudents, loading: isLoadingStudents } = useStudentStore();
 
   const {
     control,
@@ -46,7 +49,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ open, onClose }) => {
     formState: { errors },
   } = useForm<PaymentFormValues>({
     defaultValues: {
-      memberName: "",
+      studentId: "",
       paymentFor: "misc",
       amountToPay: "",
       amount: "",
@@ -54,8 +57,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ open, onClose }) => {
       paymentMethod: "cash",
       change: "",
     },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: yupResolver(paymentSchema as any),
+    resolver: yupResolver(paymentSchema as never),
   });
 
   const selectedPaymentFor = useWatch({ control, name: "paymentFor" });
@@ -66,12 +68,12 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ open, onClose }) => {
     if (open) {
       fetchTrainings();
       getSubscriptionTypes();
+      getStudents();
     } else {
       reset();
     }
   }, [open]);
 
-  // Compute change dynamically
   useEffect(() => {
     const change =
       amountGiven > amountToPay
@@ -80,7 +82,6 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ open, onClose }) => {
     setValue("change", change);
   }, [amountGiven, amountToPay, setValue]);
 
-  // Auto-fill amountToPay if a known item is selected
   useEffect(() => {
     if (selectedPaymentFor === "misc") return;
 
@@ -90,26 +91,24 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ open, onClose }) => {
     if (foundTraining) {
       setValue("amountToPay", foundTraining.baseFee.toString());
     } else if (foundSubscription) {
-      setValue("amountToPay", foundSubscription.amount?.toString() ?? '');
+      setValue("amountToPay", foundSubscription.amount?.toString() ?? "");
     }
   }, [selectedPaymentFor, trainings, subscriptions, setValue]);
 
   const combinedOptions = [
     { label: "Misc.", value: "misc" },
-    ...trainings.map((t) => ({
-      label: `Training: ${t.title}`,
-      value: t.id,
-    })),
-    ...subscriptions.map((s) => ({
-      label: `Subscription: ${s.name}`,
-      value: s.id,
-    })),
+    ...trainings.map((t) => ({ label: `Training: ${t.title}`, value: t.id })),
+    ...subscriptions.map((s) => ({ label: `Subscription: ${s.name}`, value: s.id })),
   ];
 
   const onSubmit = (data: PaymentFormValues) => {
     console.log("Payment submitted:", data);
     onClose();
   };
+
+  useEffect(() => {
+   console.log(students);
+  }, [students])
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -133,18 +132,15 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ open, onClose }) => {
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <Stack spacing={2} sx={{ mb: 3 }}>
             <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-              <Controller
-                name="memberName"
+              <SearchDropdown
+                name="studentId"
+                label="Select Student"
                 control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Member Name"
-                    fullWidth
-                    error={!!errors.memberName}
-                    helperText={errors.memberName?.message}
-                  />
-                )}
+                options={students.map((s) => ({
+                  label: `${s.first_name} ${s.last_name}`,
+                  value: s.id,
+                }))}
+                loading={isLoadingStudents}
               />
               <Controller
                 name="paymentFor"
