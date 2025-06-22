@@ -1,6 +1,6 @@
 import { Box, Button, Typography } from "@mui/material";
 import PaymentModal from "./components/PaymentModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import StatCard from "./components/StatCard";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import EventRepeatIcon from "@mui/icons-material/EventRepeat";
@@ -9,6 +9,7 @@ import PaymentLogsTable from "./components/PaymentLogsTable";
 import Dropdown from "./components/Dropdown";
 import DateRangePicker from "./components/DateRangePicker";
 import dayjs, { Dayjs } from "dayjs";
+import { usePaymentStore } from "../../store/payments/payments";
 
 const paymentOptions = [
   { label: "All", value: "all" },
@@ -29,14 +30,18 @@ const PaymentsLogs = () => {
   const [startDate, setStartDate] = useState<Dayjs | null>(dayjs());
   const [endDate, setEndDate] = useState<Dayjs | null>(dayjs());
 
+  const { averages, fetchPaymentAverages } = usePaymentStore();
+
+  useEffect(() => {
+    fetchPaymentAverages();
+  }, [fetchPaymentAverages]);
+
   // ───── Dummy Data ─────
   const dailyTotal = 1200;
-  const weeklyTotal = 7500;
-  const monthlyTotal = 30200;
 
-  const dailyGrowth = 2.15;
-  const weeklyGrowth = -1.8;
-  const monthlyGrowth = 4.75;
+  // const dailyGrowth = 2.15;
+  // const weeklyGrowth = -1.8;
+  // const monthlyGrowth = 4.75;
 
   return (
     <div className="mt-12 flex flex-col px-12 pt-12">
@@ -99,25 +104,25 @@ const PaymentsLogs = () => {
         <div className="col-12 col-md-4">
           <StatCard
             icon={<CalendarTodayIcon sx={{ fontSize: 36 }} />}
-            label="Daily Payment"
+            label="Today's Payment"
             value={`₱${dailyTotal.toLocaleString()}`}
-            percentage={dailyGrowth}
+            // percentage={dailyGrowth}
           />
         </div>
         <div className="col-12 col-md-4">
           <StatCard
             icon={<EventRepeatIcon sx={{ fontSize: 36 }} />}
-            label="Weekly Payment"
-            value={`₱${weeklyTotal.toLocaleString()}`}
-            percentage={weeklyGrowth}
+            label="Average Weekly Payment"
+            value={`₱${averages?.averagePerWeek.toLocaleString()}`}
+            // percentage={weeklyGrowth}
           />
         </div>
         <div className="col-12 col-md-4">
           <StatCard
             icon={<DateRangeIcon sx={{ fontSize: 36 }} />}
-            label="Monthly Payment"
-            value={`₱${monthlyTotal.toLocaleString()}`}
-            percentage={monthlyGrowth}
+            label="Average Monthly Payment"
+            value={`₱${averages?.averagePerMonth.toLocaleString()}`}
+            // percentage={monthlyGrowth}
           />
         </div>
       </div>

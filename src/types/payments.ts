@@ -10,3 +10,8 @@ export interface PaymentModel {
   amountToPay: number;
   change: number;
 }
+
+export interface PaymentAverageModel {
+  averagePerWeek: number;
+  averagePerMonth: number;
+}
