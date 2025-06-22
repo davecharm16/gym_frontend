@@ -11,4 +11,5 @@ export const endPoint = {
   checkIn: `/checkIn`,
   attendance: `/attendance`,
   trainings: '/trainings',
+  payment: '/payment'
 }

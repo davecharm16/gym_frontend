@@ -1,4 +1,3 @@
-// src/components/modals/PaymentModal.tsx
 import React, { useEffect } from "react";
 import {
   Modal,
@@ -15,20 +14,13 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useTrainingStore } from "../../../store/trainings/trainings";
 import { useSubscriptionStore } from "../../../store/subscriptions/subscriptionsStore";
 import { useStudentStore } from "../../../store/student/studentStore";
+import { usePaymentStore } from "../../../store/payments/payments";
+import { useToastStore } from "../../../store/toastStore";
 
 import { paymentSchema } from "../../../utils/schema/paymentSchema";
 import Dropdown from "./Dropdown";
 import SearchDropdown from "../../../components/common/SearchableDropdown";
-
-type PaymentFormValues = {
-  studentId: string;
-  paymentFor: string;
-  amountToPay: string;
-  amount: string;
-  paymentDate: string;
-  paymentMethod: string;
-  change: string;
-};
+import type { PaymentRequestDto } from "../../../api/commercial/dto/payments_dto";
 
 export type PaymentModalProps = {
   open: boolean;
@@ -39,6 +31,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ open, onClose }) => {
   const { trainings, fetchTrainings } = useTrainingStore();
   const { subscriptions, getSubscriptionTypes } = useSubscriptionStore();
   const { students, getStudents, loading: isLoadingStudents } = useStudentStore();
+  const { createPayment } = usePaymentStore();
+  const { showToast } = useToastStore();
 
   const {
     control,
@@ -47,7 +41,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ open, onClose }) => {
     reset,
     watch,
     formState: { errors },
-  } = useForm<PaymentFormValues>({
+  } = useForm({
     defaultValues: {
       studentId: "",
       paymentFor: "misc",
@@ -76,9 +70,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ open, onClose }) => {
 
   useEffect(() => {
     const change =
-      amountGiven > amountToPay
-        ? (amountGiven - amountToPay).toFixed(2)
-        : "0";
+      amountGiven > amountToPay ? (amountGiven - amountToPay).toFixed(2) : "0";
     setValue("change", change);
   }, [amountGiven, amountToPay, setValue]);
 
@@ -101,14 +93,36 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ open, onClose }) => {
     ...subscriptions.map((s) => ({ label: `Subscription: ${s.name}`, value: s.id })),
   ];
 
-  const onSubmit = (data: PaymentFormValues) => {
-    console.log("Payment submitted:", data);
-    onClose();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onSubmit = async (data: any) => {
+    let payment_type = "misc";
+    const foundTraining = trainings.find((t) => t.id === data.paymentFor);
+    const foundSubscription = subscriptions.find((s) => s.id === data.paymentFor);
+  
+    if (foundTraining) {
+      payment_type = foundTraining.title;
+    } else if (foundSubscription) {
+      payment_type = foundSubscription.name;
+    }
+  
+    const payload: PaymentRequestDto = {
+      student_id: data.studentId,
+      amount: Number(data.amount),
+      amount_to_pay: Number(data.amountToPay),
+      payment_method: data.paymentMethod,
+      payment_type,
+    };
+  
+    const result = await createPayment(payload);
+  
+    if (result) {
+      showToast("Payment successfully recorded!", "success");
+      onClose();
+    } else {
+      showToast("Failed to record payment", "error");
+    }
   };
-
-  useEffect(() => {
-   console.log(students);
-  }, [students])
+  
 
   return (
     <Modal open={open} onClose={onClose}>
