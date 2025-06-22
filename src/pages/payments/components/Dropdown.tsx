@@ -12,8 +12,8 @@ type DropdownProps = {
   value: string;
   onChange: (value: string) => void;
   options: DropdownOption[];
-  width?: number;
-  height?: number;
+  width?: number | string;
+  height?: number | string;
 } & Omit<TextFieldProps, "select" | "onChange" | "value">;
 
 const Dropdown: React.FC<DropdownProps> = ({

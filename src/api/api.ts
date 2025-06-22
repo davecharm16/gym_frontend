@@ -10,4 +10,5 @@ export const endPoint = {
   instructor: '/instructor',
   checkIn: `/checkIn`,
   attendance: `/attendance`,
+  trainings: '/trainings',
 }
