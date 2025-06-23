@@ -1,5 +1,4 @@
 import {
-
   Box,
   Table,
   TableBody,
@@ -17,9 +16,10 @@ import {
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useEffect, useState } from "react";
-import { Visibility, Edit, Delete } from "@mui/icons-material";
+import { Visibility, Delete } from "@mui/icons-material";
 
 import { useStudentStore } from "../../../store/student/studentStore";
+import ViewModal, { type StudentData } from "./ViewModal";
 
 export default function ProfileTable() {
   const {
@@ -33,12 +33,19 @@ export default function ProfileTable() {
 
   const [page, setPage] = useState(1);
   const rowsPerPage = 10;
+  const [openViewModal, setOpenViewModal] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState<StudentData | null>(
+    null
+  );
 
   useEffect(() => {
     getStudents();
   }, [getStudents]);
 
-  const handleChangePage = (_event: React.ChangeEvent<unknown>, newPage: number) => {
+  const handleChangePage = (
+    _event: React.ChangeEvent<unknown>,
+    newPage: number
+  ) => {
     setPage(newPage);
   };
 
@@ -54,13 +61,19 @@ export default function ProfileTable() {
   };
 
   const filteredStudents = students.filter((student) => {
-    const fullName = `${student.first_name} ${student.middle_name} ${student.last_name}`.toLowerCase();
+    const fullName =
+      `${student.first_name} ${student.middle_name} ${student.last_name}`.toLowerCase();
     const matchesSearch = fullName.includes(searchQuery?.toLowerCase() ?? "");
-    const matchesCategory = selectedCategory === "All" || student.subscription_type_name === selectedCategory;
+    const matchesCategory =
+      selectedCategory === "All" ||
+      student.subscription_type_name === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
-  const paginatedStudents = filteredStudents.slice((page - 1) * rowsPerPage, page * rowsPerPage);
+  const paginatedStudents = filteredStudents.slice(
+    (page - 1) * rowsPerPage,
+    page * rowsPerPage
+  );
   const totalPages = Math.ceil(filteredStudents.length / rowsPerPage);
 
   if (loading) {
@@ -92,13 +105,28 @@ export default function ProfileTable() {
         <Table>
           <TableHead sx={{ bgcolor: "#f0f0f0" }}>
             <TableRow>
-              {["Name", "Address", "Age", "Category", "Subscription Date", "Payment Method", "Action"].map((label, index) => (
-                <TableCell key={index} sx={{ fontWeight: "bold", fontSize: 14 }}>
+              {[
+                "Name",
+                "Address",
+                "Age",
+                "Category",
+                "Subscription Date",
+                "Payment Method",
+                "Action",
+              ].map((label, index) => (
+                <TableCell
+                  key={index}
+                  sx={{ fontWeight: "bold", fontSize: 14 }}
+                >
                   <Box display="flex" alignItems="center">
                     {label}
                     <Box display="inline-flex" flexDirection="column" ml={1}>
-                      <ExpandLessIcon sx={{ fontSize: 16, color: "grey.500" }} />
-                      <ExpandMoreIcon sx={{ fontSize: 16, color: "grey.500" }} />
+                      <ExpandLessIcon
+                        sx={{ fontSize: 16, color: "grey.500" }}
+                      />
+                      <ExpandMoreIcon
+                        sx={{ fontSize: 16, color: "grey.500" }}
+                      />
                     </Box>
                   </Box>
                 </TableCell>
@@ -122,9 +150,13 @@ export default function ProfileTable() {
                     variant="outlined"
                     sx={{
                       color:
-                        student.subscription_type_name === "Monthly" ? "#FFB22C" : "#379777",
+                        student.subscription_type_name === "Monthly"
+                          ? "#FFB22C"
+                          : "#379777",
                       borderColor:
-                        student.subscription_type_name === "Monthly" ? "#FFB22C" : "#379777",
+                        student.subscription_type_name === "Monthly"
+                          ? "#FFB22C"
+                          : "#379777",
                       fontWeight: 600,
                       fontSize: "14px",
                       px: 1.5,
@@ -136,20 +168,39 @@ export default function ProfileTable() {
                 </TableCell>
                 <TableCell>
                   {student.enrollment_date
-                    ? new Date(student.enrollment_date).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })
+                    ? new Date(student.enrollment_date).toLocaleDateString(
+                        "en-US",
+                        {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        }
+                      )
                     : "N/A"}
                 </TableCell>
-                <TableCell>{student.subscription_fee ? "Paid" : "N/A"}</TableCell>
                 <TableCell>
-                  <IconButton color="primary">
+                  {student.subscription_fee ? "Paid" : "N/A"}
+                </TableCell>
+                <TableCell>
+                  <IconButton
+                    color="primary"
+                    onClick={() => {
+                      setSelectedStudent({
+                        first_name: student.first_name,
+                        middle_name: student.middle_name,
+                        last_name: student.last_name,
+                        address: student.address,
+                        birthdate: student.birthdate,
+                        subscription_type_name:
+                          student.subscription_type_name ?? "",
+                        training_category: student.training_category ?? "",
+                        due_date: student.due_date ?? "",
+                        age: calculateAge(student.birthdate),
+                      });
+                      setOpenViewModal(true);
+                    }}
+                  >
                     <Visibility />
-                  </IconButton>
-                  <IconButton color="secondary">
-                    <Edit />
                   </IconButton>
                   <IconButton color="error">
                     <Delete />
@@ -171,6 +222,12 @@ export default function ProfileTable() {
           shape="rounded"
         />
       </Box>
+
+      <ViewModal
+        open={openViewModal}
+        onClose={() => setOpenViewModal(false)}
+        student={selectedStudent}
+      />
     </Box>
   );
 }
