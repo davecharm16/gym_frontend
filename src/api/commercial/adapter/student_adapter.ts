@@ -34,6 +34,7 @@ export const toCreateStudentDTO = (
 });
 
 
+
 export const toStudentCheckInDTO = (
   studentCheckInData: StudentCheckIn
 ): StudentCheckInDTO => {
