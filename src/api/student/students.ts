@@ -10,13 +10,21 @@ import type { AttendanceDTO } from "../commercial/dto/attendance_dto";
 import type { CreateStudentRequestDTO, CreateStudentResponseDTO } from "../commercial/dto/student_dto";
 
 
-export const getStudents = async (): Promise<ApiResponse<Student[]>> => {
+export const getStudents = async ({
+  subscriptionName = 'all', // Default here
+}: {
+  subscriptionName?: string;
+}): Promise<ApiResponse<Student[]>> => {
   try {
-    const res = await apiClient.get<Student[]>(endPoint.students);
-    return res; // contains success, message, data, error
+    const res = await apiClient.get<Student[]>(endPoint.students, {
+      params: {
+        subscription_type_name: subscriptionName,
+      },
+    });
+    return res;
   } catch (error) {
     console.error("get students failed:", error);
-    throw error; // Let caller decide how to handle it
+    throw error;
   }
 };
 

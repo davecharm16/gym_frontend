@@ -15,7 +15,7 @@ interface StudentState {
   selectedCategory: string;
 
   /* actions */
-  getStudents: () => Promise<void>;
+  getStudents: (subscriptionName?: string) => Promise<void>;
   registerStudent: (payload: RegisterStudentFormSchema) => Promise<void>;
   setSearchQuery: (query: string) => void;
   setSelectedCategory: (category: string) => void;
@@ -32,10 +32,13 @@ export const useStudentStore = create<StudentState>((set, get) => ({
   selectedCategory: "All",
 
   /* --- actions --- */
-  getStudents: async () => {
+  getStudents: async (subscriptionName?: string) => {
     set({ loading: true, error: null });
     try {
-      const response = await fetchStudentsAPI();
+      const response = await fetchStudentsAPI({
+        subscriptionName: subscriptionName ?? 'all',
+      });
+  
       if (response.success && Array.isArray(response.data)) {
         set({ students: response.data });
       } else {
