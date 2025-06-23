@@ -22,16 +22,17 @@ export const toCreateStudentDTO = (
   email: form.email,
   password: form.password,
   role: "student", // fixed value
-  first_name: form?.first_name,
-  last_name: form?.last_name,
-  middle_name: form?.middle_name || "",
+  first_name: form.first_name,
+  last_name: form.last_name,
+  middle_name: form.middle_name || "",
   sex: form.sex as "male" | "female",
   address: form.address,
   birthdate: format(form.birthdate, 'yyyy-MM-dd'),
   enrollment_date: format(form.enrollment_date, 'yyyy-MM-dd'),
-  subscription_type_id: form?.subscription_type_id || null,
+  subscription_type_id: form.subscription_type_id ?? undefined,
   picture_url: "",
 });
+
 
 export const toStudentCheckInDTO = (
   studentCheckInData: StudentCheckIn
