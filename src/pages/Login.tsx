@@ -1,120 +1,112 @@
-import {
-  Button,
-  Container,
-  IconButton,
-  TextField,
-  Typography,
-  Box,
-  InputAdornment,
-  Paper,
-  CircularProgress,
-} from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/auth/authStore";
-import { VisibilityOff, Visibility } from "@mui/icons-material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import backgroundImage from "../assets/images/login-background.png";
+import {
+  TextField,
+  IconButton,
+  InputAdornment,
+  Button,
+  CircularProgress,
+} from "@mui/material";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
-  const login = useAuthStore((state) => state.login);
-  const loading = useAuthStore((state) => state.loading);
+  const login = useAuthStore((s) => s.login);
+  const loading = useAuthStore((s) => s.loading);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPwd, setShowPwd] = useState(false);
   const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = async () => {
+  const handleSubmit = async () => {
     try {
-      const response = await login({ email, password });
+      const res = await login({ email, password });
 
-      if (response) {
-        // Redirect based on user role
-        const userRole = response.role; // Assuming the response contains the user role
-        if (userRole === "admin") {
-          navigate("/");
-        } else if (userRole === "student") {
-          navigate("/student");
-        } else {
-          alert("Unauthorized role");
-        }
+      if (!res) {
+        toast.error("Invalid email or password");
+        return;
       }
+
+      toast.success("Login successful!");
+
+      if (res.role === "admin") navigate("/");
+      else if (res.role === "student") navigate("/student");
+      else toast.error("Unauthorized role");
     } catch {
-      alert("Login failed");
+      toast.error("Login failed. Please try again.");
     }
   };
-  
 
   return (
-    <Box
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      minHeight="100vh"
-      bgcolor="#f9f9f9"
-    >
-      <Container maxWidth={false} sx={{ width: 600 }}>
-        <Paper
-          sx={{
-            p: 4,
-            borderRadius: 2,
-            border: "1px solid #ddd",
-            boxShadow: "none",
-            backgroundColor: "#fff",
-            minHeight: "50vh",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-          }}
-        >
-          <Typography
-            variant="h4"
-            align="center"
-            gutterBottom
-            sx={{ fontWeight: "bold" }}
-          >
-            Login
-          </Typography>
+    <div className="flex h-screen overflow-hidden">
+      {/* ───── Background Image ───── */}
+      <div className="w-1/2 hidden md:block relative">
+        <img
+          src={backgroundImage}
+          alt="Login"
+          className="absolute inset-0 w-full h-full object-cover opacity-80"
+        />
+      </div>
 
+      {/* ───── Login Form ───── */}
+      <div className="w-full md:w-1/2 flex items-center justify-center px-6 bg-white">
+        <form className="w-full max-w-md">
+          <h1 className="text-4xl font-black text-center mb-8 tracking-tight">
+            Login
+          </h1>
+
+          {/* Email Field */}
           <TextField
             fullWidth
             label="Email"
-            margin="normal"
+            type="email"
+            variant="outlined"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            margin="normal"
           />
 
+          {/* Password Field */}
           <TextField
             fullWidth
             label="Password"
-            type={showPassword ? "text" : "password"}
-            margin="normal"
+            type={showPwd ? "text" : "password"}
+            variant="outlined"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            margin="normal"
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton
-                    onClick={() => setShowPassword(!showPassword)}
-                    edge="end"
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  <IconButton onClick={() => setShowPwd(!showPwd)} edge="end">
+                    {showPwd ? <VisibilityOff /> : <Visibility />}
                   </IconButton>
                 </InputAdornment>
               ),
             }}
           />
 
+          {/* Login Button */}
           <Button
-            variant="contained"
-            color="primary"
+            variant="outlined"
             fullWidth
-            onClick={handleLogin}
+            onClick={handleSubmit}
             disabled={loading}
             sx={{
               mt: 4,
-              height: 48,
+              py: 1.5,
+              fontWeight: 600,
               textTransform: "none",
-              fontWeight: "bold",
+              backgroundColor: "#3C3D37",
+              color: "#fff",
               fontSize: "1rem",
+              "&:hover": {
+                backgroundColor: "#181C14",
+                borderColor: "#1a1a1a",
+              },
             }}
           >
             {loading ? (
@@ -123,9 +115,12 @@ const Login = () => {
               "Login"
             )}
           </Button>
-        </Paper>
-      </Container>
-    </Box>
+        </form>
+      </div>
+
+      {/* ───── Toast Container ───── */}
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
+    </div>
   );
 };
 
