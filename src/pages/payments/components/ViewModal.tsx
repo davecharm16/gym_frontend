@@ -10,6 +10,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 
 export type TransactionData = {
+  id?: string;
   name: string;
   payFor: string;           // e.g. "Monthly Subscription"
   paymentDate: string;      // ISO string or yyyy‑mm‑dd
@@ -73,7 +74,9 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, transaction }) => 
         <Typography variant="h6" fontWeight={700} textAlign="center" mb={3}>
           Transaction Receipt
         </Typography>
-
+        <Typography variant="body2" fontWeight={700} textAlign="center" mb={3}>
+          TR#:{transaction?.id ?? ''}
+        </Typography>
         {transaction ? (
           <Stack spacing={1.5} mb={2}>
             <ReceiptRow label="Name:" value={transaction.name} />

@@ -12,5 +12,7 @@ export const endPoint = {
   attendance: `/attendance`,
   trainings: '/trainings',
   payment: '/payment',
-  paymentAverage: '/payment/average'
-}
+  paymentAverage: '/payment/average',
+  totalRegistered: '/dashboard/total-registered',
+  paymentReport: '/payment/all-with-student',
+};

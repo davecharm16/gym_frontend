@@ -1,12 +1,13 @@
 // src/services/commercial/payment/createPayment.ts
 
 import type { ApiResponse } from "../../types/api_response";
-import type { PaymentAverageModel, PaymentModel } from "../../types/payments";
+import type { PaymentAverageModel, PaymentModel, PaymentReportModel } from "../../types/payments";
 import { endPoint } from "../api";
 import { apiClient } from "../apiClient";
-import { paymentAdapterDTOtoModel, paymentAverageDtoToModel } from "../commercial/adapter/payments_adapter";
+import { adaptPaymentReport, paymentAdapterDTOtoModel, paymentAverageDtoToModel } from "../commercial/adapter/payments_adapter";
 import type {
   PaymentAverageDTO,
+  PaymentReportDTO,
   PaymentRequestDto,
   PaymentResponseDto,
 } from "../commercial/dto/payments_dto";
@@ -39,6 +40,31 @@ export const getPaymentAverages = async (): Promise<ApiResponse<PaymentAverageMo
     };
   } catch (error) {
     console.error('getPaymentAverages failed:', error);
+    throw error;
+  }
+};
+
+
+
+export const getPaymentReport = async (
+  filters: {
+    start_date?: string;
+    end_date?: string;
+    payment_type?: string;
+    payment_method?: string;
+  } = {}
+): Promise<ApiResponse<PaymentReportModel>> => {
+  try {
+    const res = await apiClient.get<PaymentReportDTO>(endPoint.paymentReport, {
+      params: filters,
+    });
+
+    return {
+      ...res,
+      data: adaptPaymentReport(res.data!),
+    };
+  } catch (error) {
+    console.error('❌ Error in getPaymentReport:', error);
     throw error;
   }
 };

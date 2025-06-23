@@ -1,8 +1,8 @@
 // src/services/adapters/payment/PaymentAdapter.ts
 
 import dayjs from 'dayjs';
-import type { PaymentAverageModel, PaymentModel } from '../../../types/payments';
-import type { PaymentResponseDto, PaymentRequestDto, PaymentAverageDTO } from '../dto/payments_dto';
+import type { PaymentAverageModel, PaymentModel, PaymentRecord, PaymentReportModel } from '../../../types/payments';
+import type { PaymentResponseDto, PaymentRequestDto, PaymentAverageDTO, PaymentRecordDTO, PaymentReportDTO } from '../dto/payments_dto';
 
 
 export const paymentAdapterDTOtoModel = (
@@ -32,4 +32,18 @@ export const paymentAdapterModelToDTO = (
 export const paymentAverageDtoToModel = (dto: PaymentAverageDTO): PaymentAverageModel => ({
   averagePerWeek: dto.average_per_week,
   averagePerMonth: dto.average_per_month,
+});
+
+
+export const adaptPaymentReport = (dto: PaymentReportDTO): PaymentReportModel => ({
+  records: dto.records.map((item: PaymentRecordDTO): PaymentRecord => ({
+    ...item,
+    student: item.student
+      ? {
+          ...item.student,
+          subscription_type: item.student.subscription_type ?? null,
+        }
+      : null,
+  })),
+  summary: dto.summary,
 });

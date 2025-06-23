@@ -8,11 +8,52 @@ import { useAuthStore } from "../../store/auth/authStore";
 import MonthlySubscription from "./components/MonthlySubscription";
 import SessionSubscription from "./components/SessionSubscription";
 import CheckInLogs from "./components/CheckInLogs";
+import { useState, useEffect } from "react";
+import { useStatsStore } from "../../store/dashboard/useDashboardStore";
+import { usePaymentReportStore } from "../../store/payments/paymentReports";
+import dayjs from "dayjs";
 
 
 export default function Dashboard() {
  
   const { user } = useAuthStore();
+
+  const [monthlyCount, setMonthlyCount] = useState<number>(0);
+  const [sessionCount, setSessionCount] = useState<number>(0);
+  const [totalCount, setTotalCount] = useState<number>(0);
+
+  const { fetchTotalRegistered } = useStatsStore();
+  const { report, fetchReport } = usePaymentReportStore();
+
+  useEffect(() => {
+    const loadReport = async () => {
+      try {
+        await fetchReport({
+          start_date: dayjs().format("YYYY-MM-DD"),
+          end_date: dayjs()?.format("YYYY-MM-DD"),
+        });
+      } catch (err) {
+        console.error("Failed to load payment report", err);
+      }
+    };
+  
+    loadReport();
+  }, [fetchReport]);
+  
+
+  useEffect(() => {
+    const loadStats = async () => {
+      const all = await fetchTotalRegistered("all");
+      const monthly = await fetchTotalRegistered("monthly");
+      const session = await fetchTotalRegistered("per_session");
+
+      setTotalCount(all?.totalRegistered ?? 0);
+      setMonthlyCount(monthly?.totalRegistered ?? 0);
+      setSessionCount(session?.totalRegistered ?? 0);
+    };
+
+    loadStats();
+  }, [fetchTotalRegistered]);
 
   return (
     <div className="flex flex-col min-h-screen pt-20">
@@ -26,28 +67,28 @@ export default function Dashboard() {
             <StatCard
               icon={<VerifiedIcon sx={{ fontSize: 42 }} />}
               label="Total Membership"
-              value={6}
+              value={totalCount}
             />
           </div>
           <div className="col-6 col-md-4 col-lg-3">
             <StatCard
               icon={<AttachMoneyIcon sx={{ fontSize: 42 }} />}
               label="Daily Earned"
-              value={6}
+              value={report?.summary.total_amount_to_pay.toFixed(2) ?? 0}
             />
           </div>
           <div className="col-6 col-md-4 col-lg-3">
             <StatCard
               icon={<EventRepeatIcon sx={{ fontSize: 42 }} />}
               label="Monthly Membership"
-              value={6}
+              value={monthlyCount}
             />
           </div>
           <div className="col-6 col-md-4 col-lg-3">
             <StatCard
               icon={<PersonIcon sx={{ fontSize: 42 }} />}
               label="Session Membership"
-              value={6}
+              value={sessionCount}
             />
           </div>
         </div>

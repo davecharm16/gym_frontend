@@ -1,4 +1,3 @@
-// PaymentLogsTable.tsx - with ViewModal integration
 import {
   Box,
   Table,
@@ -8,122 +7,64 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Chip,
   Pagination,
   IconButton,
   Typography,
 } from "@mui/material";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useState, useMemo } from "react";
-import ViewModal, { type TransactionData } from "./ViewModal"; // adjust path if needed
+import type { PaymentRecord, PaymentSummary } from "../../../types/payments";
+import ViewModal, { type TransactionData } from "./ViewModal";
 
-/* --------- sample rows (replace with real data) --------- */
-interface PaymentRow {
-  id: string;
-  name: string;
-  amount: number;
-  trainingCategory: "Weight Training" | "CrossFit" | "Boxing";
-  subscription: "Monthly" | "Session";
-  paymentMethod: "Cash" | "GCash";
-  paymentDate: string; // added for modal
-}
-
-const rows: PaymentRow[] = [
-  {
-    id: "1",
-    name: "Dela Cruz, Juan A.",
-    amount: 1200,
-    trainingCategory: "Weight Training",
-    subscription: "Monthly",
-    paymentMethod: "Cash",
-    paymentDate: "2025-06-15",
-  },
-  {
-    id: "2",
-    name: "Reyes, Maria",
-    amount: 750,
-    trainingCategory: "CrossFit",
-    subscription: "Session",
-    paymentMethod: "GCash",
-    paymentDate: "2025-06-16",
-  },
-  {
-    id: "3",
-    name: "Santos, Luis",
-    amount: 500,
-    trainingCategory: "Boxing",
-    subscription: "Session",
-    paymentMethod: "Cash",
-    paymentDate: "2025-06-17",
-  },
-];
-/* ------------------------------------------------------- */
+type Props = {
+  data: PaymentRecord[];
+  summary?: PaymentSummary;
+};
 
 const rowsPerPage = 10;
 
-const getBadgeColor = (cat: PaymentRow["trainingCategory"]) =>
-  cat === "Weight Training"
-    ? "#FFB22C"
-    : cat === "CrossFit"
-    ? "#379777"
-    : "#d32f2f";
-
-export default function PaymentLogsTable() {
+const PaymentLogsTable: React.FC<Props> = ({ data }) => {
   const [page, setPage] = useState(1);
   const [openModal, setOpenModal] = useState(false);
   const [selectedTx, setSelectedTx] = useState<TransactionData | null>(null);
 
   const paginatedRows = useMemo(
-    () => rows.slice((page - 1) * rowsPerPage, page * rowsPerPage),
-    [page]
+    () => data.slice((page - 1) * rowsPerPage, page * rowsPerPage),
+    [page, data]
   );
-  const totalPages = Math.ceil(rows.length / rowsPerPage);
+  const totalPages = Math.ceil(data.length / rowsPerPage);
 
-  const handleOpen = (row: PaymentRow) => {
+  const handleOpen = (row: PaymentRecord) => {
     const tx: TransactionData = {
-      name: row.name,
-      payFor: `${row.subscription} - ${row.trainingCategory}`,
-      paymentDate: row.paymentDate,
-      paymentMethod: row.paymentMethod,
+      id: row.id,
+      name: `${row.student?.last_name}, ${row.student?.first_name} ${row.student?.middle_name || ""}`,
+      payFor: row.payment_type,
+      paymentDate: row.paid_at,
+      paymentMethod: row.payment_method,
       amount: row.amount,
-      totalPayment: row.amount, // placeholder – replace with real running total
+      totalPayment: row.amount,
     };
     setSelectedTx(tx);
     setOpenModal(true);
   };
 
   return (
-    <Box
-      width="100%"
-      border={1}
-      borderColor="#e0e0e0"
-      borderRadius={1}
-      bgcolor="#fafafa"
-    >
+    <Box width="100%" border={1} borderColor="#e0e0e0" borderRadius={1} bgcolor="#fafafa">
       <TableContainer component={Paper} elevation={0}>
         <Table>
           <TableHead sx={{ bgcolor: "#f0f0f0" }}>
             <TableRow>
               {[
                 "Name",
-                "Amount",
-                "Training Category",
-                "Subscription",
+                "Given Amount",
+                "Amount to Pay",
+                "Paid For",
+                "Paid At",
                 "Payment Method",
                 "Action",
               ].map((label) => (
                 <TableCell key={label} sx={{ fontWeight: 700, fontSize: 14 }}>
-                  <Box display="flex" alignItems="center">
-                    {label}
-                    {label !== "Action" && (
-                      <Box display="inline-flex" flexDirection="column" ml={0.5}>
-                        <ExpandLessIcon sx={{ fontSize: 16, color: "grey.500" }} />
-                        <ExpandMoreIcon sx={{ fontSize: 16, color: "grey.500" }} />
-                      </Box>
-                    )}
-                  </Box>
+                  {label}
                 </TableCell>
               ))}
             </TableRow>
@@ -132,29 +73,22 @@ export default function PaymentLogsTable() {
           <TableBody>
             {paginatedRows.map((row) => (
               <TableRow key={row.id} hover>
-                <TableCell>{row.name}</TableCell>
                 <TableCell>
-                  ₱{row.amount.toLocaleString("en-PH", {
+                  {`${row.student?.last_name}, ${row.student?.first_name} ${row.student?.middle_name || ""}`}
+                </TableCell>
+                <TableCell>
+                  ₱{Number(row.amount).toLocaleString("en-PH", {
                     minimumFractionDigits: 2,
                   })}
                 </TableCell>
                 <TableCell>
-                  <Chip
-                    label={row.trainingCategory}
-                    variant="outlined"
-                    size="small"
-                    sx={{
-                      color: getBadgeColor(row.trainingCategory),
-                      borderColor: getBadgeColor(row.trainingCategory),
-                      fontWeight: 600,
-                      px: 1.5,
-                      py: 0.25,
-                      fontSize: 13,
-                    }}
-                  />
+                  ₱{Number(row.amount_to_pay).toLocaleString("en-PH", {
+                    minimumFractionDigits: 2,
+                  })}
                 </TableCell>
-                <TableCell>{row.subscription}</TableCell>
-                <TableCell>{row.paymentMethod}</TableCell>
+                <TableCell>{row.payment_type}</TableCell>
+                <TableCell>{new Date(row.paid_at).toLocaleString("en-PH")}</TableCell>
+                <TableCell>{row.payment_method}</TableCell>
                 <TableCell>
                   <IconButton color="primary" size="small" onClick={() => handleOpen(row)}>
                     <VisibilityIcon />
@@ -163,9 +97,9 @@ export default function PaymentLogsTable() {
               </TableRow>
             ))}
 
-            {rows.length === 0 && (
+            {data.length === 0 && (
               <TableRow>
-                <TableCell colSpan={6} align="center">
+                <TableCell colSpan={7} align="center">
                   <Typography variant="body2">No payment logs found.</Typography>
                 </TableCell>
               </TableRow>
@@ -185,7 +119,6 @@ export default function PaymentLogsTable() {
         />
       </Box>
 
-      {/* View Modal */}
       <ViewModal
         open={openModal}
         onClose={() => setOpenModal(false)}
@@ -193,4 +126,6 @@ export default function PaymentLogsTable() {
       />
     </Box>
   );
-}
+};
+
+export default PaymentLogsTable;

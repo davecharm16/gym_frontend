@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import PaymentModal from "./components/PaymentModal";
 import { useEffect, useState } from "react";
 import StatCard from "./components/StatCard";
@@ -10,6 +10,12 @@ import Dropdown from "./components/Dropdown";
 import DateRangePicker from "./components/DateRangePicker";
 import dayjs, { Dayjs } from "dayjs";
 import { usePaymentStore } from "../../store/payments/payments";
+import { usePaymentReportStore } from "../../store/payments/paymentReports";
+import { useTrainingStore } from "../../store/trainings/trainings";
+import { useSubscriptionStore } from "../../store/subscriptions/subscriptionsStore";
+
+
+
 
 const paymentOptions = [
   { label: "All", value: "all" },
@@ -17,11 +23,6 @@ const paymentOptions = [
   { label: "Online", value: "online" },
 ];
 
-const paymentCategories = [
-  { label: "All", value: "all" },
-  { label: "Monthly", value: "monthly" },
-  { label: "Per Session", value: "per_session" },
-];
 
 const PaymentsLogs = () => {
   const [openPaymentModal, setOpenPaymentModal] = useState(false);
@@ -30,18 +31,78 @@ const PaymentsLogs = () => {
   const [startDate, setStartDate] = useState<Dayjs | null>(dayjs());
   const [endDate, setEndDate] = useState<Dayjs | null>(dayjs());
 
+
   const { averages, fetchPaymentAverages } = usePaymentStore();
+  const { report, fetchReport, loading } = usePaymentReportStore();
+  const { trainings, fetchTrainings } = useTrainingStore();
+  const { subscriptions, getSubscriptionTypes } = useSubscriptionStore();
+
+
+  const isToday =
+  startDate && endDate &&
+  dayjs(startDate).isSame(dayjs(), 'day') &&
+  dayjs(endDate).isSame(dayjs(), 'day');
+
+  useEffect(() => {
+    fetchTrainings();
+    getSubscriptionTypes();
+  }, [fetchTrainings, getSubscriptionTypes]);
+
+  const paymentCategories = [
+    { label: "All", value: "all" },
+    { label: "Misc", value: "misc" },
+    ...(subscriptions || []).map((sub) => ({
+      label: sub.name,
+      value: sub.name.toLowerCase(),
+    })),
+    ...(trainings || []).map((training) => ({
+      label: training.title,
+      value: training.title.toLowerCase(),
+    })),
+  ];
+
+  useEffect(() => {
+    const loadReport = async () => {
+      try {
+        await fetchReport({
+          start_date: startDate?.format("YYYY-MM-DD"),
+          end_date: endDate?.format("YYYY-MM-DD"),
+          payment_type: paymentCategory,
+          payment_method: paymentType,
+        });
+      } catch (err) {
+        console.error("Failed to load payment report", err);
+      }
+    };
+  
+    loadReport();
+  }, [startDate, endDate, paymentCategory, paymentType, fetchReport]);
+
+
+  const todayOrRangeTotal = report?.summary?.total_amount_to_pay ?? 0;
+  
 
   useEffect(() => {
     fetchPaymentAverages();
   }, [fetchPaymentAverages]);
 
-  // ───── Dummy Data ─────
-  const dailyTotal = 1200;
-
-  // const dailyGrowth = 2.15;
-  // const weeklyGrowth = -1.8;
-  // const monthlyGrowth = 4.75;
+  const refetchReport = async () => {
+    try {
+      await fetchReport({
+        start_date: startDate?.format("YYYY-MM-DD"),
+        end_date: endDate?.format("YYYY-MM-DD"),
+        payment_type: paymentCategory,
+        payment_method: paymentType,
+      });
+      fetchPaymentAverages(); // refresh stat cards too
+    } catch (err) {
+      console.error("Failed to load payment report", err);
+    }
+  };
+  
+  useEffect(() => {
+    refetchReport();
+  }, [startDate, endDate, paymentCategory, paymentType]);
 
   return (
     <div className="mt-12 flex flex-col px-12 pt-12">
@@ -104,8 +165,8 @@ const PaymentsLogs = () => {
         <div className="col-12 col-md-4">
           <StatCard
             icon={<CalendarTodayIcon sx={{ fontSize: 36 }} />}
-            label="Today's Payment"
-            value={`₱${dailyTotal.toLocaleString()}`}
+            label={isToday ? "Today's Payment" : "Date Range Payments"}
+            value={`₱${todayOrRangeTotal.toFixed(2)}`}
             // percentage={dailyGrowth}
           />
         </div>
@@ -127,11 +188,17 @@ const PaymentsLogs = () => {
         </div>
       </div>
       {/* ───── Payment Table ───── */}
-      <PaymentLogsTable /> {/* ✅ Inserted here */}
+      {!loading ? 
+      <PaymentLogsTable data={report?.records ?? []} summary={report?.summary}  /> 
+      :
+      <CircularProgress/>
+      }
+
       {/* ───── Modal ───── */}
       <PaymentModal
         open={openPaymentModal}
         onClose={() => setOpenPaymentModal(false)}
+        onSuccess={refetchReport} 
       />
     </div>
   );
