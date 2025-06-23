@@ -71,8 +71,6 @@ export const getStudenAttendance = async (
   }
 };
 
-
-
 export const deleteStudent = async (id: string) => {
   try {
     const res = await apiClient.delete(`${endPoint.students}/${id}`);
