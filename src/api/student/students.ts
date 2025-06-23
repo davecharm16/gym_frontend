@@ -71,3 +71,14 @@ export const getStudenAttendance = async (
   }
 };
 
+
+
+export const deleteStudent = async (id: string) => {
+  try {
+    const res = await apiClient.delete(`${endPoint.students}/${id}`);
+    return res.data;
+  } catch (error) {
+    console.error("Delete student failed:", error);
+    throw error;
+  }
+};

@@ -20,6 +20,8 @@ import { Visibility, Delete } from "@mui/icons-material";
 
 import { useStudentStore } from "../../../store/student/studentStore";
 import ViewModal, { type StudentData } from "./ViewModal";
+import DeleteModal from "./DeleteModal";
+import { useToastStore } from "../../../store/toastStore";
 
 export default function ProfileTable() {
   const {
@@ -29,6 +31,7 @@ export default function ProfileTable() {
     error,
     searchQuery,
     selectedCategory,
+    deleteStudent
   } = useStudentStore();
 
   const [page, setPage] = useState(1);
@@ -37,10 +40,28 @@ export default function ProfileTable() {
   const [selectedStudent, setSelectedStudent] = useState<StudentData | null>(
     null
   );
-
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [selectedToDelete, setSelectedToDelete] = useState<{ id: string, name: string } | null>(null);
+  const  {showToast}= useToastStore()
   useEffect(() => {
     getStudents();
   }, [getStudents]);
+
+
+  const handleDelete = async (): Promise<void> => {
+    if (!selectedToDelete?.id) return;
+  
+    try {
+        await deleteStudent(selectedToDelete.id);
+        setOpenDeleteModal(false);
+        setSelectedToDelete(null);
+        showToast("Student successfully deleted", "success");
+    } catch (error) {
+        showToast("Something went wrong while deleting", "error");
+      console.error("Error occurred while deleting student:", error);
+      // You can show a toast/snackbar here if desired
+    }
+  };
 
   const handleChangePage = (
     _event: React.ChangeEvent<unknown>,
@@ -202,7 +223,15 @@ export default function ProfileTable() {
                   >
                     <Visibility />
                   </IconButton>
-                  <IconButton color="error">
+                  <IconButton color="error"
+                    onClick={()=>{
+                      setSelectedToDelete({
+                        id: student.id,
+                        name: `${student.first_name} ${student.last_name}`,
+                      })
+                      setOpenDeleteModal(true)
+                    }}
+                  >
                     <Delete />
                   </IconButton>
                 </TableCell>
@@ -227,6 +256,12 @@ export default function ProfileTable() {
         open={openViewModal}
         onClose={() => setOpenViewModal(false)}
         student={selectedStudent}
+      />
+      <DeleteModal
+        open={openDeleteModal}
+        onClose={() => setOpenDeleteModal(false)}
+        onConfirm={handleDelete}
+        name={selectedToDelete?.name ?? ""}
       />
     </Box>
   );

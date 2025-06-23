@@ -1,7 +1,7 @@
 // store/student/studentStore.ts
 import { create } from "zustand";
 import type { Student, StudentCheckIn } from "../../types/students";
-import { checkInStudentApi, getStudents as fetchStudentsAPI, registerStudent, } from "../../api/student/students";
+import { checkInStudentApi, deleteStudent, getStudents as fetchStudentsAPI, registerStudent, } from "../../api/student/students";
 import type { RegisterStudentFormSchema } from "../../utils/schema/registerStudentSchema";
 import type { ApiResponse } from "../../types/api_response";
 
@@ -19,6 +19,7 @@ interface StudentState {
   registerStudent: (payload: RegisterStudentFormSchema) => Promise<void>;
   setSearchQuery: (query: string) => void;
   setSelectedCategory: (category: string) => void;
+  deleteStudent: (id: string) => void;
   checkInStudent: (studentCheckInData: StudentCheckIn) => Promise<ApiResponse<null> | null>;
 }
 
@@ -89,6 +90,25 @@ export const useStudentStore = create<StudentState>((set, get) => ({
     return null; 
   },
 
+  deleteStudent: async (id: string) => {
+    set({ loading: true });
+    try {
+      await deleteStudent(id);
+      set((state) => ({
+        students: state.students.filter((s) => s.id !== id),
+      }));
+      return true;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      set({ error: "Failed to delete student" });
+      return false;
+    } finally {
+      set({ loading: false });
+    }
+  },
+
   setSearchQuery: (query) => set({ searchQuery: query }),
   setSelectedCategory: (category) => set({ selectedCategory: category }),
 }));
+
+
