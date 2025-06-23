@@ -231,7 +231,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ open, onClose }) => {
                     helperText={errors.paymentMethod?.message}
                   >
                     <MenuItem value="cash">Cash</MenuItem>
-                    <MenuItem value="gcash">Gcash</MenuItem>
+                    <MenuItem value="online">Online</MenuItem>
                   </TextField>
                 )}
               />

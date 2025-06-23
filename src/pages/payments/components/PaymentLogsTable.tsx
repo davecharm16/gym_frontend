@@ -17,8 +17,15 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useState } from "react";
+import type { PaymentRecord, PaymentSummary } from "../../../types/payments";
 
 /* --------- sample rows (replace with real data) --------- */
+
+type Props = {
+  data: PaymentRecord[];
+  summary?: PaymentSummary;
+};
+
 type PaymentRow = {
   id: string;
   name: string;
@@ -66,7 +73,7 @@ const getBadgeColor = (cat: PaymentRow["trainingCategory"]) =>
     ? "#379777"
     : "#d32f2f";
 
-export default function PaymentLogsTable() {
+const PaymentLogsTable:React.FC<Props> = ({data})=>  {
   const [page, setPage] = useState(1);
 
   const paginatedRows = rows.slice((page - 1) * rowsPerPage, page * rowsPerPage);
@@ -170,3 +177,5 @@ export default function PaymentLogsTable() {
     </Box>
   );
 }
+
+export default PaymentLogsTable;
