@@ -1,4 +1,6 @@
 export interface Student {
+  due_date: string | null | undefined;
+  training_category: string | null | undefined;
   id: string;
   user_id: string;
   email: string;
