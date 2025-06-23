@@ -11,6 +11,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { useStudentStore } from "../../../store/student/studentStore";
+import { useEffect } from "react";
 
 const getBadgeColor = (category: string) =>
   category === "monthly"
@@ -20,11 +21,14 @@ const getBadgeColor = (category: string) =>
     : "#d32f2f";
 
 export default function MonthlySubscription() {
-  const { students, loading } = useStudentStore();
+  const { students, loading, getStudents } = useStudentStore();
 
-  const monthlyStudents = students.filter(
-    (student) => student.subscription_type?.name === "monthly"
-  );
+   useEffect(() => {
+     getStudents("monthly"); // Fetch on initial render
+   }, [getStudents]);
+ 
+   const monthlyStudents = students
+     .slice(0, 10); // limit to 10
 
   const calculateAge = (birthdate: string): number => {
     const birth = new Date(birthdate);
