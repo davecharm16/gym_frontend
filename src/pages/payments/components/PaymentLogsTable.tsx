@@ -1,4 +1,4 @@
-// PaymentLogsTable.tsx
+// PaymentLogsTable.tsx - with ViewModal integration
 import {
   Box,
   Table,
@@ -16,17 +16,19 @@ import {
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import ViewModal, { type TransactionData } from "./ViewModal"; // adjust path if needed
 
 /* --------- sample rows (replace with real data) --------- */
-type PaymentRow = {
+interface PaymentRow {
   id: string;
   name: string;
   amount: number;
   trainingCategory: "Weight Training" | "CrossFit" | "Boxing";
   subscription: "Monthly" | "Session";
   paymentMethod: "Cash" | "GCash";
-};
+  paymentDate: string; // added for modal
+}
 
 const rows: PaymentRow[] = [
   {
@@ -36,6 +38,7 @@ const rows: PaymentRow[] = [
     trainingCategory: "Weight Training",
     subscription: "Monthly",
     paymentMethod: "Cash",
+    paymentDate: "2025-06-15",
   },
   {
     id: "2",
@@ -44,6 +47,7 @@ const rows: PaymentRow[] = [
     trainingCategory: "CrossFit",
     subscription: "Session",
     paymentMethod: "GCash",
+    paymentDate: "2025-06-16",
   },
   {
     id: "3",
@@ -52,8 +56,8 @@ const rows: PaymentRow[] = [
     trainingCategory: "Boxing",
     subscription: "Session",
     paymentMethod: "Cash",
+    paymentDate: "2025-06-17",
   },
-  // …add more rows
 ];
 /* ------------------------------------------------------- */
 
@@ -68,9 +72,27 @@ const getBadgeColor = (cat: PaymentRow["trainingCategory"]) =>
 
 export default function PaymentLogsTable() {
   const [page, setPage] = useState(1);
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedTx, setSelectedTx] = useState<TransactionData | null>(null);
 
-  const paginatedRows = rows.slice((page - 1) * rowsPerPage, page * rowsPerPage);
+  const paginatedRows = useMemo(
+    () => rows.slice((page - 1) * rowsPerPage, page * rowsPerPage),
+    [page]
+  );
   const totalPages = Math.ceil(rows.length / rowsPerPage);
+
+  const handleOpen = (row: PaymentRow) => {
+    const tx: TransactionData = {
+      name: row.name,
+      payFor: `${row.subscription} - ${row.trainingCategory}`,
+      paymentDate: row.paymentDate,
+      paymentMethod: row.paymentMethod,
+      amount: row.amount,
+      totalPayment: row.amount, // placeholder – replace with real running total
+    };
+    setSelectedTx(tx);
+    setOpenModal(true);
+  };
 
   return (
     <Box
@@ -95,7 +117,6 @@ export default function PaymentLogsTable() {
                 <TableCell key={label} sx={{ fontWeight: 700, fontSize: 14 }}>
                   <Box display="flex" alignItems="center">
                     {label}
-                    {/* stubbed sort arrows for UI consistency */}
                     {label !== "Action" && (
                       <Box display="inline-flex" flexDirection="column" ml={0.5}>
                         <ExpandLessIcon sx={{ fontSize: 16, color: "grey.500" }} />
@@ -112,11 +133,11 @@ export default function PaymentLogsTable() {
             {paginatedRows.map((row) => (
               <TableRow key={row.id} hover>
                 <TableCell>{row.name}</TableCell>
-
                 <TableCell>
-                  ₱{row.amount.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
+                  ₱{row.amount.toLocaleString("en-PH", {
+                    minimumFractionDigits: 2,
+                  })}
                 </TableCell>
-
                 <TableCell>
                   <Chip
                     label={row.trainingCategory}
@@ -132,15 +153,12 @@ export default function PaymentLogsTable() {
                     }}
                   />
                 </TableCell>
-
                 <TableCell>{row.subscription}</TableCell>
                 <TableCell>{row.paymentMethod}</TableCell>
-
                 <TableCell>
-                  <IconButton color="primary" size="small">
+                  <IconButton color="primary" size="small" onClick={() => handleOpen(row)}>
                     <VisibilityIcon />
                   </IconButton>
-                
                 </TableCell>
               </TableRow>
             ))}
@@ -156,7 +174,6 @@ export default function PaymentLogsTable() {
         </Table>
       </TableContainer>
 
-      {/* Pagination */}
       <Box display="flex" justifyContent="flex-start" px={2} py={2}>
         <Pagination
           count={totalPages}
@@ -167,6 +184,13 @@ export default function PaymentLogsTable() {
           shape="rounded"
         />
       </Box>
+
+      {/* View Modal */}
+      <ViewModal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        transaction={selectedTx}
+      />
     </Box>
   );
 }
