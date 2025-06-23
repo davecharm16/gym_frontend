@@ -10,8 +10,9 @@ import {
   Typography,
   CircularProgress,
 } from "@mui/material";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useStudentStore } from "../../../store/student/studentStore";
+import type { Student } from "../../../types/students";
 
 const getBadgeColor = (type: string) =>
   type.toLowerCase() === "weight training"
@@ -30,14 +31,25 @@ const calculateAge = (birthdate: string): number => {
 };
 
 export default function SessionSubscription() {
-  const { students, loading, getStudents } = useStudentStore();
+  const [students, setStudents] = useState<Student[]>([]);
+  const [loading, setLoading] = useState(false);
+  const { getStudents } = useStudentStore();
 
   useEffect(() => {
-    getStudents("per_session"); // Fetch on initial render
-  }, [getStudents]);
+    const fetchMonthly = async () => {
+      try {
+        setLoading(true);
+        const res = await getStudents("per_session");
+        setStudents((res ?? []).slice(0, 10)); // limit to 10
+      } catch (e) {
+        console.error("Failed to fetch students:", e);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const sessionStudents = students
-    .slice(0, 10); // limit to 10
+    fetchMonthly();
+  }, [getStudents]);
 
   return (
     <Box>
@@ -61,7 +73,7 @@ export default function SessionSubscription() {
             </TableHead>
 
             <TableBody>
-              {sessionStudents.map((student) => (
+              {students.map((student) => (
                 <TableRow key={student.id} hover>
                   <TableCell>
                     {`${student.first_name} ${student.middle_name ?? ""} ${student.last_name}`}

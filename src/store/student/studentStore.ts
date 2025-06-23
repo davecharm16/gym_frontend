@@ -15,7 +15,7 @@ interface StudentState {
   selectedCategory: string;
 
   /* actions */
-  getStudents: (subscriptionName?: string) => Promise<void>;
+  getStudents: (subscriptionName?: string) => Promise<Student[] | null>;
   registerStudent: (payload: RegisterStudentFormSchema) => Promise<void>;
   setSearchQuery: (query: string) => void;
   setSelectedCategory: (category: string) => void;
@@ -41,6 +41,7 @@ export const useStudentStore = create<StudentState>((set, get) => ({
   
       if (response.success && Array.isArray(response.data)) {
         set({ students: response.data });
+        return response.data;
       } else {
         set({ error: response.message || "Failed to fetch students" });
       }
@@ -50,6 +51,7 @@ export const useStudentStore = create<StudentState>((set, get) => ({
     } finally {
       set({ loading: false });
     }
+    return null;
   },
 
   registerStudent: async (payload: RegisterStudentFormSchema) => {
@@ -103,8 +105,10 @@ export const useStudentStore = create<StudentState>((set, get) => ({
       return true;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      set({ error: "Failed to delete student" });
-      return false;
+      // set({ error: "Failed to delete student" });
+      console.log('Error', error);
+      // return false;
+      throw error;
     } finally {
       set({ loading: false });
     }

@@ -16,6 +16,7 @@ type MultiSelectCheckboxProps = {
   options: string[];
   value: string[];
   onChange: (value: string[]) => void;
+  disabled?: boolean;
 };
 
 const MultiSelectCheckbox: React.FC<MultiSelectCheckboxProps> = ({
@@ -24,6 +25,7 @@ const MultiSelectCheckbox: React.FC<MultiSelectCheckboxProps> = ({
   options,
   value,
   onChange,
+  disabled = false,
 }) => {
   const handleChange = (event: SelectChangeEvent<typeof value>) => {
     const selected = event.target.value as string[];
@@ -42,6 +44,7 @@ const MultiSelectCheckbox: React.FC<MultiSelectCheckboxProps> = ({
         renderValue={(selected) =>
           selected.length === 0 ? placeholder : selected.join(', ')
         }
+        disabled={disabled}
       >
         {options.map((option) => (
           <MenuItem key={option} value={option}>

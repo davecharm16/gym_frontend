@@ -174,7 +174,7 @@ export default function ProfileTable() {
                           address: student.address,
                           birthdate: student.birthdate,
                           subscription_type_name: student.subscription_type?.name ?? "",
-                          training_category: student.enrollments?.[0]?.training?.title ?? "",
+                          training_category: student.enrollments,
                           due_date: student.paid_until ?? "",
                           age: calculateAge(student.birthdate),
                         });
