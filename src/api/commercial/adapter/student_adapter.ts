@@ -5,20 +5,15 @@ import { format } from "date-fns";
 
 export const toStudentModel = (dto: CreateStudentResponseDTO): Partial<Student> => ({
   id: dto.id,
-  email: dto.email,
-  user_id: "", // not returned in create response
+  email: dto.email, // not returned in create response
   first_name: "",
   last_name: "",
   middle_name: "",
-  sex: "",
   address: "",
   birthdate: "",
-  enrollment_date: "",
-  picture_url: "",
   created_at: "",
-  subscription_type_id: null,
-  subscription_type_name: null,
-  subscription_fee: null,
+  subscription_type_id: undefined,
+  subscription_type: undefined,
 });
 
 export const toCreateStudentDTO = (
