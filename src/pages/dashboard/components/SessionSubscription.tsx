@@ -10,6 +10,7 @@ import {
   Typography,
   CircularProgress,
 } from "@mui/material";
+import { useEffect } from "react";
 import { useStudentStore } from "../../../store/student/studentStore";
 
 const getBadgeColor = (type: string) =>
@@ -29,14 +30,14 @@ const calculateAge = (birthdate: string): number => {
 };
 
 export default function SessionSubscription() {
-  const { students, loading } = useStudentStore();
+  const { students, loading, getStudents } = useStudentStore();
+
+  useEffect(() => {
+    getStudents("per_session"); // Fetch on initial render
+  }, [getStudents]);
 
   const sessionStudents = students
-    .filter(
-      (student) =>
-        student.subscription_type?.name?.toLowerCase() === "per_session"
-    )
-    .slice(0, 10); // Limit to first 10 entries
+    .slice(0, 10); // limit to 10
 
   return (
     <Box>
