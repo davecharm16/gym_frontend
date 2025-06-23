@@ -25,9 +25,10 @@ import type { PaymentRequestDto } from "../../../api/commercial/dto/payments_dto
 export type PaymentModalProps = {
   open: boolean;
   onClose: () => void;
+  onSuccess?: () => void; 
 };
 
-const PaymentModal: React.FC<PaymentModalProps> = ({ open, onClose }) => {
+const PaymentModal: React.FC<PaymentModalProps> = ({ open, onClose, onSuccess}) => {
   const { trainings, fetchTrainings } = useTrainingStore();
   const { subscriptions, getSubscriptionTypes } = useSubscriptionStore();
   const { students, getStudents, loading: isLoadingStudents } = useStudentStore();
@@ -118,6 +119,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ open, onClose }) => {
     if (result) {
       showToast("Payment successfully recorded!", "success");
       onClose();
+      onSuccess?.();
     } else {
       showToast("Failed to record payment", "error");
     }

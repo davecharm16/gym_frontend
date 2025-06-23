@@ -79,19 +79,30 @@ const PaymentsLogs = () => {
   }, [startDate, endDate, paymentCategory, paymentType, fetchReport]);
 
 
-  const todayOrRangeTotal = report?.summary?.total_amount ?? 0;
+  const todayOrRangeTotal = report?.summary?.total_amount_to_pay ?? 0;
   
 
   useEffect(() => {
     fetchPaymentAverages();
   }, [fetchPaymentAverages]);
 
-  // ───── Dummy Data ─────
-  // const dailyTotal = 1200;
-
-  // const dailyGrowth = 2.15;
-  // const weeklyGrowth = -1.8;
-  // const monthlyGrowth = 4.75;
+  const refetchReport = async () => {
+    try {
+      await fetchReport({
+        start_date: startDate?.format("YYYY-MM-DD"),
+        end_date: endDate?.format("YYYY-MM-DD"),
+        payment_type: paymentCategory,
+        payment_method: paymentType,
+      });
+      fetchPaymentAverages(); // refresh stat cards too
+    } catch (err) {
+      console.error("Failed to load payment report", err);
+    }
+  };
+  
+  useEffect(() => {
+    refetchReport();
+  }, [startDate, endDate, paymentCategory, paymentType]);
 
   return (
     <div className="mt-12 flex flex-col px-12 pt-12">
@@ -187,6 +198,7 @@ const PaymentsLogs = () => {
       <PaymentModal
         open={openPaymentModal}
         onClose={() => setOpenPaymentModal(false)}
+        onSuccess={refetchReport} 
       />
     </div>
   );
