@@ -15,6 +15,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useState, useMemo } from "react";
 import type { PaymentRecord, PaymentSummary } from "../../../types/payments";
 import ViewModal, { type TransactionData } from "./ViewModal";
+import { format } from "date-fns";
 
 type Props = {
   data: PaymentRecord[];
@@ -87,7 +88,7 @@ const PaymentLogsTable: React.FC<Props> = ({ data }) => {
                   })}
                 </TableCell>
                 <TableCell>{row.payment_type}</TableCell>
-                <TableCell>{new Date(row.paid_at).toLocaleString("en-PH")}</TableCell>
+                <TableCell>{format(new Date(row.paid_at), 'MMM d, h:mm a')}</TableCell>
                 <TableCell>{row.payment_method}</TableCell>
                 <TableCell>
                   <IconButton color="primary" size="small" onClick={() => handleOpen(row)}>
