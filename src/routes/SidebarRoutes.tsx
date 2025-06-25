@@ -2,7 +2,7 @@
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PersonIcon from "@mui/icons-material/Person";
 import AssignmentIcon from "@mui/icons-material/Assignment";
-import SchoolIcon from "@mui/icons-material/School";
+import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
 import SettingsIcon from "@mui/icons-material/Settings";
 import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
 import type { UserRole } from "../constant/roles";
@@ -48,17 +48,16 @@ export const sidebarRoutes: SidebarRoute[] = [
   },
 
   /* ---------- student‑only ----------- */
-  {
+ {
     path: "/student",
     label: "My Dashboard",
-    icon: <SchoolIcon />,
+    icon: <DashboardIcon />,
     roles: ["student"],
   },
-
   {
     path: "/student/student-logs",
     label: "My Logs",
-    icon: <SchoolIcon />,
+    icon: <HistoryEduIcon/>,
     roles: ["student"],
   },
 ];
