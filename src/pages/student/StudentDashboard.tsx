@@ -1,16 +1,40 @@
 import { useEffect } from "react";
-import { Avatar, TextField } from "@mui/material";
+import { Avatar, TextField, CircularProgress, Alert } from "@mui/material";
 import { InfoOutlined } from "@mui/icons-material";
 import { useProfileStore } from "../../store/profile/profileStore";
 
 export default function StudentDashboard() {
-  const { fetchProfile, profile } = useProfileStore();
+  const { fetchProfile, profile, loading, error } = useProfileStore();
 
   useEffect(() => {
-    fetchProfile();
+    fetchProfile().catch(() => {
+      // already handled in store; no need to do anything here
+    });
   }, []);
 
-  if (!profile || profile.role !== "student") return null;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <CircularProgress />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Alert severity="error">{error}</Alert>
+      </div>
+    );
+  }
+
+  if (!profile || profile.role !== "student") {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Alert severity="warning">Student profile not found or unauthorized.</Alert>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-8 bg-gray-50">
