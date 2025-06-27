@@ -11,7 +11,7 @@ import {
   Skeleton,
 } from "@mui/material";
 import { useStudentStore } from "../../../store/student/studentStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const getBadgeColor = (category: string) =>
   category === "monthly"
@@ -22,11 +22,15 @@ const getBadgeColor = (category: string) =>
 
 export default function MonthlySubscription() {
   const { students, loading, getStudents } = useStudentStore();
-
+  const [delayedLoading, setDelayedLoading] = useState(true);
   useEffect(() => {
     getStudents("monthly");
   }, [getStudents]);
 
+  useEffect(() => {
+    const timer = setTimeout(() => setDelayedLoading(false), 2000); 
+    return () => clearTimeout(timer);
+  }, []);
   const monthlyStudents = students.slice(0, 10);
 
   const calculateAge = (birthdate: string): number => {
@@ -71,7 +75,7 @@ export default function MonthlySubscription() {
           </TableHead>
 
           <TableBody>
-            {loading
+            {loading || delayedLoading
               ? Array.from({ length: 5 }).map((_, i) => (
                   <TableRow key={`skeleton-${i}`}>
                     {Array.from({ length: 5 }).map((_, j) => (

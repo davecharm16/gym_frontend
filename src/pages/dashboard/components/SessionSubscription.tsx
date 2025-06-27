@@ -10,7 +10,7 @@ import {
   Typography,
   Skeleton,
 } from "@mui/material";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useStudentStore } from "../../../store/student/studentStore";
 
 const getBadgeColor = (type: string) =>
@@ -31,11 +31,15 @@ const calculateAge = (birthdate: string): number => {
 
 export default function SessionSubscription() {
   const { students, loading, getStudents } = useStudentStore();
-
+  const [delayedLoading, setDelayedLoading] = useState(true);
   useEffect(() => {
     getStudents("per_session");
   }, [getStudents]);
 
+  useEffect(() => {
+    const timer = setTimeout(() => setDelayedLoading(false), 2000); // ✅
+    return () => clearTimeout(timer);
+  }, []);
   const sessionStudents = students.slice(0, 10);
 
   return (
@@ -44,7 +48,14 @@ export default function SessionSubscription() {
         Session Subscribers
       </Typography>
 
-      <TableContainer sx={{ border: "1px solid #ddd", borderRadius: 1,    backgroundColor: "#fff", height: "345px"}}>
+      <TableContainer
+        sx={{
+          border: "1px solid #ddd",
+          borderRadius: 1,
+          backgroundColor: "#fff",
+          height: "345px",
+        }}
+      >
         <Table>
           <TableHead>
             <TableRow>
@@ -57,7 +68,7 @@ export default function SessionSubscription() {
           </TableHead>
 
           <TableBody>
-            {loading
+            {loading || delayedLoading
               ? Array.from({ length: 5 }).map((_, i) => (
                   <TableRow key={`skeleton-${i}`}>
                     {Array.from({ length: 4 }).map((_, j) => (
