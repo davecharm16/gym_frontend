@@ -7,9 +7,9 @@ import {
   ListItemText,
   Divider,
   Box,
-} from '@mui/material';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-import SidebarList from './SidebarList';
+} from "@mui/material";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import SidebarList from "./SidebarList";
 
 interface SidebarProps {
   open: boolean; // true = expanded with text, false = mini with icons only
@@ -18,14 +18,10 @@ interface SidebarProps {
   onClose?: () => void; // Optional, if you want to handle closing the sidebar
 }
 
-const drawerWidth = 280;
+const drawerWidth = 240;
 const miniDrawerWidth = 60;
 
-export default function Sidebar({
-  open,
-  onLogout,
-  onNavigate,
-}: SidebarProps) {
+export default function Sidebar({ open, onLogout, onNavigate }: SidebarProps) {
   const handleNavigate = (path: string) => {
     onNavigate(path);
   };
@@ -41,24 +37,24 @@ export default function Sidebar({
         marginTop: 6,
         width: open ? drawerWidth : miniDrawerWidth,
         flexShrink: 0,
-        whiteSpace: 'nowrap',
-        boxSizing: 'border-box',
-        transition: 'width 0.3s',
-        '& .MuiDrawer-paper': {
+        whiteSpace: "nowrap",
+        boxSizing: "border-box",
+        transition: "width 0.3s",
+        "& .MuiDrawer-paper": {
           width: open ? drawerWidth : miniDrawerWidth,
-          transition: 'width 0.3s',
-          overflowX: 'hidden',
-          boxSizing: 'border-box',
+          transition: "width 0.3s",
+          overflowX: "hidden",
+          boxSizing: "border-box",
         },
       }}
     >
       <Box
         sx={{
           marginTop: 4,
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
           paddingTop: 8,
         }}
       >
@@ -69,26 +65,30 @@ export default function Sidebar({
         <Box>
           <Divider />
           <List>
-            <ListItem disablePadding sx={{ display: 'block' }}>
+            <ListItem disablePadding sx={{ display: "block" }}>
               <ListItemButton
                 onClick={handleLogout}
                 sx={{
                   minHeight: 48,
-                  justifyContent: open ? 'initial' : 'center',
+                  justifyContent: open ? "initial" : "center",
                   px: 2.5,
                 }}
               >
                 <ListItemIcon
                   sx={{
                     minWidth: 0,
-                    mr: open ? 3 : 'auto',
-                    justifyContent: 'center',
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
                   }}
                 >
                   <ExitToAppIcon />
                 </ListItemIcon>
                 <ListItemText
                   primary="Sign Out"
+                  primaryTypographyProps={{
+                    fontSize: "13px",
+                    fontWeight: 500,
+                  }}
                   sx={{ opacity: open ? 1 : 0 }}
                 />
               </ListItemButton>
