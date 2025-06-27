@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Modal,
   Box,
@@ -7,13 +7,14 @@ import {
   Avatar,
   TextField,
   IconButton,
-  MenuItem
+  MenuItem,
+  Divider,
+  Tooltip,
 } from "@mui/material";
 import InfoOutlined from "@mui/icons-material/InfoOutlined";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import CloseIcon from "@mui/icons-material/Close";
-
 
 export type StudentData = {
   first_name: string;
@@ -37,91 +38,98 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
   const [editable, setEditable] = useState(false);
   const [formData, setFormData] = useState<StudentData | null>(student);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setFormData(student);
+    setEditable(false);
   }, [student]);
 
   const handleChange = (field: keyof StudentData, value: string) => {
-    if (formData) {
-      setFormData({ ...formData, [field]: value });
-    }
+    if (formData) setFormData({ ...formData, [field]: value });
   };
 
-  const handleToggleEdit = () => {
-    setEditable((prev) => !prev);
-  };
+  const handleToggleEdit = () => setEditable((prev) => !prev);
 
   const trainingOptions = ["Basic", "Intermediate", "Advanced"];
   const subscriptionOptions = ["Monthly", "Quarterly", "Yearly"];
 
   return (
     <Modal open={open} onClose={onClose}>
-  <Box
-    sx={{
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      width: "95%",
-      maxWidth: 900,
-      bgcolor: "background.paper",
-      borderRadius: 3,
-      p: 4,
-      pt: 7, // add padding top to avoid overlap with close icon
-      boxShadow: 24,
-    }}
-  >
-    {/* Close Icon */}
-    <IconButton
-      onClick={onClose}
-      sx={{
-        position: "absolute",
-        top: 16,
-        right: 16,
-        color: "grey.600",
-        "&:hover": { color: "grey.800" },
-      }}
-    >
-      <CloseIcon />
-    </IconButton>
+      <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: "95%",
+          maxWidth: 900,
+          bgcolor: "#fff",
+          borderRadius: 3,
+          p: 4,
+          pt: 7,
+          boxShadow: 24,
+        }}
+      >
+        <IconButton
+          onClick={onClose}
+          sx={{
+            position: "absolute",
+            top: 16,
+            right: 16,
+            color: "grey.600",
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
 
-        
-      <Stack direction="row" justifyContent="space-between" alignItems="center" mb={4}>
-  {/* Left section: Avatar + Info */}
-  <Stack direction="row" spacing={3} alignItems="center">
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+          mb={3}
+        >
+          <Stack direction="row" spacing={2} alignItems="center">
+            <Avatar sx={{ width: 72, height: 72, fontSize: 28 }}>
+              {student
+                ? student.first_name[0] + (student.last_name?.[0] ?? "")
+                : "?"}
+            </Avatar>
+            <Box>
+              <Typography variant="h5" fontWeight={700}>
+                {formData
+                  ? `${formData.first_name} ${formData.middle_name ?? ""} ${
+                      formData.last_name
+                    }`
+                  : "No data"}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Student Profile
+              </Typography>
+            </Box>
+          </Stack>
 
-    
-    <Avatar sx={{ width: 82, height: 82 }}>
-      {student
-        ? student.first_name[0] + (student.last_name?.[0] ?? "")
-        : "?"}
-    </Avatar>
-    <div>
-      <Typography variant="h5" fontWeight={700} lineHeight={1.2}>
-        {formData
-          ? `${formData.first_name} ${formData.middle_name ?? ""} ${formData.last_name}`
-          : "No data"}
-      </Typography>
-      <Typography variant="body2" color="text.secondary">
-        Profile details
-      </Typography>
-    </div>
-  </Stack>
+          <Tooltip title={editable ? "Save" : "Edit"}>
+            <IconButton
+              onClick={handleToggleEdit}
+              sx={{
+                bgcolor: editable ? "#3c3d37" : "grey.200",
+                color: editable ? "#fff" : "#3c3d37",
+                "&:hover": {
+                  bgcolor: editable ? "#2f2f2f" : "grey.300",
+                },
+              }}
+            >
+              {editable ? <SaveIcon /> : <EditIcon />}
+            </IconButton>
+          </Tooltip>
+        </Stack>
 
-  {/* Right section: Edit/Save Button */}
-  <IconButton onClick={handleToggleEdit}>
-    {editable ? <SaveIcon /> : <EditIcon />}
-  </IconButton>
-</Stack>
-
+        <Divider sx={{ mb: 3 }} />
 
         {formData ? (
           <Box
-            sx={{
-              display: "grid",
-              gap: 2,
-              gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)" },
-            }}
+            display="grid"
+            gridTemplateColumns={{ xs: "1fr", sm: "repeat(2, 1fr)" }}
+            gap={2}
           >
             <FieldRow
               label="First Name"
@@ -171,8 +179,6 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
               select
               options={subscriptionOptions}
             />
-
-          
             <FieldRow
               label="Due Date"
               type="date"
@@ -182,7 +188,9 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
             />
           </Box>
         ) : (
-          <Typography>No student data available.</Typography>
+          <Typography color="text.secondary">
+            No student data available.
+          </Typography>
         )}
 
         {formData?.due_date && (
@@ -190,24 +198,23 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
             sx={{
               mt: 4,
               p: 2,
-              borderRadius: 2,
-              bgcolor: "primary.light",
+              borderRadius: 1,
+              bgcolor: "#E3F2FD",
               display: "flex",
               gap: 1.5,
               alignItems: "flex-start",
             }}
           >
-            <InfoOutlined sx={{ mt: "2px" }} fontSize="small" />
-            <Typography variant="body2" color="primary.dark">
-              <strong>Note:</strong> Subscription is due on&nbsp;
+            <InfoOutlined
+              sx={{ mt: "2px", color: "primary.main" }}
+              fontSize="small"
+            />
+            <Typography variant="body2" color="text.primary">
+              <strong>Note:</strong> Subscription is due on{" "}
               {new Date(formData.due_date).toLocaleDateString()}.
             </Typography>
           </Box>
         )}
-
-      
-        
-      
       </Box>
     </Modal>
   );
@@ -224,7 +231,16 @@ type FieldProps = {
   options?: string[];
 };
 
-const FieldRow: React.FC<FieldProps> = ({ label, value, onChange, editable, sx, type = "text", select = false, options = [] }) => (
+const FieldRow: React.FC<FieldProps> = ({
+  label,
+  value,
+  onChange,
+  editable,
+  sx,
+  type = "text",
+  select = false,
+  options = [],
+}) => (
   <TextField
     label={label}
     value={value}
@@ -233,7 +249,7 @@ const FieldRow: React.FC<FieldProps> = ({ label, value, onChange, editable, sx, 
     fullWidth
     disabled={!editable}
     onChange={(e) => onChange?.(e.target.value)}
-    sx={sx}
+    sx={{ ...sx, backgroundColor: editable ? "#fafafa" : "#f9f9f9" }}
     type={type}
     select={select}
   >

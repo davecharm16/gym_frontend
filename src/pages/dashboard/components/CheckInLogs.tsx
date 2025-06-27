@@ -1,11 +1,11 @@
 import { Avatar, Box, Typography, Skeleton } from "@mui/material";
-import { useEffect } from "react";
+import { useEffect, useState } from "react"; 
 import { useAttendanceStore } from "../../../store/student_attendance/studentAttendanceStore";
 import type { StudentAttendance } from "../../../types/student_attendance";
 
 export default function CheckInLogs() {
   const { fetchAttendances, attendances, loading } = useAttendanceStore();
-
+  const [delayedLoading, setDelayedLoading] = useState(true);
   const checkIns = attendances.slice(0, 12).map((item: StudentAttendance) => {
     const dateObj = new Date(item.checkinTime);
 
@@ -31,6 +31,11 @@ export default function CheckInLogs() {
     fetchAttendances();
   }, [fetchAttendances]);
 
+
+    useEffect(() => {
+    const timer = setTimeout(() => setDelayedLoading(false), 2000); // ✅
+    return () => clearTimeout(timer);
+  }, []);
   return (
     <div className="w-full">
       <Typography variant="h6" fontWeight={700} mb={2}>
@@ -38,7 +43,7 @@ export default function CheckInLogs() {
       </Typography>
 
       <div className="flex flex-col gap-2 border border-gray-300 rounded-md p-3 bg-white">
-        {loading
+         {(loading || delayedLoading)
           ? Array.from({ length: 12 }).map((_, idx) => (
               <Box
                 key={idx}

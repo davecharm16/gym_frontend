@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   Box,
@@ -7,14 +7,17 @@ import {
   Button,
   MenuItem,
   Stack,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { registerStudentSchema,  } from "../../../utils/schema/registerStudentSchema";
+import { registerStudentSchema } from "../../../utils/schema/registerStudentSchema";
 import type { RegisterStudentFormSchema } from "../../../utils/schema/registerStudentSchema";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useStudentStore } from "../../../store/student/studentStore";
 import { useSubscriptionStore } from "../../../store/subscriptions/subscriptionsStore";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 export type RegisterModalProps = {
   open: boolean;
@@ -24,12 +27,12 @@ export type RegisterModalProps = {
 const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
   const registerStudent = useStudentStore((state) => state.registerStudent);
   const subscriptions = useSubscriptionStore((state) => state.subscriptions);
-
+  const [showPassword, setShowPassword] = useState(false);
   const {
     register,
     handleSubmit,
     setValue,
-    formState: { errors, },
+    formState: { errors },
   } = useForm<RegisterStudentFormSchema>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: yupResolver(registerStudentSchema as any),
@@ -50,7 +53,6 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
       useSubscriptionStore.getState().getSubscriptionTypes();
     }
   }, [open]);
-
 
   useEffect(() => {
     console.log("Available subscriptions:", subscriptions);
@@ -83,6 +85,10 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
               {...register("last_name")}
               error={!!errors.last_name}
               helperText={errors.last_name?.message}
+              sx={{
+                "& .MuiInputBase-input, & .MuiFormHelperText-root, & .MuiInputLabel-root":
+                  { fontSize: 12 },
+              }}
             />
             <TextField
               fullWidth
@@ -90,6 +96,10 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
               {...register("first_name")}
               error={!!errors.first_name}
               helperText={errors.first_name?.message}
+              sx={{
+                "& .MuiInputBase-input, & .MuiFormHelperText-root, & .MuiInputLabel-root":
+                  { fontSize: 12 },
+              }}
             />
             <TextField
               fullWidth
@@ -97,6 +107,10 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
               {...register("middle_name")}
               error={!!errors.middle_name}
               helperText={errors.middle_name?.message}
+              sx={{
+                "& .MuiInputBase-input, & .MuiFormHelperText-root, & .MuiInputLabel-root":
+                  { fontSize: 12 },
+              }}
             />
             <TextField
               select
@@ -105,11 +119,10 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
               {...register("sex")}
               error={!!errors.sex}
               helperText={errors.sex?.message}
-              onChange={(e) => {
-                // Ensure the value is set correctly
-                const value = e.target.value; 
-                console.log("Selected", value);
-                setValue('sex', value)
+              onChange={(e) => setValue("sex", e.target.value)}
+              sx={{
+                "& .MuiInputBase-input, & .MuiFormHelperText-root, & .MuiInputLabel-root":
+                  { fontSize: 12 },
               }}
             >
               <MenuItem value="male">Male</MenuItem>
@@ -124,6 +137,10 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
               {...register("address")}
               error={!!errors.address}
               helperText={errors.address?.message}
+              sx={{
+                "& .MuiInputBase-input, & .MuiFormHelperText-root, & .MuiInputLabel-root":
+                  { fontSize: 12 },
+              }}
             />
             <TextField
               fullWidth
@@ -133,6 +150,10 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
               {...register("birthdate")}
               error={!!errors.birthdate}
               helperText={errors.birthdate?.message}
+              sx={{
+                "& .MuiInputBase-input, & .MuiFormHelperText-root, & .MuiInputLabel-root":
+                  { fontSize: 12 },
+              }}
             />
             <TextField
               fullWidth
@@ -142,60 +163,86 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
               {...register("enrollment_date")}
               error={!!errors.enrollment_date}
               helperText={errors.enrollment_date?.message}
+              sx={{
+                "& .MuiInputBase-input, & .MuiFormHelperText-root, & .MuiInputLabel-root":
+                  { fontSize: 12 },
+              }}
             />
           </Stack>
 
           <Stack direction="row" spacing={2} mb={2}>
-          <TextField
-            select
-            fullWidth
-            label="Subscription Type"
-            {...register("subscription_type_id")}
-            error={!!errors.subscription_type_id}
-            helperText={errors.subscription_type_id?.message}
-            onChange={(e) => {
-              const value = e.target.value;
-              console.log("Selected Subscription ID:", value);
-              setValue("subscription_type_id", value);
-            }}
-          >
-            {subscriptions.map((sub) => (
-              <MenuItem key={sub.id} value={sub.id}>
-                {sub.name} - ₱{sub.amount ?? "N/A"}
-              </MenuItem>
-            ))}
-          </TextField>
+            <TextField
+              select
+              fullWidth
+              label="Subscription Type"
+              {...register("subscription_type_id")}
+              error={!!errors.subscription_type_id}
+              helperText={errors.subscription_type_id?.message}
+              onChange={(e) => setValue("subscription_type_id", e.target.value)}
+              sx={{
+                "& .MuiInputBase-input, & .MuiFormHelperText-root, & .MuiInputLabel-root":
+                  { fontSize: 12 },
+              }}
+            >
+              {subscriptions.map((sub) => (
+                <MenuItem key={sub.id} value={sub.id}>
+                  {sub.name} - ₱{sub.amount ?? "N/A"}
+                </MenuItem>
+              ))}
+            </TextField>
             <TextField
               fullWidth
               label="Email"
               {...register("email")}
               error={!!errors.email}
               helperText={errors.email?.message}
+              sx={{
+                "& .MuiInputBase-input, & .MuiFormHelperText-root, & .MuiInputLabel-root":
+                  { fontSize: 12 },
+              }}
             />
             <TextField
               fullWidth
               label="Password"
-              type="password"
+              placeholder="Enter password"
+              type={showPassword ? "text" : "password"}
               InputLabelProps={{ shrink: true }}
               {...register("password")}
               error={!!errors.password}
               helperText={errors.password?.message}
+              sx={{
+                "& .MuiInputBase-input, & .MuiFormHelperText-root, & .MuiInputLabel-root":
+                  {
+                    fontSize: 12,
+                  },
+              }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
           </Stack>
 
           <Box
             sx={{
-              border: "3px dashed #ccc",
+              border: "1px solid #ccc",
               padding: 2,
               textAlign: "center",
-              borderRadius: 2,
+              borderRadius: 1,
               mb: 3,
             }}
           >
             <input
               type="file"
               accept="image/*"
-              // {...register("avatar")}
               style={{ display: "none" }}
               id="upload-avatar"
             />
