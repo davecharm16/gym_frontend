@@ -14,15 +14,11 @@ import { usePaymentReportStore } from "../../store/payments/paymentReports";
 import { useTrainingStore } from "../../store/trainings/trainings";
 import { useSubscriptionStore } from "../../store/subscriptions/subscriptionsStore";
 
-
-
-
 const paymentOptions = [
   { label: "All", value: "all" },
   { label: "Cash", value: "cash" },
   { label: "Online", value: "online" },
 ];
-
 
 const PaymentsLogs = () => {
   const [openPaymentModal, setOpenPaymentModal] = useState(false);
@@ -31,17 +27,16 @@ const PaymentsLogs = () => {
   const [startDate, setStartDate] = useState<Dayjs | null>(dayjs());
   const [endDate, setEndDate] = useState<Dayjs | null>(dayjs());
 
-
   const { averages, fetchPaymentAverages } = usePaymentStore();
   const { report, fetchReport, loading } = usePaymentReportStore();
   const { trainings, fetchTrainings } = useTrainingStore();
   const { subscriptions, getSubscriptionTypes } = useSubscriptionStore();
 
-
   const isToday =
-  startDate && endDate &&
-  dayjs(startDate).isSame(dayjs(), 'day') &&
-  dayjs(endDate).isSame(dayjs(), 'day');
+    startDate &&
+    endDate &&
+    dayjs(startDate).isSame(dayjs(), "day") &&
+    dayjs(endDate).isSame(dayjs(), "day");
 
   useEffect(() => {
     fetchTrainings();
@@ -74,13 +69,11 @@ const PaymentsLogs = () => {
         console.error("Failed to load payment report", err);
       }
     };
-  
+
     loadReport();
   }, [startDate, endDate, paymentCategory, paymentType, fetchReport]);
 
-
   const todayOrRangeTotal = report?.summary?.total_amount_to_pay ?? 0;
-  
 
   useEffect(() => {
     fetchPaymentAverages();
@@ -99,108 +92,114 @@ const PaymentsLogs = () => {
       console.error("Failed to load payment report", err);
     }
   };
-  
+
   useEffect(() => {
     refetchReport();
   }, [startDate, endDate, paymentCategory, paymentType]);
 
   return (
-    <div className="mt-12 flex flex-col px-12 pt-12">
-      <h1 className="text-sm font-extrabold pb-8">Payment Logs</h1>
-      {/* ───── Filters Left / Button Right ───── */}
-      <div className="flex justify-between flex-wrap gap-4 items-center mb-6">
-        <Box display="flex" flexWrap="wrap" gap={2} alignItems="flex-end">
-          <Box>
-            <Typography variant="h6" gutterBottom>
-              Filter by Date Range
-            </Typography>
-            <DateRangePicker
-              startDate={startDate}
-              endDate={endDate}
-              onStartDateChange={setStartDate}
-              onEndDateChange={setEndDate}
-              enforceBidirectionalConstraint
-            />
-          </Box>
+    <Box sx={{ backgroundColor: "#f5f5f5", minHeight: "100vh", py: 4  }}>
+      <div className=" flex flex-col px-6  pt-4 ">
+        <h1 className="text-sm font-extrabold pb-2">Payment Logs</h1>
 
-          <Box minWidth={200}>
-            <Dropdown
-              label="Payment Type"
-              value={paymentType}
-              onChange={setPaymentType}
-              options={paymentOptions}
-            />
-          </Box>
+        {/* Filters & Button Container */}
+        <div className="flex flex-col sm:flex-row justify-between items-end gap-4 w-full mb-4">
+          {/* Filters Group */}
+          <div className="flex flex-col sm:flex-row flex-wrap gap-4 w-full lg:w-auto items-end">
+            <div className="w-full sm:w-auto">
+              <Typography gutterBottom className="mb-3">
+                Filter by Date Range
+              </Typography>
+              <DateRangePicker
+                startDate={startDate}
+                endDate={endDate}
+                onStartDateChange={setStartDate}
+                onEndDateChange={setEndDate}
+                enforceBidirectionalConstraint
+              />
+            </div>
 
-          <Box minWidth={200}>
-            <Dropdown
-              label="Payment Category"
-              value={paymentCategory}
-              onChange={setPaymentCategory}
-              options={paymentCategories}
-            />
-          </Box>
-        </Box>
-        <Button
-          variant="outlined"
-          onClick={() => setOpenPaymentModal(true)}
-          sx={{
-            height: 50,
-            fontSize: "16px",
-            width: 160,
-            textTransform: "none",
-            backgroundColor: "#3C3D37",
-            color: "#fff",
-            "&:hover": {
-              backgroundColor: "#181C14",
-              borderColor: "#1a1a1a",
-            },
-          }}
-        >
-          Make Payment
-        </Button>
-      </div>
-      {/* ───── Stat Cards ───── */}
-      <div className="row gy-4 mb-6">
-        <div className="col-12 col-md-4">
+            <div className="w-full sm:w-[165px]">
+              <Dropdown
+                label="Payment Type"
+                value={paymentType}
+                onChange={setPaymentType}
+                options={paymentOptions}
+              />
+            </div>
+
+            <div className="w-full sm:w-[165px]">
+              <Dropdown
+                label="Payment Category"
+                value={paymentCategory}
+                onChange={setPaymentCategory}
+                options={paymentCategories}
+              />
+            </div>
+          </div>
+
+          {/* Button aligned to bottom */}
+          <div className="w-full sm:w-auto mt-2 sm:mt-0">
+            <Button
+              variant="outlined"
+              onClick={() => setOpenPaymentModal(true)}
+              sx={{
+                fontSize: "12px",
+                height: 40,
+                width: 130,
+                textTransform: "none",
+                backgroundColor: "#3C3D37",
+                color: "#fff",
+                "&:hover": {
+                  backgroundColor: "#181C14",
+                  borderColor: "#1a1a1a",
+                },
+              }}
+            >
+              Make Payment
+            </Button>
+          </div>
+        </div>
+
+        {/* Stat Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
           <StatCard
             icon={<CalendarTodayIcon sx={{ fontSize: 36 }} />}
             label={isToday ? "Today's Payment" : "Date Range Payments"}
             value={`₱${todayOrRangeTotal.toFixed(2)}`}
-            // percentage={dailyGrowth}
           />
-        </div>
-        <div className="col-12 col-md-4">
           <StatCard
             icon={<EventRepeatIcon sx={{ fontSize: 36 }} />}
             label="Average Weekly Payment"
             value={`₱${averages?.averagePerWeek.toLocaleString()}`}
-            // percentage={weeklyGrowth}
           />
-        </div>
-        <div className="col-12 col-md-4">
           <StatCard
             icon={<DateRangeIcon sx={{ fontSize: 36 }} />}
             label="Average Monthly Payment"
             value={`₱${averages?.averagePerMonth.toLocaleString()}`}
-            // percentage={monthlyGrowth}
           />
         </div>
-      </div>
-      {/* ───── Payment Table ───── */}
-      {!loading ? 
-      <PaymentLogsTable data={report?.records ?? []} summary={report?.summary}  /> 
-      :
-      <CircularProgress/>
-      }
 
-      {/* ───── Modal ───── */}
-      <PaymentModal
-        open={openPaymentModal}
-        onClose={() => setOpenPaymentModal(false)}
-        onSuccess={refetchReport} 
-      />
-    </div>
+        {/* Payment Table */}
+        {!loading ? (
+          <PaymentLogsTable
+            data={report?.records ?? []}
+            summary={report?.summary}
+          />
+        ) : (
+          <div className="flex justify-center py-6">
+            <CircularProgress />
+          </div>
+        )}
+
+        {/* Modal */}
+        <PaymentModal
+          open={openPaymentModal}
+          onClose={() => setOpenPaymentModal(false)}
+          onSuccess={refetchReport}
+        />
+      </div>
+    </Box>
   );
 };
 
