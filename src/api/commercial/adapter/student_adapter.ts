@@ -1,6 +1,7 @@
+import type { StudentData } from "../../../pages/profile-management/components/ViewModal";
 import type { Student, StudentCheckIn } from "../../../types/students";
 import type { RegisterStudentFormSchema } from "../../../utils/schema/registerStudentSchema";
-import type { CreateStudentRequestDTO, CreateStudentResponseDTO, StudentCheckInDTO } from "../dto/student_dto";
+import type { CreateStudentRequestDTO, CreateStudentResponseDTO, StudentCheckInDTO, UpdateStudentDTO } from "../dto/student_dto";
 import { format } from "date-fns";
 
 export const toStudentModel = (dto: CreateStudentResponseDTO): Partial<Student> => ({
@@ -54,3 +55,13 @@ export const toStudentCheckInDTO = (
     checkin_time: combined.toISOString(), // ✅ Accurate UTC with Z
   };
 };
+
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const toUpdateStudentDTO = (formData: StudentData): UpdateStudentDTO => ({
+  first_name: formData.first_name,
+  last_name: formData.last_name,
+  middle_name: formData.middle_name ?? null,
+  address: formData.address,
+  birthdate: formData.birthdate,
+});

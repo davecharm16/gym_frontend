@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useStudentStore } from "../../../store/student/studentStore";
+import type { Student } from "../../../types/students";
 
 const getBadgeColor = (type: string) =>
   type.toLowerCase() === "weight training"
@@ -30,7 +31,26 @@ const calculateAge = (birthdate: string): number => {
 };
 
 export default function SessionSubscription() {
-  const { students, loading, getStudents } = useStudentStore();
+  const [students, setStudents] = useState<Student[]>([]);
+  const [loading, setLoading] = useState(false);
+  const { getStudents } = useStudentStore();
+
+  useEffect(() => {
+    
+    const fetchMonthly = async () => {
+      try {
+        setLoading(true);
+        const res = await getStudents("per_session");
+        setStudents((res ?? []).slice(0, 10)); // limit to 10
+      } catch (e) {
+        console.error("Failed to fetch students:", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMonthly();
+  }, [getStudents]);
   const [delayedLoading, setDelayedLoading] = useState(true);
   useEffect(() => {
     getStudents("per_session");

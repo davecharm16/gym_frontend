@@ -59,6 +59,8 @@ export const getPaymentReport = async (
       params: filters,
     });
 
+    console.log(res.data);
+
     return {
       ...res,
       data: adaptPaymentReport(res.data!),

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Modal,
   Box,
@@ -15,15 +15,20 @@ import InfoOutlined from "@mui/icons-material/InfoOutlined";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import CloseIcon from "@mui/icons-material/Close";
+import { useTrainingStore } from "../../../store/trainings/trainings"
+import { useSubscriptionStore } from "../../../store/subscriptions/subscriptionsStore";
+import MultiSelectCheckbox from "../../../components/common/MultiSelect";
+import { useStudentStore } from "../../../store/student/studentStore";
 
 export type StudentData = {
+  id: string;
   first_name: string;
   middle_name?: string;
   last_name: string;
   address: string;
   age: number;
   birthdate: string;
-  training_category: string;
+  training_category: { training: { id: string; title: string; description: string; }; }[];
   subscription_type_name: string;
   due_date: string;
 };
@@ -38,19 +43,29 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
   const [editable, setEditable] = useState(false);
   const [formData, setFormData] = useState<StudentData | null>(student);
 
-  useEffect(() => {
+  const { trainings } = useTrainingStore();
+  const { subscriptions } = useSubscriptionStore();
+  const { updateStudent } = useStudentStore(); // ✅ grab the zustand update fn
+
+  const trainingOptions = trainings.map((t) => t.title);
+  const subscriptionOptions = subscriptions.map((s) => s.name);
+
+  React.useEffect(() => {
+    
     setFormData(student);
-    setEditable(false);
-  }, [student]);
+  
+
+    if (open) {
+      useTrainingStore.getState().fetchTrainings();
+      useSubscriptionStore.getState().getSubscriptionTypes();
+    }
+  }, [student, open]);
 
   const handleChange = (field: keyof StudentData, value: string) => {
     if (formData) setFormData({ ...formData, [field]: value });
   };
 
   const handleToggleEdit = () => setEditable((prev) => !prev);
-
-  const trainingOptions = ["Basic", "Intermediate", "Advanced"];
-  const subscriptionOptions = ["Monthly", "Quarterly", "Yearly"];
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -163,13 +178,26 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
               editable={editable}
               sx={{ gridColumn: { sm: "span 2" } }}
             />
-            <FieldRow
+            {/* <FieldRow
               label="Training Category"
               value={formData.training_category}
               onChange={(val) => handleChange("training_category", val)}
               editable={editable}
               select
               options={trainingOptions}
+            /> */}
+            <MultiSelectCheckbox
+              options={trainingOptions}
+              value={formData.training_category.map((t) => t.training.title)}
+              onChange={(selectedTitles) => {
+                const matchedTrainings = trainings
+                  .filter((t) => selectedTitles.includes(t.title))
+                  .map((t) => ({ training: t }));
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                handleChange("training_category", matchedTrainings as any);
+              }}
+              placeholder="Select training"
+              disabled={!editable}
             />
             <FieldRow
               label="Subscription Type"

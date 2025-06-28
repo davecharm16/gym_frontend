@@ -52,7 +52,6 @@ export default function ProfileTable() {
   useEffect(() => {
     getStudents();
   }, [getStudents]);
-  
   useEffect(() => {
     const timer = setTimeout(() => {
       setDelayedLoading(false);
@@ -218,18 +217,18 @@ export default function ProfileTable() {
                         <IconButton
                           onClick={() => {
                             setSelectedStudent({
-                              first_name: student.first_name,
-                              middle_name: student.middle_name || "",
-                              last_name: student.last_name,
-                              address: student.address,
-                              birthdate: student.birthdate,
-                              subscription_type_name:
-                                student.subscription_type?.name ?? "",
-                              training_category:
-                                student.enrollments?.[0]?.training?.title ?? "",
+                              id: student.id,
+                              first_name: student.first_name ?? "",
+                              middle_name: student.middle_name ?? "",
+                              last_name: student.last_name ?? "",
+                              address: student.address ?? "",
+                              birthdate: student.birthdate ?? "",
+                              subscription_type_name: student.subscription_type?.name ?? "",
+                              training_category: Array.isArray(student.enrollments) ? student.enrollments : [],
                               due_date: student.paid_until ?? "",
                               age: calculateAge(student.birthdate),
                             });
+                            
                             setOpenViewModal(true);
                           }}
                           sx={{ color: "#3C3D37" }}

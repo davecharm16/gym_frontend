@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { useStudentStore } from "../../../store/student/studentStore";
 import { useEffect, useState } from "react";
+import type { Student } from "../../../types/students";
 
 const getBadgeColor = (category: string) =>
   category === "monthly"
@@ -21,7 +22,27 @@ const getBadgeColor = (category: string) =>
     : "#d32f2f";
 
 export default function MonthlySubscription() {
-  const { students, loading, getStudents } = useStudentStore();
+  const [students, setStudents] = useState<Student[]>([]);
+  const [loading, setLoading] = useState(false);
+  const { getStudents } = useStudentStore();
+
+  
+  useEffect(() => {
+    const fetchMonthly = async () => {
+      try {
+        setLoading(true);
+        const res = await getStudents("monthly");
+        setStudents((res ?? []).slice(0, 10)); // limit to 10
+      } catch (e) {
+        console.error("Failed to fetch students:", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMonthly();
+  }, [getStudents]);
+  
   const [delayedLoading, setDelayedLoading] = useState(true);
   useEffect(() => {
     getStudents("monthly");

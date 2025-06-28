@@ -7,7 +7,8 @@ import type { PaymentResponseDto, PaymentRequestDto, PaymentAverageDTO, PaymentR
 
 export const paymentAdapterDTOtoModel = (
   dto: PaymentResponseDto
-): PaymentModel => ({
+): PaymentModel => (
+  {
   id: dto.id,
   studentId: dto.student_id,
   amount: dto.amount,
