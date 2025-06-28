@@ -10,9 +10,10 @@ import {
   Pagination,
   IconButton,
   Typography,
+  Skeleton,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import type { PaymentRecord, PaymentSummary } from "../../../types/payments";
 import ViewModal, { type TransactionData } from "./ViewModal";
 
@@ -27,6 +28,12 @@ const PaymentLogsTable: React.FC<Props> = ({ data }) => {
   const [page, setPage] = useState(1);
   const [openModal, setOpenModal] = useState(false);
   const [selectedTx, setSelectedTx] = useState<TransactionData | null>(null);
+  const [delayedLoading, setDelayedLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDelayedLoading(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const paginatedRows = useMemo(
     () => data.slice((page - 1) * rowsPerPage, page * rowsPerPage),
@@ -52,7 +59,7 @@ const PaymentLogsTable: React.FC<Props> = ({ data }) => {
     <Box width="100%" border={1} borderColor="#e0e0e0" borderRadius={1} bgcolor="#fafafa">
       <TableContainer component={Paper} elevation={0}>
         <Table>
-          <TableHead sx={{ bgcolor: "#f0f0f0" }}>
+          <TableHead>
             <TableRow>
               {[
                 "Name",
@@ -71,33 +78,43 @@ const PaymentLogsTable: React.FC<Props> = ({ data }) => {
           </TableHead>
 
           <TableBody>
-            {paginatedRows.map((row) => (
-              <TableRow key={row.id} hover>
-                <TableCell>
-                  {`${row.student?.last_name}, ${row.student?.first_name} ${row.student?.middle_name || ""}`}
-                </TableCell>
-                <TableCell>
-                  ₱{Number(row.amount).toLocaleString("en-PH", {
-                    minimumFractionDigits: 2,
-                  })}
-                </TableCell>
-                <TableCell>
-                  ₱{Number(row.amount_to_pay).toLocaleString("en-PH", {
-                    minimumFractionDigits: 2,
-                  })}
-                </TableCell>
-                <TableCell>{row.payment_type}</TableCell>
-                <TableCell>{new Date(row.paid_at).toLocaleString("en-PH")}</TableCell>
-                <TableCell>{row.payment_method}</TableCell>
-                <TableCell>
-                  <IconButton color="primary" size="small" onClick={() => handleOpen(row)}>
-                    <VisibilityIcon />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-
-            {data.length === 0 && (
+            {delayedLoading ? (
+              [...Array(rowsPerPage)].map((_, i) => (
+                <TableRow key={`skeleton-${i}`}>
+                  {Array.from({ length: 7 }).map((_, j) => (
+                    <TableCell key={j}>
+                      <Skeleton variant="text" height={28} />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : paginatedRows.length > 0 ? (
+              paginatedRows.map((row) => (
+                <TableRow key={row.id} hover>
+                  <TableCell>
+                    {`${row.student?.last_name}, ${row.student?.first_name} ${row.student?.middle_name || ""}`}
+                  </TableCell>
+                  <TableCell>
+                    ₱{Number(row.amount).toLocaleString("en-PH", {
+                      minimumFractionDigits: 2,
+                    })}
+                  </TableCell>
+                  <TableCell>
+                    ₱{Number(row.amount_to_pay).toLocaleString("en-PH", {
+                      minimumFractionDigits: 2,
+                    })}
+                  </TableCell>
+                  <TableCell>{row.payment_type}</TableCell>
+                  <TableCell>{new Date(row.paid_at).toLocaleString("en-PH")}</TableCell>
+                  <TableCell>{row.payment_method}</TableCell>
+                  <TableCell>
+                    <IconButton color="primary" size="small" onClick={() => handleOpen(row)}>
+                      <VisibilityIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
               <TableRow>
                 <TableCell colSpan={7} align="center">
                   <Typography variant="body2">No payment logs found.</Typography>
@@ -108,16 +125,18 @@ const PaymentLogsTable: React.FC<Props> = ({ data }) => {
         </Table>
       </TableContainer>
 
-      <Box display="flex" justifyContent="flex-start" px={2} py={2}>
-        <Pagination
-          count={totalPages}
-          page={page}
-          onChange={(_, p) => setPage(p)}
-          color="primary"
-          variant="outlined"
-          shape="rounded"
-        />
-      </Box>
+      {!delayedLoading && (
+        <Box display="flex" justifyContent="flex-start" px={2} py={2}>
+          <Pagination
+            count={totalPages}
+            page={page}
+            onChange={(_, p) => setPage(p)}
+            color="primary"
+            variant="outlined"
+            shape="rounded"
+          />
+        </Box>
+      )}
 
       <ViewModal
         open={openModal}

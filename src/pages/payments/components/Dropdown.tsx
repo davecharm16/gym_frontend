@@ -1,6 +1,6 @@
 import React from "react";
-import { TextField, MenuItem,  } from "@mui/material";
-import type {TextFieldProps} from '@mui/material';
+import { TextField, MenuItem } from "@mui/material";
+import type { TextFieldProps } from "@mui/material";
 
 export type DropdownOption = {
   label: string;
@@ -21,8 +21,8 @@ const Dropdown: React.FC<DropdownProps> = ({
   value,
   onChange,
   options,
-  width = 300,
-  height = 50,
+  width = 165,
+  height = 40,
   ...rest
 }) => {
   return (
@@ -31,23 +31,35 @@ const Dropdown: React.FC<DropdownProps> = ({
       label={label}
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      size="medium"
+      size="small"
       sx={{
         width,
-        height,
-        fontSize: "18px",
+        backgroundColor: "#fff",
         "& .MuiInputBase-root": {
           height,
-          fontSize: "16px",
+          fontSize: "12px",
+          color: "#000",
         },
         "& .MuiInputLabel-root": {
-          fontSize: "16px",
+          fontSize: "12px",
+          color: "#000",
+        },
+        "& .MuiOutlinedInput-root": {
+          "& fieldset": {
+            borderColor: "#ccc",
+          },
+          "&:hover fieldset": {
+            borderColor: "#999",
+          },
+          "&.Mui-focused fieldset": {
+            borderColor: "#666",
+          },
         },
       }}
       {...rest}
     >
       {options.map((option) => (
-        <MenuItem key={option.value} value={option.value}>
+        <MenuItem key={option.value} value={option.value} sx={{ fontSize: 12 }}>
           {option.label}
         </MenuItem>
       ))}
