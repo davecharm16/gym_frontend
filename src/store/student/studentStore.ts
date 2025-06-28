@@ -121,6 +121,7 @@ export const useStudentStore = create<StudentState>((set, get) => ({
 
     try {
       await updateStudent(id, form); // This already maps and transforms internally
+        get().getStudents();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err:any) {
       console.error('Update failed:', err);
