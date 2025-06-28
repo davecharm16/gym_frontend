@@ -26,7 +26,7 @@ const ProfileManagement = () => {
       }}
     >
       <Box className="flex flex-col ">
-        <h1 className="text-sm font-extrabold pb-8">Profile Management</h1>
+        <h2 className="text-sm font-extrabold pb-8">Profile Management</h2>
 
         <Stack
           direction={{ xs: "column", sm: "row" }}
