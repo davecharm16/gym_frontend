@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Modal,
   Box,
@@ -19,6 +19,7 @@ import { useTrainingStore } from "../../../store/trainings/trainings";
 import { useSubscriptionStore } from "../../../store/subscriptions/subscriptionsStore";
 import MultiSelectCheckbox from "../../../components/common/MultiSelect";
 import { useStudentStore } from "../../../store/student/studentStore";
+import { useToastStore } from "../../../store/toastStore";
 
 export type StudentData = {
   id: string;
@@ -28,9 +29,7 @@ export type StudentData = {
   address: string;
   age: number;
   birthdate: string;
-  training_category: {
-    training: { id: string; title: string; description: string };
-  }[];
+  training_category: { training: { id: string; title: string; description: string } }[];
   subscription_type_name: string;
   due_date: string;
 };
@@ -44,61 +43,62 @@ type ViewModalProps = {
 const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
   const [editable, setEditable] = useState(false);
   const [formData, setFormData] = useState<StudentData | null>(student);
+  const { showToast } = useToastStore();    
 
-  const { trainings } = useTrainingStore();
-  const { subscriptions } = useSubscriptionStore();
-  const { updateStudent } = useStudentStore(); // ✅ grab the zustand update fn
+  const { trainings, fetchTrainings } = useTrainingStore();
+  const { subscriptions, getSubscriptionTypes } = useSubscriptionStore();
+  const { updateStudent } = useStudentStore();
 
   const trainingOptions = trainings.map((t) => t.title);
   const subscriptionOptions = subscriptions.map((s) => s.name);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setFormData(student);
-
     if (open) {
-      useTrainingStore.getState().fetchTrainings();
-      useSubscriptionStore.getState().getSubscriptionTypes();
+      fetchTrainings();
+      getSubscriptionTypes();
     }
-  }, [student, open]);
+  }, [student, open, fetchTrainings, getSubscriptionTypes]);
 
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const handleChange = (field: keyof StudentData, value: string) => {
-    if (formData) setFormData({ ...formData, [field]: value });
-  };
-
-  const handleToggleEdit = async () => {
-    if (editable) {
-      const isValid = validateForm();
-      if (!isValid) return;
-
-      try {
-        if (formData) {
-          await updateStudent(formData.id, formData as any); // Cast safely if needed
-          onClose(); // Close modal after update
-        }
-      } catch (err) {
-        console.error("Update failed", err);
-      }
-    }
-    setEditable((prev) => !prev);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleChange = (field: keyof StudentData, value: any) => {
+    setFormData((prev) => (prev ? { ...prev, [field]: value } : prev));
   };
 
   const validateForm = () => {
-    const newErrors: { [key: string]: string } = {};
-
-    if (!formData?.first_name.trim())
-      newErrors.first_name = "First name is required";
-    if (!formData?.last_name.trim())
-      newErrors.last_name = "Last name is required";
-    if (!formData?.birthdate) newErrors.birthdate = "Birthdate is required";
-    if (!formData?.address.trim()) newErrors.address = "Address is required";
-    if (!formData?.subscription_type_name.trim())
+    if (!formData) return false;
+    const newErrors: Record<string, string> = {};
+    if (!formData.first_name.trim()) newErrors.first_name = "First name is required";
+    if (!formData.last_name.trim()) newErrors.last_name = "Last name is required";
+    if (!formData.birthdate) newErrors.birthdate = "Birthdate is required";
+    if (!formData.address.trim()) newErrors.address = "Address is required";
+    if (!formData.subscription_type_name.trim())
       newErrors.subscription_type_name = "Subscription type is required";
-    if (!formData?.due_date) newErrors.due_date = "Due date is required";
-
+    if (!formData.due_date) newErrors.due_date = "Due date is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  const handleToggleEdit = async () => {
+    if (editable && formData) {
+      if (!validateForm()) return;
+      const trainingsPayload = formData.training_category.map((tc) => ({
+        training_id: tc.training.id,
+      }));
+      const {...studentForm } = formData;
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await updateStudent(formData.id, studentForm as any, trainingsPayload);
+        showToast("Student updated successfully", "success"); 
+        onClose();
+      } catch (err) {
+        console.error("Update failed", err);
+        showToast("Failed to update student", "error"); 
+      }
+    }
+    setEditable((prev) => !prev);
   };
 
   return (
@@ -111,7 +111,7 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
           transform: "translate(-50%, -50%)",
           width: "95%",
           maxWidth: 900,
-          bgcolor: "#fff",
+          bgcolor: "background.paper",
           borderRadius: 3,
           p: 4,
           pt: 7,
@@ -120,22 +120,12 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
       >
         <IconButton
           onClick={onClose}
-          sx={{
-            position: "absolute",
-            top: 16,
-            right: 16,
-            color: "grey.600",
-          }}
+          sx={{ position: "absolute", top: 16, right: 16 }}
         >
           <CloseIcon />
         </IconButton>
 
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-          mb={3}
-        >
+        <Stack direction="row" justifyContent="space-between" alignItems="center" mb={3}>
           <Stack direction="row" spacing={2} alignItems="center">
             <Avatar sx={{ width: 72, height: 72, fontSize: 28 }}>
               {student
@@ -145,9 +135,7 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
             <Box>
               <Typography variant="h5" fontWeight={700}>
                 {formData
-                  ? `${formData.first_name} ${formData.middle_name ?? ""} ${
-                      formData.last_name
-                    }`
+                  ? `${formData.first_name} ${formData.middle_name ?? ""} ${formData.last_name}`
                   : "No data"}
               </Typography>
               <Typography variant="body2" color="text.secondary">
@@ -160,11 +148,9 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
             <IconButton
               onClick={handleToggleEdit}
               sx={{
-                bgcolor: editable ? "#3c3d37" : "grey.200",
-                color: editable ? "#fff" : "#3c3d37",
-                "&:hover": {
-                  bgcolor: editable ? "#2f2f2f" : "grey.300",
-                },
+                bgcolor: editable ? "primary.main" : "grey.200",
+                color: editable ? "common.white" : "text.primary",
+                "&:hover": { bgcolor: editable ? "primary.dark" : "grey.300" },
               }}
             >
               {editable ? <SaveIcon /> : <EditIcon />}
@@ -180,115 +166,102 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
             gridTemplateColumns={{ xs: "1fr", sm: "repeat(2, 1fr)" }}
             gap={2}
           >
-            <FieldRow
+            <TextField
               label="First Name"
               value={formData.first_name}
-              onChange={(val) => handleChange("first_name", val)}
-              editable={editable}
+              onChange={(e) => handleChange("first_name", e.target.value)}
+              disabled={!editable}
               error={!!errors.first_name}
               helperText={errors.first_name}
+              size="small"
             />
-
-            <FieldRow
+            <TextField
               label="Middle Name"
-              value={formData.middle_name ?? ""}
-              onChange={(val) => handleChange("middle_name", val)}
-              editable={editable}
-              error={!!errors.middle_name}
-              helperText={errors.middle_name}
+              value={formData.middle_name || ""}
+              onChange={(e) => handleChange("middle_name", e.target.value)}
+              disabled={!editable}
+              size="small"
             />
-            <FieldRow
+            <TextField
               label="Last Name"
               value={formData.last_name}
-              onChange={(val) => handleChange("last_name", val)}
-              editable={editable}
+              onChange={(e) => handleChange("last_name", e.target.value)}
+              disabled={!editable}
               error={!!errors.last_name}
               helperText={errors.last_name}
+              size="small"
             />
-            <FieldRow
-              label="Birthdate"
+            <TextField
               type="date"
+              label="Birthdate"
               value={formData.birthdate}
-              onChange={(val) => handleChange("birthdate", val)}
-              editable={editable}
+              onChange={(e) => handleChange("birthdate", e.target.value)}
+              disabled={!editable}
               error={!!errors.birthdate}
               helperText={errors.birthdate}
+              size="small"
+              InputLabelProps={{ shrink: true }}
             />
-            <FieldRow
+            <TextField
               label="Address"
               value={formData.address}
-              onChange={(val) => handleChange("address", val)}
-              editable={editable}
+              onChange={(e) => handleChange("address", e.target.value)}
+              disabled={!editable}
               error={!!errors.address}
               helperText={errors.address}
+              size="small"
               sx={{ gridColumn: { sm: "span 2" } }}
             />
-            {/* <FieldRow
-              label="Training Category"
-              value={formData.training_category}
-              onChange={(val) => handleChange("training_category", val)}
-              editable={editable}
-              select
-              options={trainingOptions}
-            /> */}
             <MultiSelectCheckbox
               options={trainingOptions}
-              value={formData.training_category.map((t) => t.training.title)}
-              onChange={(selectedTitles) => {
-                const matchedTrainings = trainings
-                  .filter((t) => selectedTitles.includes(t.title))
+              value={formData.training_category.map((tc) => tc.training.title)}
+              onChange={(selected) => {
+                const mapped = trainings
+                  .filter((t) => selected.includes(t.title))
                   .map((t) => ({ training: t }));
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                handleChange("training_category", matchedTrainings as any);
+                handleChange("training_category", mapped as any);
               }}
               placeholder="Select training"
               disabled={!editable}
             />
-            <FieldRow
+            <TextField
+              select
               label="Subscription Type"
               value={formData.subscription_type_name}
-              onChange={(val) => handleChange("subscription_type_name", val)}
-              editable={editable}
-              error={!!errors.subscription_type_name}
-              helperText={errors.subscription_type_name}
-              select
-              options={subscriptionOptions}
-            />
-            <FieldRow
-              label="Due Date"
+              onChange={(e) => handleChange("subscription_type_name", e.target.value)}
+              disabled={!editable}
+              size="small"
+            >
+              {subscriptionOptions.map((opt) => (
+                <MenuItem key={opt} value={opt}>
+                  {opt}
+                </MenuItem>
+              ))}
+            </TextField>
+            <TextField
               type="date"
+              label="Due Date"
               value={formData.due_date}
-              onChange={(val) => handleChange("due_date", val)}
-              editable={editable}
+              onChange={(e) => handleChange("due_date", e.target.value)}
+              disabled={!editable}
               error={!!errors.due_date}
               helperText={errors.due_date}
+              size="small"
+              InputLabelProps={{ shrink: true }}
             />
           </Box>
-        ) : (
-          <Typography color="text.secondary">
-            No student data available.
-          </Typography>
+        ) : ( 
+        <Typography color="text.secondary">No student data available.</Typography>
         )}
 
         {formData?.due_date && (
           <Box
-            sx={{
-              mt: 4,
-              p: 2,
-              borderRadius: 1,
-              bgcolor: "#E3F2FD",
-              display: "flex",
-              gap: 1.5,
-              alignItems: "flex-start",
-            }}
+            sx={{ mt: 4, p: 2, borderRadius: 1, bgcolor: "#E3F2FD", display: "flex", gap: 1.5 }}
           >
-            <InfoOutlined
-              sx={{ mt: "2px", color: "primary.main" }}
-              fontSize="small"
-            />
+            <InfoOutlined sx={{ mt: "2px", color: "primary.main" }} fontSize="small" />
             <Typography variant="body2" color="text.primary">
-              <strong>Note:</strong> Subscription is due on{" "}
-              {new Date(formData.due_date).toLocaleDateString()}.
+              <strong>Note:</strong> Subscription is due on {new Date(formData.due_date).toLocaleDateString()}.
             </Typography>
           </Box>
         )}
@@ -296,53 +269,5 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
     </Modal>
   );
 };
-
-type FieldProps = {
-  label: string;
-  value: string;
-  onChange?: (value: string) => void;
-  editable: boolean;
-  sx?: object;
-  type?: string;
-  select?: boolean;
-  options?: string[];
-  error?: boolean;
-  helperText?: string;
-};
-
-const FieldRow: React.FC<FieldProps> = ({
-  label,
-  value,
-  onChange,
-  editable,
-  sx,
-  type = "text",
-  select = false,
-  options = [],
-  error = false,
-  helperText = "",
-}) => (
-  <TextField
-    label={label}
-    value={value}
-    variant="outlined"
-    size="small"
-    fullWidth
-    disabled={!editable}
-    onChange={(e) => onChange?.(e.target.value)}
-    sx={{ ...sx, backgroundColor: editable ? "#fafafa" : "#f9f9f9" }}
-    type={type}
-    select={select}
-    error={error}
-    helperText={helperText}
-  >
-    {select &&
-      options.map((option) => (
-        <MenuItem key={option} value={option}>
-          {option}
-        </MenuItem>
-      ))}
-  </TextField>
-);
 
 export default ViewModal;

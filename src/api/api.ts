@@ -15,5 +15,5 @@ export const endPoint = {
   paymentAverage: '/payment/average',
   totalRegistered: '/dashboard/total-registered',
   paymentReport: '/payment/all-with-student',
-  enroll: "/api/enroll",
+  enroll: "/enroll",
 };

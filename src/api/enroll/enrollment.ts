@@ -6,6 +6,7 @@ import type { EnrollRequestDTO, EnrollResponseDTO } from "../commercial/dto/enro
 export const enrollStudent = async (payload: EnrollRequestDTO): Promise<EnrollResponseDTO> => {
   try {
     const res = await apiClient.post<EnrollResponseDTO, EnrollRequestDTO>(endPoint.enroll, payload);
+    console.log(res.data);
     return res.data!;
   } catch (error) {
     console.error("Enrollment failed:", error);

@@ -52,6 +52,7 @@ export default function ProfileTable() {
   useEffect(() => {
     getStudents();
   }, [getStudents]);
+  
   useEffect(() => {
     const timer = setTimeout(() => {
       setDelayedLoading(false);

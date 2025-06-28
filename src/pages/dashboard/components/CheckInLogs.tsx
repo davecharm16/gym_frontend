@@ -82,10 +82,11 @@ export default function CheckInLogs() {
               >
                 <Box display="flex" alignItems="center" gap={1.5}>
                   <Avatar
-                    src={entry.avatarUrl}
                     alt={entry.name}
                     sx={{ width: 36, height: 36 }}
-                  />
+                  >
+                    {entry.name[0]}
+                  </Avatar>
                   <Typography variant="body2" fontWeight={500}>
                     {entry.name}
                   </Typography>
