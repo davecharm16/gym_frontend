@@ -1,6 +1,5 @@
-// src/components/common/DateRangePicker.tsx
 import React from 'react';
-import { Stack } from '@mui/material';
+import { Stack, type TextFieldProps } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -25,6 +24,32 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
   labelEnd = 'End Date',
   enforceBidirectionalConstraint = true,
 }) => {
+  const commonTextFieldProps: Partial<TextFieldProps> = {
+    size: 'small',
+    sx: {
+      backgroundColor: '#fff',
+      '& .MuiInputBase-input': {
+        color: '#000',
+        fontSize: 12,
+      },
+      '& .MuiInputLabel-root': {
+        color: '#000',
+        fontSize: 12,
+      },
+      '& .MuiOutlinedInput-root': {
+        '& fieldset': {
+          borderColor: '#ccc',
+        },
+        '&:hover fieldset': {
+          borderColor: '#999',
+        },
+        '&.Mui-focused fieldset': {
+          borderColor: '#666',
+        },
+      },
+    },
+  };
+
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Stack direction="row" spacing={2}>
@@ -39,11 +64,11 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
               endDate &&
               newValue.isAfter(endDate)
             ) {
-              onEndDateChange(newValue); // auto-correct
+              onEndDateChange(newValue);
             }
           }}
           maxDate={enforceBidirectionalConstraint ? endDate ?? undefined : undefined}
-          slotProps={{ textField: { fullWidth: true, size: 'medium' } }}
+          slotProps={{ textField: commonTextFieldProps }}
         />
 
         <DatePicker
@@ -51,7 +76,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
           value={endDate}
           onChange={onEndDateChange}
           minDate={enforceBidirectionalConstraint ? startDate ?? undefined : undefined}
-          slotProps={{ textField: { fullWidth: true, size: 'medium' } }}
+          slotProps={{ textField: commonTextFieldProps }}
         />
       </Stack>
     </LocalizationProvider>

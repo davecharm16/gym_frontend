@@ -21,11 +21,11 @@ const ProfileManagement = () => {
       sx={{
         backgroundColor: "#f5f5f5", // Match dashboard background
         minHeight: "100vh",
-        pt: "80px", // adjust if you have a fixed header
-        px: 4,
+        pt: "60px", // adjust if you have a fixed header
+        px: 3,
       }}
     >
-      <Box className="flex flex-col px-8 pt-4">
+      <Box className="flex flex-col ">
         <h1 className="text-sm font-extrabold pb-8">Profile Management</h1>
 
         <Stack
