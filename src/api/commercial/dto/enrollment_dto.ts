@@ -1,5 +1,5 @@
 export type EnrollRequestDTO = {
-  student_id: string;
+  student: string;
   trainings: string[];
 };
 

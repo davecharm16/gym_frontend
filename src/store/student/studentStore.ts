@@ -5,6 +5,8 @@ import { checkInStudentApi, deleteStudent, getStudents as fetchStudentsAPI, regi
 import type { RegisterStudentFormSchema } from "../../utils/schema/registerStudentSchema";
 import type { ApiResponse } from "../../types/api_response";
 import type { UpdateStudentFormSchema } from "../../utils/schema/updateSchema";
+import type { EnrollRequestDTO, EnrollResponseDTO } from "../../api/commercial/dto/enrollment_dto";
+import { enrollStudent } from "../../api/enroll/enrollment";
 
 interface StudentState {
   students: Student[];
@@ -22,7 +24,8 @@ interface StudentState {
   setSelectedCategory: (category: string) => void;
   deleteStudent: (id: string) => void;
   checkInStudent: (studentCheckInData: StudentCheckIn) => Promise<ApiResponse<null> | null>;
-  updateStudent: (id: string, form: UpdateStudentFormSchema) => Promise<void>;
+  updateStudent: (id: string, form: UpdateStudentFormSchema, trainings: {training_id : string}[]) => Promise<void>;
+  enrollStudent: (payload: EnrollRequestDTO) => Promise<EnrollResponseDTO | null>;
 }
 
 export const useStudentStore = create<StudentState>((set, get) => ({
@@ -116,16 +119,41 @@ export const useStudentStore = create<StudentState>((set, get) => ({
     }
   },
 
-  updateStudent: async (id, form) => {
+  updateStudent: async (id, form, trainings) => {
     set({ loading: true, error: null });
 
     try {
-      await updateStudent(id, form); // This already maps and transforms internally
-        get().getStudents();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await updateStudent(id, form as any);
+
+      // 2) update enrollments
+      await enrollStudent({
+        student: id,
+        trainings: trainings.map((t) => t.training_id),
+      });
+
+      // 3) now *await* the re-fetch before we exit
+      await get().getStudents();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err:any) {
       console.error('Update failed:', err);
       set({ error: err?.message || 'Failed to update student' });
+    } finally {
+      set({ loading: false });
+    }
+  },
+  enrollStudent: async (payload) => {
+    set({ loading: true, error: null });
+    try {
+      const res = await enrollStudent(payload);
+      // optionally, you can refresh students or fetch enrollments here:
+      // await get().getStudents();
+      return res;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      console.error("Enrollment failed:", err);
+      set({ error: err.message || "Enrollment failed" });
+      return null;
     } finally {
       set({ loading: false });
     }
