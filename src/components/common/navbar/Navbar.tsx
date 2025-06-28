@@ -2,16 +2,17 @@ import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import { useAuthStore } from "../../../store/auth/authStore";
 
 interface NavbarProps {
   onMenuClick: () => void;
 }
 
 export default function Navbar({ onMenuClick }: NavbarProps) {
+  const { user } = useAuthStore();
   return (
     <AppBar
       position="fixed"
@@ -36,10 +37,12 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
         </Typography>
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
           <IconButton color="inherit">
-            <NotificationsIcon />
+            {/* <NotificationsIcon /> */}
           </IconButton>
           <IconButton color="inherit">
-            <Avatar alt="User Profile" src="/static/images/avatar/1.jpg" />
+            <Avatar alt="User Profile">
+              {user?.email[0].toUpperCase()}
+            </Avatar>
           </IconButton>
         </Box>
       </Toolbar>
