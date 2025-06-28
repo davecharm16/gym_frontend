@@ -3,7 +3,6 @@ import type { ApiResponse } from "../../types/api_response";
 import type { StudentAttendance } from "../../types/student_attendance";
 import type { Student, StudentCheckIn } from "../../types/students";
 import type { RegisterStudentFormSchema } from "../../utils/schema/registerStudentSchema";
-import type { UpdateStudentFormSchema } from "../../utils/schema/updateSchema";
 import { endPoint } from "../api";
 import { apiClient } from "../apiClient";
 import { toStudentAttendanceModel } from "../commercial/adapter/attendance_adapter";
