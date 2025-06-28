@@ -100,7 +100,7 @@ const PaymentsLogs = () => {
   return (
     <Box sx={{ backgroundColor: "#f5f5f5", minHeight: "100vh", py: 4  }}>
       <div className=" flex flex-col px-6  pt-4 ">
-        <h1 className="text-sm font-extrabold pb-2">Payment Logs</h1>
+        <h2 className="text-sm font-extrabold pb-2">Payment Logs</h2>
 
         {/* Filters & Button Container */}
         <div className="flex flex-col sm:flex-row justify-between items-end gap-4 w-full mb-4">

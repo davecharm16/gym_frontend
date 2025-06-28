@@ -15,7 +15,7 @@ import InfoOutlined from "@mui/icons-material/InfoOutlined";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import CloseIcon from "@mui/icons-material/Close";
-import { useTrainingStore } from "../../../store/trainings/trainings"
+import { useTrainingStore } from "../../../store/trainings/trainings";
 import { useSubscriptionStore } from "../../../store/subscriptions/subscriptionsStore";
 import MultiSelectCheckbox from "../../../components/common/MultiSelect";
 import { useStudentStore } from "../../../store/student/studentStore";
@@ -28,7 +28,9 @@ export type StudentData = {
   address: string;
   age: number;
   birthdate: string;
-  training_category: { training: { id: string; title: string; description: string; }; }[];
+  training_category: {
+    training: { id: string; title: string; description: string };
+  }[];
   subscription_type_name: string;
   due_date: string;
 };
@@ -51,9 +53,7 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
   const subscriptionOptions = subscriptions.map((s) => s.name);
 
   React.useEffect(() => {
-    
     setFormData(student);
-  
 
     if (open) {
       useTrainingStore.getState().fetchTrainings();
@@ -61,11 +61,45 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
     }
   }, [student, open]);
 
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
   const handleChange = (field: keyof StudentData, value: string) => {
     if (formData) setFormData({ ...formData, [field]: value });
   };
 
-  const handleToggleEdit = () => setEditable((prev) => !prev);
+  const handleToggleEdit = async () => {
+    if (editable) {
+      const isValid = validateForm();
+      if (!isValid) return;
+
+      try {
+        if (formData) {
+          await updateStudent(formData.id, formData as any); // Cast safely if needed
+          onClose(); // Close modal after update
+        }
+      } catch (err) {
+        console.error("Update failed", err);
+      }
+    }
+    setEditable((prev) => !prev);
+  };
+
+  const validateForm = () => {
+    const newErrors: { [key: string]: string } = {};
+
+    if (!formData?.first_name.trim())
+      newErrors.first_name = "First name is required";
+    if (!formData?.last_name.trim())
+      newErrors.last_name = "Last name is required";
+    if (!formData?.birthdate) newErrors.birthdate = "Birthdate is required";
+    if (!formData?.address.trim()) newErrors.address = "Address is required";
+    if (!formData?.subscription_type_name.trim())
+      newErrors.subscription_type_name = "Subscription type is required";
+    if (!formData?.due_date) newErrors.due_date = "Due date is required";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -151,18 +185,25 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
               value={formData.first_name}
               onChange={(val) => handleChange("first_name", val)}
               editable={editable}
+              error={!!errors.first_name}
+              helperText={errors.first_name}
             />
+
             <FieldRow
               label="Middle Name"
               value={formData.middle_name ?? ""}
               onChange={(val) => handleChange("middle_name", val)}
               editable={editable}
+              error={!!errors.middle_name}
+              helperText={errors.middle_name}
             />
             <FieldRow
               label="Last Name"
               value={formData.last_name}
               onChange={(val) => handleChange("last_name", val)}
               editable={editable}
+              error={!!errors.last_name}
+              helperText={errors.last_name}
             />
             <FieldRow
               label="Birthdate"
@@ -170,12 +211,16 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
               value={formData.birthdate}
               onChange={(val) => handleChange("birthdate", val)}
               editable={editable}
+              error={!!errors.birthdate}
+              helperText={errors.birthdate}
             />
             <FieldRow
               label="Address"
               value={formData.address}
               onChange={(val) => handleChange("address", val)}
               editable={editable}
+              error={!!errors.address}
+              helperText={errors.address}
               sx={{ gridColumn: { sm: "span 2" } }}
             />
             {/* <FieldRow
@@ -204,6 +249,8 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
               value={formData.subscription_type_name}
               onChange={(val) => handleChange("subscription_type_name", val)}
               editable={editable}
+              error={!!errors.subscription_type_name}
+              helperText={errors.subscription_type_name}
               select
               options={subscriptionOptions}
             />
@@ -213,6 +260,8 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
               value={formData.due_date}
               onChange={(val) => handleChange("due_date", val)}
               editable={editable}
+              error={!!errors.due_date}
+              helperText={errors.due_date}
             />
           </Box>
         ) : (
@@ -257,6 +306,8 @@ type FieldProps = {
   type?: string;
   select?: boolean;
   options?: string[];
+  error?: boolean;
+  helperText?: string;
 };
 
 const FieldRow: React.FC<FieldProps> = ({
@@ -268,6 +319,8 @@ const FieldRow: React.FC<FieldProps> = ({
   type = "text",
   select = false,
   options = [],
+  error = false,
+  helperText = "",
 }) => (
   <TextField
     label={label}
@@ -280,6 +333,8 @@ const FieldRow: React.FC<FieldProps> = ({
     sx={{ ...sx, backgroundColor: editable ? "#fafafa" : "#f9f9f9" }}
     type={type}
     select={select}
+    error={error}
+    helperText={helperText}
   >
     {select &&
       options.map((option) => (
