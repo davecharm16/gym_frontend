@@ -55,7 +55,7 @@ export default function Dashboard() {
   return (
     <div
       className="flex flex-col min-h-screen pt-20"
-      style={{ backgroundColor: "#f8f8f8" }}
+      style={{ backgroundColor: "#fff" }}
     >
       {/* ───── Header row ───── */}
       <div className="flex flex-row w-full justify-between items-center px-4 mx-auto">
