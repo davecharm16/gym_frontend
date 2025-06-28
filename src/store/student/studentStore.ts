@@ -123,21 +123,21 @@ export const useStudentStore = create<StudentState>((set, get) => ({
     set({ loading: true, error: null });
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await updateStudent(id, form as any);
-
-      // 2) update enrollments
-      await enrollStudent({
-        student: id,
-        trainings: trainings.map((t) => t.training_id),
-      });
-
-      // 3) now *await* the re-fetch before we exit
-      await get().getStudents();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await updateStudent(id, form as any);
+   
+    // 2) update enrollments
+    await enrollStudent({
+      student: id,
+      trainings: trainings.map((t) => t.training_id),
+    });
+    // 3) refresh list
+    await get().getStudents();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err:any) {
       console.error('Update failed:', err);
       set({ error: err?.message || 'Failed to update student' });
+      throw(err);
     } finally {
       set({ loading: false });
     }
