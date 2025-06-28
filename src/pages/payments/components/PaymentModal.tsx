@@ -64,6 +64,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ open, onClose, onSuccess}) 
       fetchTrainings();
       getSubscriptionTypes();
       getStudents();
+      const today = new Date().toISOString().split('T')[0];
+      setValue("paymentDate", today);
     } else {
       reset();
     }
@@ -168,6 +170,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ open, onClose, onSuccess}) 
                     onChange={field.onChange}
                     options={combinedOptions}
                     width="100%"
+                    height={'100%'}
                   />
                 )}
               />
@@ -212,6 +215,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ open, onClose, onSuccess}) 
                     type="date"
                     InputLabelProps={{ shrink: true }}
                     fullWidth
+                    disabled
                     error={!!errors.paymentDate}
                     helperText={errors.paymentDate?.message}
                   />
@@ -246,6 +250,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ open, onClose, onSuccess}) 
                     label="Change"
                     fullWidth
                     InputProps={{ readOnly: true }}
+                    disabled
                   />
                 )}
               />
