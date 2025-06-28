@@ -95,6 +95,14 @@ export const updateStudent = async (
   id: string,
   form: StudentData
 ): Promise<void> => {
-  const dto: UpdateStudentDTO = toUpdateStudentDTO(form);
-  await apiClient.put(`${endPoint.students}/${id}`, dto);
+  try {
+    const dto: UpdateStudentDTO = toUpdateStudentDTO(form);
+    await apiClient.put(`${endPoint.students}/${id}`, dto); // or whatever you need to return
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    console.error("Failed to update student:", error);
+    // re-throw if you want the caller’s try/catch to catch it,
+    // or handle it here (e.g. set an error state / show toast).
+    throw error;
+  }
 };
