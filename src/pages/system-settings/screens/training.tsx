@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Typography,
   Stack,
@@ -14,33 +14,28 @@ import {
   IconButton,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-
-type TrainingRow = {
-  name: string;
-  fee: number;
-  dateAdded: string;
-};
+import { useTrainingStore } from "../../../store/trainings/trainings";
 
 
 export default function Training() {
   const [name, setName] = useState("");
   const [fee, setFee] = useState("");
-  const [rows, setRows] = useState<TrainingRow[]>([]);
+
+  const { trainings, fetchTrainings } = useTrainingStore();
+
+  useEffect(() => {
+    fetchTrainings();
+  }, [fetchTrainings]);
 
   const handleSave = () => {
-    if (!name || !fee) return;
-    const dateAdded = new Date().toLocaleDateString("en-PH", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-    setRows([...rows, { name, fee: parseFloat(fee), dateAdded }]);
-    setName("");
-    setFee("");
+    // Future implementation: createTraining API call
+    console.log("Saving:", { name, fee });
   };
 
-  const handleDelete = (idx: number) =>
-    setRows(rows.filter((_, i) => i !== idx));
+  const handleDelete = (idx: number) => {
+    // Future implementation: deleteTraining API call
+    console.log("Deleting index:", idx);
+  };
 
   return (
     <div className="mx-auto p-4">
@@ -56,10 +51,6 @@ export default function Training() {
           onChange={(e) => setName(e.target.value)}
           fullWidth
           size="medium"
-          sx={{
-            "& .MuiInputBase-root": { height: 50, fontSize: "16px" },
-            "& .MuiInputLabel-root": { fontSize: "16px" },
-          }}
         />
         <TextField
           label="Fee"
@@ -68,10 +59,6 @@ export default function Training() {
           onChange={(e) => setFee(e.target.value)}
           fullWidth
           size="medium"
-          sx={{
-            "& .MuiInputBase-root": { height: 50, fontSize: "16px" },
-            "& .MuiInputLabel-root": { fontSize: "16px" },
-          }}
         />
         <Button
           variant="outlined"
@@ -107,13 +94,14 @@ export default function Training() {
               </TableCell>
             </TableRow>
           </TableHead>
+
           <TableBody>
-            {rows.length ? (
-              rows.map((r, idx) => (
+            {trainings?.length ? (
+              trainings.map((r, idx) => (
                 <TableRow key={idx} hover>
-                  <TableCell>{r.name}</TableCell>
-                  <TableCell>₱{r.fee.toFixed(2)}</TableCell>
-                  <TableCell>{r.dateAdded}</TableCell>
+                  <TableCell>{r.title}</TableCell>
+                  <TableCell>₱{r.baseFee.toFixed(2)}</TableCell>
+                  <TableCell>{r.createdAt.format("MMM DD, YYYY")}</TableCell>
                   <TableCell align="center">
                     <IconButton
                       size="small"

@@ -98,7 +98,7 @@ const PaymentsLogs = () => {
   }, [startDate, endDate, paymentCategory, paymentType]);
 
   return (
-    <Box sx={{ backgroundColor: "#f5f5f5", minHeight: "100vh", py: 4  }}>
+    <Box sx={{ backgroundColor: "#fff", minHeight: "100vh", py: 4  }}>
       <div className=" flex flex-col px-6  pt-4 ">
         <h2 className="text-sm font-extrabold pb-2">Payment Logs</h2>
 

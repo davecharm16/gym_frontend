@@ -180,7 +180,7 @@ export default function ProfileTable() {
                           sx={{
                             color: isMonthly ? "#FFB22C" : "#379777",
                             borderColor: isMonthly ? "#FFB22C" : "#379777",
-                            fontWeight: 600,
+                            fontWeight: 400,
                             fontSize: "14px",
                             px: 1.5,
                             py: 0.5,

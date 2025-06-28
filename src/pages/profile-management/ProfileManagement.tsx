@@ -19,7 +19,7 @@ const ProfileManagement = () => {
   return (
     <Box
       sx={{
-        backgroundColor: "#f5f5f5", // Match dashboard background
+        backgroundColor: "#fff", // Match dashboard background
         minHeight: "100vh",
         pt: "60px", // adjust if you have a fixed header
         px: 3,

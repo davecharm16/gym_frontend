@@ -126,7 +126,7 @@ export const useStudentStore = create<StudentState>((set, get) => ({
     } catch (err:any) {
       console.error('Update failed:', err);
       set({ error: err?.message || 'Failed to update student' });
-    } finally {
+    } finally { 
       set({ loading: false });
     }
   },
