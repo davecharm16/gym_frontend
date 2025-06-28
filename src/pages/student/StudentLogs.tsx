@@ -12,6 +12,7 @@ import {
   Stack,
   Typography,
   Divider,
+  Grid,
 } from "@mui/material";
 import CheckInModal from "./CheckInModal";
 import { useStudentStore } from "../../store/student/studentStore";
@@ -19,14 +20,6 @@ import { useToastStore } from "../../store/toastStore";
 import { useAuthStore } from "../../store/auth/authStore";
 import { useAttendanceStore } from "../../store/student_attendance/studentAttendanceStore";
 import { useProfileStore } from "../../store/profile/profileStore";
-
-type LogRow = {
-  name: string;
-  email: string;
-  date: string;
-  time: string;
-};
-
 
 export default function StudentLogs() {
   const [query, setQuery] = useState("");
@@ -36,38 +29,40 @@ export default function StudentLogs() {
   const { fetchProfile, profile } = useProfileStore();
   const { showToast } = useToastStore();
   const { user } = useAuthStore();
-  const {fetchAttendances} = useAttendanceStore();
-  const { attendances } = useAttendanceStore();
+  const { fetchAttendances, attendances } = useAttendanceStore();
 
-const rows: LogRow[] = attendances.map((item) => {
-  const dateObj = new Date(item.checkinTime);
-  return {
-    name: `${item.student.firstName} ${item.student.lastName}`,
-    email: item.student.email,
-    date: dateObj.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    }),
-    time: dateObj.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    }),
-  };
-});
+  const rows = useMemo(
+    () =>
+      attendances.map((item) => {
+        const dateObj = new Date(item.checkinTime);
+        return {
+          name: `${item.student.firstName} ${item.student.lastName}`,
+          email: item.student.email,
+          date: dateObj.toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          }),
+          time: dateObj.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          }),
+        };
+      }),
+    [attendances]
+  );
 
-useEffect(() => {
-  fetchProfile();
-}, [fetchProfile]);
-
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
 
   useEffect(() => {
     if (user?.id && profile) {
       fetchAttendances(profile.id);
     }
   }, [user?.id, fetchAttendances, profile]);
-  
+
   const filteredRows = useMemo(
     () =>
       rows.filter(
@@ -92,8 +87,7 @@ useEffect(() => {
 
       if (res?.success === true) {
         showToast("Check-in successful!", "success");
-        await fetchAttendances(profile?.id ?? '');
-
+        await fetchAttendances(profile?.id ?? "");
       } else {
         showToast("Check-in failed. " + res?.message, "error");
       }
@@ -110,23 +104,26 @@ useEffect(() => {
       sx={{
         display: "flex",
         justifyContent: "center",
-        alignItems: "center",
+        marginTop:"15vh",
         minHeight: "100vh",
         px: 2,
       }}
     >
-      <Box
+      <Grid
+       
         sx={{
           width: "100%",
           maxWidth: 1300,
           p: 4,
-          backgroundColor: "#fff",
+         
         }}
       >
         <Typography variant="h4" fontWeight="bold" gutterBottom>
           Check-In Logs
         </Typography>
-        <Typography mb={3}>Manage student check-in records</Typography>
+        <Typography variant="body1" color="text.secondary" mb={3}>
+          Manage check-in records
+        </Typography>
 
         <Divider sx={{ mb: 3 }} />
 
@@ -154,35 +151,31 @@ useEffect(() => {
               textTransform: "none",
               fontWeight: "bold",
               px: 5,
-              "&:hover": { backgroundColor: "#333a3a" },
+              borderRadius: 0,"&:hover": { backgroundColor: "#333a3a" },
             }}
           >
             Check In
           </Button>
         </Stack>
 
-        <TableContainer sx={{ minHeight: 400 }}>
+        <TableContainer sx={{  border: "1px solid #e0e0e0" }}>
           <Table>
-            <TableHead sx={{ backgroundColor: "#f4f4f4" }}>
+            <TableHead sx={{ backgroundColor: "#f9f9f9" }}>
               <TableRow>
-                <TableCell sx={{ fontSize: "18px", fontWeight: "bold" }}>
-                  Name
-                </TableCell>
-                <TableCell sx={{ fontSize: "18px", fontWeight: "bold" }}>
-                  Email
-                </TableCell>
-                <TableCell sx={{ fontSize: "18px", fontWeight: "bold" }}>
-                  Date
-                </TableCell>
-                <TableCell sx={{ fontSize: "18px", fontWeight: "bold" }}>
-                  Time
-                </TableCell>
+                {["Name", "Email", "Date", "Time"].map((label) => (
+                  <TableCell
+                    key={label}
+                    sx={{ fontSize: "15px", fontWeight: "bold", color: "#424242" }}
+                  >
+                    {label}
+                  </TableCell>
+                ))}
               </TableRow>
             </TableHead>
             <TableBody>
               {filteredRows.length > 0 ? (
                 filteredRows.map((row, idx) => (
-                  <TableRow key={idx}>
+                  <TableRow key={idx} hover>
                     <TableCell>{row.name}</TableCell>
                     <TableCell>{row.email}</TableCell>
                     <TableCell>{row.date}</TableCell>
@@ -199,13 +192,13 @@ useEffect(() => {
             </TableBody>
           </Table>
         </TableContainer>
-      </Box>
+      </Grid>
 
       <CheckInModal
         open={openModal}
         onClose={() => setOpenModal(false)}
         onConfirm={handleConfirmCheckIn}
-        email={user?.email ?? ''}
+        email={user?.email ?? ""}
       />
     </Box>
   );

@@ -5,15 +5,24 @@ import type { AxiosRequestConfig } from "axios";
 import type { ApiResponse } from "../types/api_response";
 import { base_url } from "./api";
 
-const token = localStorage.getItem("token");
-
 const instance = axios.create({
   baseURL: base_url,
   headers: {
-    Authorization: `Bearer ${token}`,
     "Content-Type": "application/json",
   },
 });
+
+// Dynamically attach token before each request
+instance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token && config.headers) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 class ApiClient {
   async get<T>(

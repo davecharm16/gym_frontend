@@ -13,9 +13,7 @@ import { useStatsStore } from "../../store/dashboard/useDashboardStore";
 import { usePaymentReportStore } from "../../store/payments/paymentReports";
 import dayjs from "dayjs";
 
-
 export default function Dashboard() {
- 
   const { user } = useAuthStore();
 
   const [monthlyCount, setMonthlyCount] = useState<number>(0);
@@ -30,16 +28,15 @@ export default function Dashboard() {
       try {
         await fetchReport({
           start_date: dayjs().format("YYYY-MM-DD"),
-          end_date: dayjs()?.format("YYYY-MM-DD"),
+          end_date: dayjs().format("YYYY-MM-DD"),
         });
       } catch (err) {
         console.error("Failed to load payment report", err);
       }
     };
-  
+
     loadReport();
   }, [fetchReport]);
-  
 
   useEffect(() => {
     const loadStats = async () => {
@@ -56,11 +53,16 @@ export default function Dashboard() {
   }, [fetchTotalRegistered]);
 
   return (
-    <div className="flex flex-col min-h-screen pt-20">
+    <div
+      className="flex flex-col min-h-screen pt-20"
+      style={{ backgroundColor: "#f8f8f8" }}
+    >
       {/* ───── Header row ───── */}
       <div className="flex flex-row w-full justify-between items-center px-4 mx-auto">
         <WelcomeBanner name={user?.email ?? ""} />
       </div>
+
+      {/* ───── Stats Row ───── */}
       <div className="w-full px-4 mx-auto mt-2 mb-4">
         <div className="row gy-4">
           <div className="col-6 col-md-4 col-lg-3">
@@ -94,6 +96,7 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* ───── Main Content ───── */}
       <div className="w-full px-4 mx-auto mt-2">
         <div className="row gy-4">
           {/* Left column */}
@@ -114,6 +117,6 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-       </div>
+    </div>
   );
 }

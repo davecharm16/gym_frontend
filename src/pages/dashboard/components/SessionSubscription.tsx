@@ -8,7 +8,7 @@ import {
   TableRow,
   Chip,
   Typography,
-  CircularProgress,
+  Skeleton,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useStudentStore } from "../../../store/student/studentStore";
@@ -36,6 +36,7 @@ export default function SessionSubscription() {
   const { getStudents } = useStudentStore();
 
   useEffect(() => {
+    
     const fetchMonthly = async () => {
       try {
         setLoading(true);
@@ -50,65 +51,97 @@ export default function SessionSubscription() {
 
     fetchMonthly();
   }, [getStudents]);
+  const [delayedLoading, setDelayedLoading] = useState(true);
+  useEffect(() => {
+    getStudents("per_session");
+  }, [getStudents]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDelayedLoading(false), 2000); // ✅
+    return () => clearTimeout(timer);
+  }, []);
+  const sessionStudents = students.slice(0, 10);
 
   return (
-    <Box>
+    <Box sx={{ height: "430px" }}>
       <Typography variant="h6" fontWeight={700} mb={2}>
         Session Subscribers
       </Typography>
 
-      {loading ? (
-        <CircularProgress />
-      ) : (
-        <TableContainer sx={{ border: "1px solid #ddd", borderRadius: 1 }}>
-          <Table>
-            <TableHead sx={{ bgcolor: "#f0f0f0" }}>
-              <TableRow>
-                {["Name", "Age", "Subscription Date", "Category"].map((h) => (
-                  <TableCell key={h} sx={{ fontWeight: 700 }}>
-                    {h}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-
-            <TableBody>
-              {students.map((student) => (
-                <TableRow key={student.id} hover>
-                  <TableCell>
-                    {`${student.first_name} ${student.middle_name ?? ""} ${student.last_name}`}
-                  </TableCell>
-                  <TableCell>{calculateAge(student.birthdate)}</TableCell>
-                  <TableCell>
-                    {student.created_at
-                      ? new Date(student.created_at).toLocaleDateString()
-                      : "N/A"}
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      label={student.subscription_type?.name ?? "N/A"}
-                      variant="outlined"
-                      size="small"
-                      sx={{
-                        color: getBadgeColor(
-                          student.subscription_type?.name ?? ""
-                        ),
-                        borderColor: getBadgeColor(
-                          student.subscription_type?.name ?? ""
-                        ),
-                        fontWeight: 600,
-                        px: 1.5,
-                        py: 0.5,
-                        fontSize: "13px",
-                      }}
-                    />
-                  </TableCell>
-                </TableRow>
+      <TableContainer
+        sx={{
+          border: "1px solid #ddd",
+          borderRadius: 1,
+          backgroundColor: "#fff",
+          height: "345px",
+        }}
+      >
+        <Table>
+          <TableHead>
+            <TableRow>
+              {["Name", "Age", "Subscription Date", "Category"].map((h) => (
+                <TableCell key={h} sx={{ fontWeight: 700, fontSize: 13 }}>
+                  {h}
+                </TableCell>
               ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
+            </TableRow>
+          </TableHead>
+
+          <TableBody>
+            {loading || delayedLoading
+              ? Array.from({ length: 5 }).map((_, i) => (
+                  <TableRow key={`skeleton-${i}`}>
+                    {Array.from({ length: 4 }).map((_, j) => (
+                      <TableCell key={j}>
+                        <Skeleton variant="text" width="100%" height={20} />
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              : sessionStudents.length > 0
+              ? sessionStudents.map((student) => (
+                  <TableRow key={student.id} hover>
+                    <TableCell>{`${student.first_name} ${
+                      student.middle_name ?? ""
+                    } ${student.last_name}`}</TableCell>
+                    <TableCell>{calculateAge(student.birthdate)}</TableCell>
+                    <TableCell>
+                      {student.created_at
+                        ? new Date(student.created_at).toLocaleDateString()
+                        : "N/A"}
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        label={student.subscription_type?.name ?? "N/A"}
+                        variant="outlined"
+                        size="small"
+                        sx={{
+                          color: getBadgeColor(
+                            student.subscription_type?.name ?? ""
+                          ),
+                          borderColor: getBadgeColor(
+                            student.subscription_type?.name ?? ""
+                          ),
+                          fontWeight: 400,
+                          px: 1.5,
+                          py: 0.5,
+                          fontSize: "12px",
+                        }}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))
+              : // Render 5 blank rows when there is no data
+                Array.from({ length: 5 }).map((_, i) => (
+                  <TableRow key={`blank-${i}`}>
+                    {Array.from({ length: 4 }).map((_, j) => (
+                      <TableCell key={j}>&nbsp;</TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </Box>
   );
 }
