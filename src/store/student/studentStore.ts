@@ -1,9 +1,10 @@
 // store/student/studentStore.ts
 import { create } from "zustand";
 import type { Student, StudentCheckIn } from "../../types/students";
-import { checkInStudentApi, deleteStudent, getStudents as fetchStudentsAPI, registerStudent, } from "../../api/student/students";
+import { checkInStudentApi, deleteStudent, getStudents as fetchStudentsAPI, registerStudent, updateStudent, } from "../../api/student/students";
 import type { RegisterStudentFormSchema } from "../../utils/schema/registerStudentSchema";
 import type { ApiResponse } from "../../types/api_response";
+import type { UpdateStudentFormSchema } from "../../utils/schema/updateSchema";
 
 interface StudentState {
   students: Student[];
@@ -21,6 +22,7 @@ interface StudentState {
   setSelectedCategory: (category: string) => void;
   deleteStudent: (id: string) => void;
   checkInStudent: (studentCheckInData: StudentCheckIn) => Promise<ApiResponse<null> | null>;
+  updateStudent: (id: string, form: UpdateStudentFormSchema) => Promise<void>;
 }
 
 export const useStudentStore = create<StudentState>((set, get) => ({
@@ -114,6 +116,19 @@ export const useStudentStore = create<StudentState>((set, get) => ({
     }
   },
 
+  updateStudent: async (id, form) => {
+    set({ loading: true, error: null });
+
+    try {
+      await updateStudent(id, form); // This already maps and transforms internally
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err:any) {
+      console.error('Update failed:', err);
+      set({ error: err?.message || 'Failed to update student' });
+    } finally {
+      set({ loading: false });
+    }
+  },
   setSearchQuery: (query) => set({ searchQuery: query }),
   setSelectedCategory: (category) => set({ selectedCategory: category }),
 }));

@@ -16,9 +16,11 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useTrainingStore } from "../../../store/trainings/trainings"
 import { useSubscriptionStore } from "../../../store/subscriptions/subscriptionsStore";
 import MultiSelectCheckbox from "../../../components/common/MultiSelect";
+import { useStudentStore } from "../../../store/student/studentStore";
 
 
 export type StudentData = {
+  id: string;
   first_name: string;
   middle_name?: string;
   last_name: string;
@@ -42,6 +44,8 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
 
   const { trainings } = useTrainingStore();
   const { subscriptions } = useSubscriptionStore();
+  const { updateStudent } = useStudentStore(); // ✅ grab the zustand update fn
+
 
   const trainingOptions = trainings.map((t) => t.title);
   const subscriptionOptions = subscriptions.map((s) => s.name);

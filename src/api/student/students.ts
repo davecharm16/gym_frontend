@@ -1,13 +1,15 @@
+import type { StudentData } from "../../pages/profile-management/components/ViewModal";
 import type { ApiResponse } from "../../types/api_response";
 import type { StudentAttendance } from "../../types/student_attendance";
 import type { Student, StudentCheckIn } from "../../types/students";
 import type { RegisterStudentFormSchema } from "../../utils/schema/registerStudentSchema";
+import type { UpdateStudentFormSchema } from "../../utils/schema/updateSchema";
 import { endPoint } from "../api";
 import { apiClient } from "../apiClient";
 import { toStudentAttendanceModel } from "../commercial/adapter/attendance_adapter";
-import { toCreateStudentDTO, toStudentCheckInDTO, toStudentModel } from "../commercial/adapter/student_adapter";
+import { toCreateStudentDTO, toStudentCheckInDTO, toStudentModel, toUpdateStudentDTO } from "../commercial/adapter/student_adapter";
 import type { AttendanceDTO } from "../commercial/dto/attendance_dto";
-import type { CreateStudentRequestDTO, CreateStudentResponseDTO } from "../commercial/dto/student_dto";
+import type { CreateStudentRequestDTO, CreateStudentResponseDTO, UpdateStudentDTO } from "../commercial/dto/student_dto";
 
 
 export const getStudents = async ({
@@ -87,4 +89,13 @@ export const deleteStudent = async (id: string) => {
     console.error("Delete student failed:", error);
     throw error;
   }
+};
+
+
+export const updateStudent = async (
+  id: string,
+  form: StudentData
+): Promise<void> => {
+  const dto: UpdateStudentDTO = toUpdateStudentDTO(form);
+  await apiClient.put(`${endPoint.students}/${id}`, dto);
 };

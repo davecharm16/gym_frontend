@@ -24,3 +24,18 @@ export interface StudentCheckInDTO {
   student_email: string;
   checkin_time: string; // ISO format: "YYYY-MM-DDTHH:mm:ss.sssZ"
 }
+
+
+export type UpdateStudentDTO = {
+  first_name?: string;
+  last_name?: string;
+  middle_name?: string | null;
+  address?: string;
+  birthdate?: string;
+  sex?: 'male' | 'female' | 'other';
+  subscription_type_id?: string | null;
+  picture_url?: string | null;
+  paid_until?: string;
+};
+
+
