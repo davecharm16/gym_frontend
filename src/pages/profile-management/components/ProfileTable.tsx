@@ -231,6 +231,7 @@ export default function ProfileTable() {
                               due_date: student.paid_until ?? "",
                               age: calculateAge(student.birthdate),
                               email: student.email,
+                              user_id: student.users.id,
                             });
                             
                             setOpenViewModal(true);

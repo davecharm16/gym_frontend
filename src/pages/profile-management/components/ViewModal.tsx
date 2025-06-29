@@ -24,6 +24,7 @@ import PasswordManagement from "./PasswordReset";
 
 export type StudentData = {
   id: string;
+  user_id: string;
   first_name: string;
   middle_name?: string;
   last_name: string;
@@ -295,7 +296,7 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
         )}
         <PasswordManagement
           email={student?.email ?? ""}
-          userId={student?.id ?? ""}
+          userId={student?.user_id ?? ""}
         />
       </Box>
     </Modal>
