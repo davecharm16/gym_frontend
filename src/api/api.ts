@@ -16,4 +16,6 @@ export const endPoint = {
   totalRegistered: '/dashboard/total-registered',
   paymentReport: '/payment/all-with-student',
   enroll: "/enroll",
+  requestPasswordReset : "/auth/reset-password",
+  forceResetPassword : "/auth/admin-reset-password"
 };

@@ -124,6 +124,7 @@ export default function ProfileTable() {
                 "Name",
                 "Address",
                 "Age",
+                "Email",
                 "Category",
                 "Date Created",
                 "Paid Until",
@@ -174,6 +175,7 @@ export default function ProfileTable() {
                       </TableCell>
                       <TableCell>{student.address}</TableCell>
                       <TableCell>{calculateAge(student.birthdate)}</TableCell>
+                      <TableCell>{student.users.email}</TableCell>
                       <TableCell>
                         <Chip
                           label={student.subscription_type?.name ?? "N/A"}
@@ -228,6 +230,8 @@ export default function ProfileTable() {
                               training_category: Array.isArray(student.enrollments) ? student.enrollments : [],
                               due_date: student.paid_until ?? "",
                               age: calculateAge(student.birthdate),
+                              email: student.email,
+                              user_id: student.users.id,
                             });
                             
                             setOpenViewModal(true);

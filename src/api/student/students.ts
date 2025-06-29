@@ -60,14 +60,21 @@ export const checkInStudentApi = async(data: StudentCheckIn): Promise<ApiRespons
 
 
 export const getStudenAttendance = async (
-  studentId?: string
+  studentId?: string,
+  date?: string
 ): Promise<ApiResponse<StudentAttendance[]>> => {
   try {
     console.log(studentId);
-    const url = studentId
-      ? `${endPoint.attendance}?student_id=${studentId}`
-      : endPoint.attendance;
+    console.log(date);
+    const params = new URLSearchParams();
+    if (studentId) params.append("student_id", studentId);
+    if (date) params.append("date", date);
 
+    const url =
+      params.toString().length > 0
+        ? `${endPoint.attendance}?${params.toString()}`
+        : endPoint.attendance;
+        
     const res = await apiClient.get<AttendanceDTO[]>(url);
 
     return {

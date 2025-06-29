@@ -20,16 +20,21 @@ import { useSubscriptionStore } from "../../../store/subscriptions/subscriptions
 import MultiSelectCheckbox from "../../../components/common/MultiSelect";
 import { useStudentStore } from "../../../store/student/studentStore";
 import { useToastStore } from "../../../store/toastStore";
+import PasswordManagement from "./PasswordReset";
 
 export type StudentData = {
   id: string;
+  user_id: string;
   first_name: string;
   middle_name?: string;
   last_name: string;
   address: string;
   age: number;
+  email: string;
   birthdate: string;
-  training_category: { training: { id: string; title: string; description: string } }[];
+  training_category: {
+    training: { id: string; title: string; description: string };
+  }[];
   subscription_type_name: string;
   due_date: string;
 };
@@ -43,7 +48,7 @@ type ViewModalProps = {
 const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
   const [editable, setEditable] = useState(false);
   const [formData, setFormData] = useState<StudentData | null>(student);
-  const { showToast } = useToastStore();    
+  const { showToast } = useToastStore();
 
   const { trainings, fetchTrainings } = useTrainingStore();
   const { subscriptions, getSubscriptionTypes } = useSubscriptionStore();
@@ -70,8 +75,10 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
   const validateForm = () => {
     if (!formData) return false;
     const newErrors: Record<string, string> = {};
-    if (!formData.first_name.trim()) newErrors.first_name = "First name is required";
-    if (!formData.last_name.trim()) newErrors.last_name = "Last name is required";
+    if (!formData.first_name.trim())
+      newErrors.first_name = "First name is required";
+    if (!formData.last_name.trim())
+      newErrors.last_name = "Last name is required";
     if (!formData.birthdate) newErrors.birthdate = "Birthdate is required";
     if (!formData.address.trim()) newErrors.address = "Address is required";
     if (!formData.subscription_type_name.trim())
@@ -87,15 +94,15 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
       const trainingsPayload = formData.training_category.map((tc) => ({
         training_id: tc.training.id,
       }));
-      const {...studentForm } = formData;
+      const { ...studentForm } = formData;
       try {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await updateStudent(formData.id, studentForm as any, trainingsPayload);
-        showToast("Student updated successfully", "success"); 
+        showToast("Student updated successfully", "success");
         onClose();
       } catch (err) {
         console.error("Update failed", err);
-        showToast("Failed to update student", "error"); 
+        showToast("Failed to update student", "error");
       }
     }
     setEditable((prev) => !prev);
@@ -125,7 +132,12 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
           <CloseIcon />
         </IconButton>
 
-        <Stack direction="row" justifyContent="space-between" alignItems="center" mb={3}>
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+          mb={3}
+        >
           <Stack direction="row" spacing={2} alignItems="center">
             <Avatar sx={{ width: 72, height: 72, fontSize: 28 }}>
               {student
@@ -135,7 +147,9 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
             <Box>
               <Typography variant="h5" fontWeight={700}>
                 {formData
-                  ? `${formData.first_name} ${formData.middle_name ?? ""} ${formData.last_name}`
+                  ? `${formData.first_name} ${formData.middle_name ?? ""} ${
+                      formData.last_name
+                    }`
                   : "No data"}
               </Typography>
               <Typography variant="body2" color="text.secondary">
@@ -229,7 +243,9 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
               select
               label="Subscription Type"
               value={formData.subscription_type_name}
-              onChange={(e) => handleChange("subscription_type_name", e.target.value)}
+              onChange={(e) =>
+                handleChange("subscription_type_name", e.target.value)
+              }
               disabled={!editable}
               size="small"
             >
@@ -251,20 +267,37 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
               InputLabelProps={{ shrink: true }}
             />
           </Box>
-        ) : ( 
-        <Typography color="text.secondary">No student data available.</Typography>
+        ) : (
+          <Typography color="text.secondary">
+            No student data available.
+          </Typography>
         )}
 
         {formData?.due_date && (
           <Box
-            sx={{ mt: 4, p: 2, borderRadius: 1, bgcolor: "#E3F2FD", display: "flex", gap: 1.5 }}
+            sx={{
+              mt: 4,
+              p: 2,
+              borderRadius: 1,
+              bgcolor: "#E3F2FD",
+              display: "flex",
+              gap: 1.5,
+            }}
           >
-            <InfoOutlined sx={{ mt: "2px", color: "primary.main" }} fontSize="small" />
+            <InfoOutlined
+              sx={{ mt: "2px", color: "primary.main" }}
+              fontSize="small"
+            />
             <Typography variant="body2" color="text.primary">
-              <strong>Note:</strong> Subscription is due on {new Date(formData.due_date).toLocaleDateString()}.
+              <strong>Note:</strong> Subscription is due on{" "}
+              {new Date(formData.due_date).toLocaleDateString()}.
             </Typography>
           </Box>
         )}
+        <PasswordManagement
+          email={student?.email ?? ""}
+          userId={student?.user_id ?? ""}
+        />
       </Box>
     </Modal>
   );

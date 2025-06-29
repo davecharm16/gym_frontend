@@ -9,11 +9,9 @@ export interface Student {
   created_at: string;
   subscription_type_id: string;
   paid_until: string | null;
-
   subscription_type: {
     name: string;
   };
-
   enrollments: {
     training: {
       id: string;
@@ -21,6 +19,10 @@ export interface Student {
       description: string;
     };
   }[];
+  users : {
+    id: string,
+    email: string,
+  }
 }
 
 
