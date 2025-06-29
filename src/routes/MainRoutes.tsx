@@ -11,6 +11,7 @@ import StudentDashboard from "../pages/student/StudentDashboard";
 import StudentLogs from "../pages/student/StudentLogs";
 import SystemSettings from "../pages/system-settings/SystemSettings";
 import PaymentsLogs from "../pages/payments/PaymentsLogs";
+import ResetPassword from "../pages/ResetPassword";
 
 export const MainRoutes = createBrowserRouter([
   {
@@ -21,6 +22,10 @@ export const MainRoutes = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
+  },
+  {
+    path: "/reset-password",
+    element: <ResetPassword />,
   },
   {
     path: "/",

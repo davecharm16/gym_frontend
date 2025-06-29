@@ -8,7 +8,7 @@ type AttendanceStore = {
   loading: boolean;
   selectedStudentId?: string;
   error?: string;
-  fetchAttendances: (studentId?: string) => Promise<void>;
+  fetchAttendances: (studentId?: string, date?: string) => Promise<void>;
   setSelectedStudent: (studentId: string | undefined) => void;
 };
 
@@ -18,11 +18,11 @@ export const useAttendanceStore = create<AttendanceStore>((set) => ({
   selectedStudentId: undefined,
   error: undefined,
 
-  fetchAttendances: async (studentId) => {
+  fetchAttendances: async (studentId, date) => {
     set({ loading: true, error: undefined });
 
     try {
-      const res: ApiResponse<StudentAttendance[]> = await getStudenAttendance(studentId);
+      const res: ApiResponse<StudentAttendance[]> = await getStudenAttendance(studentId, date);
       if (res.success) {
         set({ attendances: res.data ?? [] });
       } else {
