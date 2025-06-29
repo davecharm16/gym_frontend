@@ -12,11 +12,13 @@ import {
   Pagination,
   Paper,
   IconButton,
+  Button,
 } from "@mui/material";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useState, useMemo } from "react";
 import type { StudentAttendance } from "../../../types/student_attendance";
+import { useCsvExport } from "../../../hooks/useCSVExport";
 
 type AttendanceRow = {
   name: string;
@@ -28,7 +30,6 @@ type AttendanceRow = {
   avatarUrl: string;
 };
 
-
 interface AttendanceTableProps {
   searchQuery: string;
   selectedType: string;
@@ -38,7 +39,11 @@ interface AttendanceTableProps {
 type SortKey = keyof AttendanceRow;
 type SortOrder = "asc" | "desc";
 
-const AttendanceLog = ({ searchQuery, selectedType, data}: AttendanceTableProps) => {
+const AttendanceLog = ({
+  searchQuery,
+  selectedType,
+  data,
+}: AttendanceTableProps) => {
   const [page, setPage] = useState(1);
   const [sortConfig, setSortConfig] = useState<{
     key: SortKey;
@@ -48,7 +53,18 @@ const AttendanceLog = ({ searchQuery, selectedType, data}: AttendanceTableProps)
     order: "asc",
   });
 
-  const rowsPerPage = 5;
+  const rowsPerPage = 15;
+  const csvFields = [
+    { label: "Member Name", value: "name" },
+    { label: "Address", value: "address" },
+    { label: "Age", value: "age" },
+    { label: "Type", value: "type" },
+    { label: "CheckIn Date", value: "date" },
+    { label: "Time", value: "time" },
+  ] as const;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const exportCsv = useCsvExport<AttendanceRow>();
+
 
   const rows: AttendanceRow[] = data.map((item) => ({
     name: `${item.student.lastName}, ${item.student.firstName}`,
@@ -152,87 +168,99 @@ const AttendanceLog = ({ searchQuery, selectedType, data}: AttendanceTableProps)
     { label: "Address", key: "address" },
     { label: "Age", key: "age" },
     { label: "Type", key: "type" },
-    { label: "Subscription Date", key: "date" },
+    { label: "CheckIn Date", key: "date" },
     { label: "Time", key: "time" },
   ];
 
   return (
-    <Box
-      width="100%"
-      border={1}
-      borderColor={"#e0e0e0"}
-      overflow="hidden"
-      borderRadius={1}
-      bgcolor="#fafafa"
-    >
-      <TableContainer component={Paper} elevation={0}>
-        <Table>
-          <TableHead sx={{ bgcolor: "#f0f0f0" }}>
-            <TableRow>
-              {headers.map(({ label, key }) => (
-                <TableCell
-                  key={label}
-                  sx={{ fontWeight: "bold", fontSize: 14 }}
-                >
-                  <Box display="flex" alignItems="center">
-                    {label}
-                    {renderSortIcons(key)}
-                  </Box>
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-
-          <TableBody>
-            {paginatedRows.map((row, idx) => (
-              <TableRow key={idx} hover>
-                <TableCell>
-                  <Box display="flex" alignItems="center" gap={1}>
-                    <Avatar
-                      src={row.avatarUrl}
-                      sx={{ width: 32, height: 32 }}
-                    />
-                    <Typography variant="body2">{row.name}</Typography>
-                  </Box>
-                </TableCell>
-                <TableCell>{row.address}</TableCell>
-                <TableCell>{row.age}</TableCell>
-                <TableCell>
-                  <Chip
-                    label={row.type}
-                    variant="outlined"
-                    sx={{
-                      color: row.type === "Monthly" ? "#FFB22C" : "#379777",
-                      borderColor:
-                        row.type === "Monthly" ? "#FFB22C" : "#379777",
-                      fontWeight: 600,
-                      fontSize: "14px",
-                      px: 1.5,
-                      py: 0.5,
-                      borderWidth: 1.5,
-                      backgroundColor: "transparent",
-                    }}
-                  />
-                </TableCell>
-                <TableCell>{row.date}</TableCell>
-                <TableCell>{row.time}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      <Box display="flex" justifyContent="flex-start" px={2} py={2}>
-        <Pagination
-          count={totalPages}
-          page={page}
-          onChange={(_, p) => setPage(p)}
-          color="primary"
-          variant="outlined"
-          shape="rounded"
-        />
+    <>
+      <Box marginBottom={2}>
+      <Button
+        variant="outlined"
+        onClick={() => exportCsv(paginatedRows, csvFields, "attendance.csv")}
+      >
+        Export CSV
+      </Button>
       </Box>
-    </Box>
+      <Box
+        width="100%"
+        border={1}
+        borderColor={"#e0e0e0"}
+        overflow="hidden"
+        borderRadius={1}
+        bgcolor="#fafafa"
+      >
+        <TableContainer component={Paper} elevation={0}>
+          <Table>
+            <TableHead sx={{ bgcolor: "#f0f0f0" }}>
+              <TableRow>
+                {headers.map(({ label, key }) => (
+                  <TableCell
+                    key={label}
+                    sx={{ fontWeight: "bold", fontSize: 14 }}
+                  >
+                    <Box display="flex" alignItems="center">
+                      {label}
+                      {renderSortIcons(key)}
+                    </Box>
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+
+            <TableBody>
+              {paginatedRows.map((row, idx) => (
+                <TableRow key={idx} hover>
+                  <TableCell>
+                    <Box display="flex" alignItems="center" gap={1}>
+                      <Avatar
+                        // src={row.avatarUrl}
+                        sx={{ width: 32, height: 32 }}
+                      >
+                        {row.name.split(' ').map((item)=> item[0])}
+                      </Avatar>
+                      <Typography variant="body2">{row.name}</Typography>
+                    </Box>
+                  </TableCell>
+                  <TableCell>{row.address}</TableCell>
+                  <TableCell>{row.age}</TableCell>
+                  <TableCell>
+                    <Chip
+                      label={row.type}
+                      variant="outlined"
+                      sx={{
+                        color: row.type === "Monthly" ? "#FFB22C" : "#379777",
+                        borderColor:
+                          row.type === "Monthly" ? "#FFB22C" : "#379777",
+                        fontWeight: 600,
+                        fontSize: "14px",
+                        px: 1.5,
+                        py: 0.5,
+                        borderWidth: 1.5,
+                        backgroundColor: "transparent",
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell>{row.date}</TableCell>
+                  <TableCell>{row.time}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        <Box display="flex" justifyContent="flex-start" px={2} py={2}>
+          <Pagination
+            count={totalPages}
+            page={page}
+            onChange={(_, p) => setPage(p)}
+            color="primary"
+            variant="outlined"
+            shape="rounded"
+          />
+        </Box>
+      </Box>
+    </>
   );
 };
 
