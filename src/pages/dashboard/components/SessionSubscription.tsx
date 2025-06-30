@@ -57,15 +57,15 @@ export default function SessionSubscription() {
   }, [getStudents]);
 
   useEffect(() => {
-    const timer = setTimeout(() => setDelayedLoading(false), 2000); // ✅
+    const timer = setTimeout(() => setDelayedLoading(false), 1000); // ✅
     return () => clearTimeout(timer);
   }, []);
   const sessionStudents = students.slice(0, 10);
 
   return (
     <Box sx={{ height: "430px" }}>
-      <Typography variant="h6" fontWeight={700} mb={2}>
-        Session Subscribers
+      <Typography variant="h6" fontWeight={500} mb={2}>
+        Latest Session Subscription
       </Typography>
 
       <TableContainer

@@ -10,7 +10,7 @@ const WelcomeBanner = ({ name }: { name: string }) => {
 
   return (
     <div className="">
-      <h3 className="text-lg font-bold text-gray-800">Welcome Back, {name}</h3>
+      <h3 className="text-lg font-extrabold text-gray-800">Welcome Back, {name}</h3>
       <p className="text-gray-600 mt-2">{currentDate}</p>
     </div>
   );

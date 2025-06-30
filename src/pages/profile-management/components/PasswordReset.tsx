@@ -1,10 +1,5 @@
 import { useState } from "react";
-import {
-  Box,
-  TextField,
-  Button,
-  CircularProgress,
-} from "@mui/material";
+import { Box, TextField, Button, CircularProgress } from "@mui/material";
 import { requestResetPassword, resetPassword } from "../../../api/auth/auth";
 import { useToastStore } from "../../../store/toastStore";
 
@@ -13,7 +8,10 @@ type PasswordManagementProps = {
   userId: string;
 };
 
-export default function PasswordManagement({ email, userId }: PasswordManagementProps) {
+export default function PasswordManagement({
+  email,
+  userId,
+}: PasswordManagementProps) {
   const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState<"reset" | "email" | null>(null);
   const { showToast } = useToastStore();
@@ -33,7 +31,7 @@ export default function PasswordManagement({ email, userId }: PasswordManagement
       } else {
         showToast(res.message || "Something went wrong.", "error");
       }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       console.error(err);
       showToast("Unexpected error. Please try again.", "error");
@@ -51,7 +49,7 @@ export default function PasswordManagement({ email, userId }: PasswordManagement
       } else {
         showToast(res.message || "Something went wrong.", "error");
       }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       console.error(err);
       showToast("Unexpected error. Please try again.", "error");
@@ -81,20 +79,34 @@ export default function PasswordManagement({ email, userId }: PasswordManagement
 
       <Button
         variant="contained"
-        color="primary"
         onClick={handleResetPassword}
         disabled={loading === "reset"}
         startIcon={loading === "reset" && <CircularProgress size={18} />}
+        sx={{
+          backgroundColor: "#3C3D37",
+          textTransform: "none",
+          "&:hover": {
+            backgroundColor: "#2c2d2a",
+          },
+        }}
       >
         {loading === "reset" ? "Resetting..." : "Reset"}
       </Button>
 
       <Button
         variant="outlined"
-        color="secondary"
         onClick={handleSendResetEmail}
         disabled={loading === "email"}
         startIcon={loading === "email" && <CircularProgress size={18} />}
+        sx={{
+          color: "#3C3D37",
+          borderColor: "#3C3D37",
+          textTransform: "none",
+          "&:hover": {
+            backgroundColor: "#f5f5f5",
+            borderColor: "#3C3D37",
+          },
+        }}
       >
         {loading === "email" ? "Sending..." : "Send Email"}
       </Button>

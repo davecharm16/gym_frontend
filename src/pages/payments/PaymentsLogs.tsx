@@ -113,7 +113,7 @@ const PaymentsLogs = () => {
               <DateRangePicker
                 startDate={startDate}
                 endDate={endDate}
-                onStartDateChange={setStartDate}
+                onStartDateChange={setStartDate} 
                 onEndDateChange={setEndDate}
                 enforceBidirectionalConstraint
               />

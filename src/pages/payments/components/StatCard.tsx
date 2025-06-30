@@ -20,10 +20,9 @@ const StatCard: React.FC<StatCardProps> = ({
 
   return (
     <div className="flex flex-col border border-gray-200  bg-white p-5  w-full h-[200px] justify-between">
-    
       {/* Icon + Label */}
       <div className="flex items-center gap-3">
-        <div className="text-gray-600">{icon}</div>
+        <div className="text-[#3C3D37]">{icon}</div>
         <p className="text-sm text-gray-500 m-0 p-0 leading-none">{label}</p>
       </div>
 

@@ -33,12 +33,12 @@ export default function CheckInLogs() {
 
 
     useEffect(() => {
-    const timer = setTimeout(() => setDelayedLoading(false), 2000); // ✅
+    const timer = setTimeout(() => setDelayedLoading(false), 1000); // ✅
     return () => clearTimeout(timer);
   }, []);
   return (
     <div className="w-full">
-      <Typography variant="h6" fontWeight={700} mb={2}>
+      <Typography variant="h6" fontWeight={500} mb={2}>
         Latest Check-in Logs
       </Typography>
 

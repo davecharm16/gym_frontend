@@ -49,7 +49,7 @@ export default function MonthlySubscription() {
   }, [getStudents]);
 
   useEffect(() => {
-    const timer = setTimeout(() => setDelayedLoading(false), 2000); 
+    const timer = setTimeout(() => setDelayedLoading(false), 1000); 
     return () => clearTimeout(timer);
   }, []);
   const monthlyStudents = students.slice(0, 10);
@@ -65,8 +65,8 @@ export default function MonthlySubscription() {
 
   return (
     <Box>
-      <Typography variant="h6" fontWeight={700} mb={2}>
-        Monthly Subscribers
+      <Typography variant="h6" fontWeight={500} mb={2}>
+        Latest Monthly Subscription
       </Typography>
 
       <TableContainer

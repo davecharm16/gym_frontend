@@ -29,8 +29,8 @@ export default function SystemSettings() {
 
  
   return (
-    <div className="mt-12 flex flex-col  px-12 pt-12">
-      <h1 className="text-sm font-extrabold pb-6 fw-6">System Settings</h1>
+    <div className="mt-12 flex flex-col  px-4 pt-12">
+      <h2 className="text-sm font-extrabold pb-6 fw-6">System Settings</h2>
 
       {/* Tabs header */}
       <Tabs
