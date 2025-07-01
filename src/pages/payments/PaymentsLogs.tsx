@@ -98,9 +98,16 @@ const PaymentsLogs = () => {
   }, [startDate, endDate, paymentCategory, paymentType]);
 
   return (
-    <Box sx={{ backgroundColor: "#fff", minHeight: "100vh", py: 4  }}>
+    <Box
+      sx={{
+        backgroundColor: "#fff", // Match dashboard background
+        minHeight: "100vh",
+        pt: "40px", // adjust if you have a fixed header
+      
+      }}
+    >
       <div className=" flex flex-col px-6  pt-4 ">
-        <h2 className="text-sm font-extrabold pb-2">Payment Logs</h2>
+        <h2 className="text-sm font-extrabold pb-8">Payment Logs</h2>
 
         {/* Filters & Button Container */}
         <div className="flex flex-col sm:flex-row justify-between items-end gap-4 w-full mb-4">
@@ -113,7 +120,7 @@ const PaymentsLogs = () => {
               <DateRangePicker
                 startDate={startDate}
                 endDate={endDate}
-                onStartDateChange={setStartDate} 
+                onStartDateChange={setStartDate}
                 onEndDateChange={setEndDate}
                 enforceBidirectionalConstraint
               />

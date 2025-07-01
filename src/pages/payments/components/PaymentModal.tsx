@@ -25,13 +25,21 @@ import type { PaymentRequestDto } from "../../../api/commercial/dto/payments_dto
 export type PaymentModalProps = {
   open: boolean;
   onClose: () => void;
-  onSuccess?: () => void; 
+  onSuccess?: () => void;
 };
 
-const PaymentModal: React.FC<PaymentModalProps> = ({ open, onClose, onSuccess}) => {
+const PaymentModal: React.FC<PaymentModalProps> = ({
+  open,
+  onClose,
+  onSuccess,
+}) => {
   const { trainings, fetchTrainings } = useTrainingStore();
   const { subscriptions, getSubscriptionTypes } = useSubscriptionStore();
-  const { students, getStudents, loading: isLoadingStudents } = useStudentStore();
+  const {
+    students,
+    getStudents,
+    loading: isLoadingStudents,
+  } = useStudentStore();
   const { createPayment } = usePaymentStore();
   const { showToast } = useToastStore();
 
@@ -46,6 +54,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ open, onClose, onSuccess}) 
     defaultValues: {
       studentId: "",
       paymentFor: "misc",
+      discount: "",
       amountToPay: "",
       amount: "",
       paymentDate: "",
@@ -58,13 +67,15 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ open, onClose, onSuccess}) 
   const selectedPaymentFor = useWatch({ control, name: "paymentFor" });
   const amountGiven = parseFloat(watch("amount") || "0");
   const amountToPay = parseFloat(watch("amountToPay") || "0");
+  const discount = parseFloat(watch("discount") || "0");
+  const netAmountToPay = Math.max(amountToPay - discount, 0);
 
   useEffect(() => {
     if (open) {
       fetchTrainings();
       getSubscriptionTypes();
       getStudents();
-      const today = new Date().toISOString().split('T')[0];
+      const today = new Date().toISOString().split("T")[0];
       setValue("paymentDate", today);
     } else {
       reset();
@@ -78,10 +89,20 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ open, onClose, onSuccess}) 
   }, [amountGiven, amountToPay, setValue]);
 
   useEffect(() => {
+    const change =
+      amountGiven > netAmountToPay
+        ? (amountGiven - netAmountToPay).toFixed(2)
+        : "0";
+    setValue("change", change);
+  }, [amountGiven, netAmountToPay, setValue]);
+
+  useEffect(() => {
     if (selectedPaymentFor === "misc") return;
 
     const foundTraining = trainings.find((t) => t.id === selectedPaymentFor);
-    const foundSubscription = subscriptions.find((s) => s.id === selectedPaymentFor);
+    const foundSubscription = subscriptions.find(
+      (s) => s.id === selectedPaymentFor
+    );
 
     if (foundTraining) {
       setValue("amountToPay", foundTraining.baseFee.toString());
@@ -93,21 +114,26 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ open, onClose, onSuccess}) 
   const combinedOptions = [
     { label: "Misc.", value: "misc" },
     ...trainings.map((t) => ({ label: `Training: ${t.title}`, value: t.id })),
-    ...subscriptions.map((s) => ({ label: `Subscription: ${s.name}`, value: s.id })),
+    ...subscriptions.map((s) => ({
+      label: `Subscription: ${s.name}`,
+      value: s.id,
+    })),
   ];
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = async (data: any) => {
     let payment_type = "misc";
     const foundTraining = trainings.find((t) => t.id === data.paymentFor);
-    const foundSubscription = subscriptions.find((s) => s.id === data.paymentFor);
-  
+    const foundSubscription = subscriptions.find(
+      (s) => s.id === data.paymentFor
+    );
+
     if (foundTraining) {
       payment_type = foundTraining.title;
     } else if (foundSubscription) {
       payment_type = foundSubscription.name;
     }
-  
+
     const payload: PaymentRequestDto = {
       student_id: data.studentId,
       amount: Number(data.amount),
@@ -115,9 +141,9 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ open, onClose, onSuccess}) 
       payment_method: data.paymentMethod,
       payment_type,
     };
-  
+
     const result = await createPayment(payload);
-  
+
     if (result) {
       showToast("Payment successfully recorded!", "success");
       onClose();
@@ -126,7 +152,6 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ open, onClose, onSuccess}) 
       showToast("Failed to record payment", "error");
     }
   };
-  
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -170,7 +195,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ open, onClose, onSuccess}) 
                     onChange={field.onChange}
                     options={combinedOptions}
                     width="100%"
-                    height={'100%'}
+                    height={"100%"}
                   />
                 )}
               />
@@ -241,16 +266,18 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ open, onClose, onSuccess}) 
                   </TextField>
                 )}
               />
+
               <Controller
-                name="change"
+                name="discount"
                 control={control}
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    label="Change"
+                    label="Discount"
+                    type="number"
                     fullWidth
-                    InputProps={{ readOnly: true }}
-                    disabled
+                    error={!!errors.discount}
+                    helperText={errors.discount?.message}
                   />
                 )}
               />
@@ -258,11 +285,24 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ open, onClose, onSuccess}) 
           </Stack>
 
           <Box sx={{ borderTop: "1px solid #e0e0e0", my: 4 }} />
+          <Stack spacing={1.5} sx={{ mt: 3 }}>
+            <Typography sx={{ fontSize: 18 }}>Discount: {discount}%</Typography>
 
-          <Typography sx={{ fontSize: 18 }}>
-            <strong>Total Payment:</strong> ₱
-            {watch("amount") || watch("amountToPay") || "0.00"}
-          </Typography>
+            <Typography sx={{ fontSize: 18 }}>
+              Total Payment: ₱{netAmountToPay.toFixed(2)}
+            </Typography>
+
+            <Typography sx={{ fontSize: 18, fontWeight: "bold" }}>
+              Change:{" "}
+              <span
+                style={{
+                  fontWeight: 600,
+                }}
+              >
+                ₱{watch("change")}
+              </span>
+            </Typography>
+          </Stack>
 
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={2}>
             <Button variant="outlined" onClick={onClose}>
