@@ -33,7 +33,7 @@ const PaymentLogsTable: React.FC<Props> = ({ data }) => {
   const [delayedLoading, setDelayedLoading] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => setDelayedLoading(false), 2000);
+    const timer = setTimeout(() => setDelayedLoading(false), 1000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -85,10 +85,24 @@ const PaymentLogsTable: React.FC<Props> = ({ data }) => {
   return (
     <>
       <Box marginBottom={2}>
-        <Button variant="outlined" onClick={handleExport}>
+        <Button
+          variant="outlined"
+          onClick={handleExport}
+          sx={{
+            borderColor: "#3C3D37",
+            color: "#3C3D37",
+            "&:hover": {
+              borderColor: "#181C14",
+              backgroundColor: "#f5f5f5",
+            },
+            textTransform: "none",
+            fontWeight: 600,
+          }}
+        >
           Export CSV
         </Button>
       </Box>
+
       <Box
         width="100%"
         border={1}
@@ -158,7 +172,13 @@ const PaymentLogsTable: React.FC<Props> = ({ data }) => {
                         size="small"
                         onClick={() => handleOpen(row)}
                       >
-                        <VisibilityIcon />
+                        <VisibilityIcon
+                          sx={{
+                            color: "#3C3D37", // Replace with your design's primary icon color
+                            fontSize: 20, // Optional: adjust size
+                            verticalAlign: "middle", // Optional: aligns with text baseline
+                          }}
+                        />
                       </IconButton>
                     </TableCell>
                   </TableRow>

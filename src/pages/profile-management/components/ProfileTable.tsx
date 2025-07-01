@@ -52,11 +52,11 @@ export default function ProfileTable() {
   useEffect(() => {
     getStudents();
   }, [getStudents]);
-  
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setDelayedLoading(false);
-    }, 2000);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -226,14 +226,19 @@ export default function ProfileTable() {
                               last_name: student.last_name ?? "",
                               address: student.address ?? "",
                               birthdate: student.birthdate ?? "",
-                              subscription_type_name: student.subscription_type?.name ?? "",
-                              training_category: Array.isArray(student.enrollments) ? student.enrollments : [],
+                              subscription_type_name:
+                                student.subscription_type?.name ?? "",
+                              training_category: Array.isArray(
+                                student.enrollments
+                              )
+                                ? student.enrollments
+                                : [],
                               due_date: student.paid_until ?? "",
                               age: calculateAge(student.birthdate),
                               email: student.email,
                               user_id: student.users.id,
                             });
-                            
+
                             setOpenViewModal(true);
                           }}
                           sx={{ color: "#3C3D37" }}

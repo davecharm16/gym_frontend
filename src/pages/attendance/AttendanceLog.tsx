@@ -23,8 +23,8 @@ export default function AttendanceLog() {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <div className="mt-12 flex flex-col px-12 pt-12">
-        <h1 className="text-lg font-black pb-8">Attendance Log</h1>
+      <div className="mt-16 flex flex-col px-4 pt-12">
+        <h2 className="text-sm font-black pb-8">Attendance Log</h2>
 
         {/* --- moved search & filter here --- */}
         <Stack

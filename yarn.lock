@@ -502,7 +502,7 @@
 
 "@fontsource/poppins@^5.2.6":
   version "5.2.6"
-  resolved "https://registry.npmjs.org/@fontsource/poppins/-/poppins-5.2.6.tgz"
+  resolved "https://registry.yarnpkg.com/@fontsource/poppins/-/poppins-5.2.6.tgz#49a297bbec25419469dbb75f61788feac97cea63"
   integrity sha512-NFr0121+vWCfzLDVvSZOzwAjRUaNj6QHA9gtUh/KHHoWf1Qn23EkwVFs63XZ6UtF5K1b3UNmCx77YEMGgV7BOQ==
 
 "@hookform/resolvers@^5.1.1":

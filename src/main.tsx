@@ -1,17 +1,17 @@
-// index.tsx
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 
 import "bootstrap/dist/css/bootstrap.min.css";
-import "react-toastify/dist/ReactToastify.css"; 
-import { ToastContainer } from "react-toastify"; 
+import "react-toastify/dist/ReactToastify.css";
 
 import { CssBaseline } from "@mui/material";
 import { RouterProvider } from "react-router-dom";
 import { MainRoutes } from "./routes/MainRoutes";
 import { lightTheme } from "./theme/theme";
 import { ThemeProvider } from "@mui/material/styles";
+import { ToastContainer } from "react-toastify";
+
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
