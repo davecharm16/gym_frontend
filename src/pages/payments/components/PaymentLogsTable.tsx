@@ -118,6 +118,7 @@ const PaymentLogsTable: React.FC<Props> = ({ data }) => {
                   "Name",
                   "Given Amount",
                   "Amount to Pay",
+                  "Discount",
                   "Paid For",
                   "Paid At",
                   "Payment Method",
@@ -161,7 +162,9 @@ const PaymentLogsTable: React.FC<Props> = ({ data }) => {
                         minimumFractionDigits: 2,
                       })}
                     </TableCell>
+                        <TableCell>{row.discountValue}</TableCell>
                     <TableCell>{row.payment_type}</TableCell>
+                    
                     <TableCell>
                       {new Date(row.paid_at).toLocaleString("en-PH")}
                     </TableCell>

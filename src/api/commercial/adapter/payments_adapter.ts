@@ -1,14 +1,23 @@
 // src/services/adapters/payment/PaymentAdapter.ts
 
-import dayjs from 'dayjs';
-import type { PaymentAverageModel, PaymentModel, PaymentRecord, PaymentReportModel } from '../../../types/payments';
-import type { PaymentResponseDto, PaymentRequestDto, PaymentAverageDTO, PaymentRecordDTO, PaymentReportDTO } from '../dto/payments_dto';
-
+import dayjs from "dayjs";
+import type {
+  PaymentAverageModel,
+  PaymentModel,
+  PaymentRecord,
+  PaymentReportModel,
+} from "../../../types/payments";
+import type {
+  PaymentResponseDto,
+  PaymentRequestDto,
+  PaymentAverageDTO,
+  PaymentRecordDTO,
+  PaymentReportDTO,
+} from "../dto/payments_dto";
 
 export const paymentAdapterDTOtoModel = (
   dto: PaymentResponseDto
-): PaymentModel => (
-  {
+): PaymentModel => ({
   id: dto.id,
   studentId: dto.student_id,
   amount: dto.amount,
@@ -17,6 +26,7 @@ export const paymentAdapterDTOtoModel = (
   paymentMethod: dto.payment_method,
   amountToPay: dto.amount_to_pay,
   change: dto.change,
+  discountValue: dto.discount_value,
 });
 
 export const paymentAdapterModelToDTO = (
@@ -27,24 +37,33 @@ export const paymentAdapterModelToDTO = (
   payment_type: model.paymentType,
   payment_method: model.paymentMethod,
   amount_to_pay: model.amountToPay,
+  discount_value: model.discountValue,
 });
 
-
-export const paymentAverageDtoToModel = (dto: PaymentAverageDTO): PaymentAverageModel => ({
+export const paymentAverageDtoToModel = (
+  dto: PaymentAverageDTO
+): PaymentAverageModel => ({
   averagePerWeek: dto.average_per_week,
   averagePerMonth: dto.average_per_month,
 });
 
-
-export const adaptPaymentReport = (dto: PaymentReportDTO): PaymentReportModel => ({
-  records: dto.records.map((item: PaymentRecordDTO): PaymentRecord => ({
-    ...item,
-    student: item.student
-      ? {
-          ...item.student,
-          subscription_type: item.student.subscription_type ?? null,
-        }
-      : null,
-  })),
+export const adaptPaymentReport = (
+  dto: PaymentReportDTO
+): PaymentReportModel => ({
+  records: dto.records.map(
+    (item: PaymentRecordDTO): PaymentRecord => ({
+      ...item,
+      student: item.student
+        ? {
+            ...item.student,
+            subscription_type: item.student.subscription_type ?? null,
+          }
+        : null,
+      discountValue:
+        !item.discount_value || item.discount_value === 0
+          ? "N/A"
+          : `${item.discount_value}%`,
+    })
+  ),
   summary: dto.summary,
 });
