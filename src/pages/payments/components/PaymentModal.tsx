@@ -15,12 +15,13 @@ import { useTrainingStore } from "../../../store/trainings/trainings";
 import { useSubscriptionStore } from "../../../store/subscriptions/subscriptionsStore";
 import { useStudentStore } from "../../../store/student/studentStore";
 import { usePaymentStore } from "../../../store/payments/payments";
-import { useToastStore } from "../../../store/toastStore";
+
 
 import { paymentSchema } from "../../../utils/schema/paymentSchema";
 import Dropdown from "./Dropdown";
 import SearchDropdown from "../../../components/common/SearchableDropdown";
 import type { PaymentRequestDto } from "../../../api/commercial/dto/payments_dto";
+import { toast } from "react-toastify";
 
 export type PaymentModalProps = {
   open: boolean;
@@ -41,7 +42,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
     loading: isLoadingStudents,
   } = useStudentStore();
   const { createPayment } = usePaymentStore();
-  const { showToast } = useToastStore();
+ 
 
   const {
     control,
@@ -69,6 +70,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   const amountToPay = parseFloat(watch("amountToPay") || "0");
   const discount = parseFloat(watch("discount") || "0");
   const netAmountToPay = Math.max(amountToPay - discount, 0);
+
+  
 
   useEffect(() => {
     if (open) {
@@ -145,11 +148,11 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
     const result = await createPayment(payload);
 
     if (result) {
-      showToast("Payment successfully recorded!", "success");
+      toast.success("Payment successfully recorded!");
       onClose();
       onSuccess?.();
     } else {
-      showToast("Failed to record payment", "error");
+      toast.error("Failed to record payment");
     }
   };
 
