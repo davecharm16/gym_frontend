@@ -10,6 +10,8 @@ import {
   InputAdornment,
   IconButton,
 } from "@mui/material";
+import { toast } from "react-toastify";
+
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { registerStudentSchema } from "../../../utils/schema/registerStudentSchema";
@@ -41,10 +43,14 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
   const onSubmit = async (data: RegisterStudentFormSchema) => {
     try {
       await registerStudent(data);
-    } catch (error) {
+      toast.success("Registration successful!");
+      onClose();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
       console.error("Registration failed:", error);
+      toast.error("Registration failed. Please try again." + error?.message);
+      
     }
-    onClose();
   };
 
   useEffect(() => {
@@ -103,7 +109,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
             />
             <TextField
               fullWidth
-              label="Middle Name (Optional)"
+              label="Middle Name"
               {...register("middle_name")}
               error={!!errors.middle_name}
               helperText={errors.middle_name?.message}
