@@ -95,7 +95,8 @@ export default function CheckInLogs() {
                   {entry.time}
                 </Typography>
               </Box>
-            ))}
+            )
+            )}
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import { apiClient } from "../apiClient";
 import { endPoint } from "../api";
 import type { ApiResponse } from "../../types/api_response";
-import type { CreateSubscriptionType, SubscriptionType } from "../../types/subscription";
+import type { CreateSubscriptionType, EditSubscriptionType, SubscriptionType } from "../../types/subscription";
 import type { SubscriptionTypeDTO } from "../commercial/dto/subscription_dto";
 import { createSubscriptionModelToDTO, subscriptionTypeDTOToModel } from "../commercial/adapter/subscription_adapter";
 
@@ -41,4 +41,25 @@ export const createSubscriptionService = async (
     console.error("create subscription failed:", error);
     throw error;
   }
+  
+
+};
+
+export const editSubscriptionType = async (
+  payload: EditSubscriptionType, 
+  id: string
+): Promise<ApiResponse<SubscriptionType>> => {
+  try {
+    const res = await apiClient.put<SubscriptionTypeDTO>(endPoint.subscription(id), createSubscriptionModelToDTO(payload));
+    const adaptedData = subscriptionTypeDTOToModel(res.data!);
+
+    return {
+      ...res,
+      data: adaptedData,
+    };
+  } catch (error) {
+    console.error("create subscription failed:", error);
+    throw error;
+  }
+  
 };

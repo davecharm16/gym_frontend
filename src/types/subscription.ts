@@ -10,3 +10,8 @@ export interface CreateSubscriptionType {
   name: string;
   fee: number;
 }
+
+export interface EditSubscriptionType {
+   name: string;
+  fee: number;
+}

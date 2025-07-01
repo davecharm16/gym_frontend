@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import type { CreateSubscriptionType, SubscriptionType } from "../../types/subscription";
-import { createSubscriptionService, getSubscriptionTypes } from "../../api/subscription/subscription";
+import type { CreateSubscriptionType, EditSubscriptionType, SubscriptionType } from "../../types/subscription";
+import { createSubscriptionService, editSubscriptionType, getSubscriptionTypes } from "../../api/subscription/subscription";
 
 
 interface SubscriptionState {
@@ -13,9 +13,11 @@ interface SubscriptionState {
   resetSubscriptions: () => void;
   createSubscription: (payload:CreateSubscriptionType) => Promise<SubscriptionType 
   | undefined > | null;
+  editSubscription: (payload:EditSubscriptionType, id : string) => Promise<SubscriptionType 
+  | undefined > | null;
 }
  
-export const useSubscriptionStore = create<SubscriptionState>((set) => ({
+export const useSubscriptionStore = create<SubscriptionState>((set, get) => ({
   subscriptions: [],
   loading: false,
   error: null,
@@ -58,7 +60,25 @@ export const useSubscriptionStore = create<SubscriptionState>((set) => ({
     }
   },
 
-  
-
+  editSubscription: async (payload, id) => {
+    set({ loading: true, error: null });
+    try {
+      const res = await editSubscriptionType(payload, id);
+      console.log("Fetched subscription types:", res.data);
+      if (res.success) {
+        get().getSubscriptionTypes();
+        return(res.data)
+      } else {
+        set({ error: res.message || "Failed to load subscription types" });
+      }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      console.error("Failed to fetch subscriptions", err);
+      set({ error: err.message || "Unexpected error" });
+    } finally {
+      set({ loading: false });
+    }
+    get().getSubscriptionTypes();
+  },
   resetSubscriptions: () => set({ subscriptions: [], error: null, loading: false }),
 }));
