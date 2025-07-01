@@ -55,13 +55,12 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
     defaultValues: {
       studentId: "",
       paymentFor: "misc",
-      discount: "",
       amountToPay: "",
       amount: "",
       paymentDate: "",
       paymentMethod: "cash",
       change: "",
-      discountValue:"",
+      discountValue: 0,
     },
     resolver: yupResolver(paymentSchema as never),
   });
@@ -69,8 +68,9 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   const selectedPaymentFor = useWatch({ control, name: "paymentFor" });
   const amountGiven = parseFloat(watch("amount") || "0");
   const amountToPay = parseFloat(watch("amountToPay") || "0");
-  const discount = parseFloat(watch("discountValue") || "0");
-  const netAmountToPay = Math.max(amountToPay - discount, 0);
+  const discount =  watch("discountValue") || 0;
+  const discountAmount = amountToPay* watch("discountValue") / 100;
+  const netAmountToPay = Math.max(amountToPay - discountAmount, 0);
 
   
 
