@@ -11,6 +11,8 @@ import {
   Divider,
   Tooltip,
 } from "@mui/material";
+import { toast } from "react-toastify";
+
 import InfoOutlined from "@mui/icons-material/InfoOutlined";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
@@ -19,7 +21,6 @@ import { useTrainingStore } from "../../../store/trainings/trainings";
 import { useSubscriptionStore } from "../../../store/subscriptions/subscriptionsStore";
 import MultiSelectCheckbox from "../../../components/common/MultiSelect";
 import { useStudentStore } from "../../../store/student/studentStore";
-import { useToastStore } from "../../../store/toastStore";
 import PasswordManagement from "./PasswordReset";
 
 export type StudentData = {
@@ -48,7 +49,6 @@ type ViewModalProps = {
 const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
   const [editable, setEditable] = useState(false);
   const [formData, setFormData] = useState<StudentData | null>(student);
-  const { showToast } = useToastStore();
 
   const { trainings, fetchTrainings } = useTrainingStore();
   const { subscriptions, getSubscriptionTypes } = useSubscriptionStore();
@@ -89,24 +89,25 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
   };
 
   const handleToggleEdit = async () => {
-    if (editable && formData) {
-      if (!validateForm()) return;
-      const trainingsPayload = formData.training_category.map((tc) => ({
-        training_id: tc.training.id,
-      }));
-      const { ...studentForm } = formData;
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await updateStudent(formData.id, studentForm as any, trainingsPayload);
-        showToast("Student updated successfully", "success");
-        onClose();
-      } catch (err) {
-        console.error("Update failed", err);
-        showToast("Failed to update student", "error");
-      }
+  if (editable && formData) {
+    if (!validateForm()) return;
+    const trainingsPayload = formData.training_category.map((tc) => ({
+      training_id: tc.training.id,
+    }));
+    const { ...studentForm } = formData;
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await updateStudent(formData.id, studentForm as any, trainingsPayload);
+      toast.success("Student updated successfully");
+      onClose();
+    } catch (err) {
+      console.error("Update failed", err);
+      toast.error("Failed to update student");
     }
-    setEditable((prev) => !prev);
-  };
+  }
+  setEditable((prev) => !prev);
+};
+
 
   return (
     <Modal open={open} onClose={onClose}>
