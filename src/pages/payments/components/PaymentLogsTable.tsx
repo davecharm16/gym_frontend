@@ -193,7 +193,7 @@ const PaymentLogsTable: React.FC<Props> = ({ data }) => {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={7} align="center">
+                  <TableCell colSpan={12} align="center">
                     <Typography variant="body2">
                       No payment logs found.
                     </Typography>

@@ -1,8 +1,6 @@
 import { useState } from "react";
-import DeleteIcon from "@mui/icons-material/Delete";
 import {
   Button,
-  IconButton,
   Typography,
   TextField,
   Stack,
@@ -16,49 +14,38 @@ import {
 } from "@mui/material";
 import type { SubscriptionType } from "../../../types/subscription";
 import { useSubscriptionStore } from "../../../store/subscriptions/subscriptionsStore";
+import { Edit } from "@mui/icons-material";
+import { toast } from "react-toastify";
 
-type SessionType = {
-  name: string;
-  fee: number;
-  dateAdded: string;
-};
 
 interface SessionTableProps {
   data: SubscriptionType[];
 }
 
-export default function Session({data} : SessionTableProps) {
-
+export default function Session({ data }: SessionTableProps) {
   const [name, setName] = useState("");
   const [fee, setFee] = useState("");
-  const [sessions, setSessions] = useState<SessionType[]>([]); 
-  const {createSubscription} = useSubscriptionStore();
+  const [id, setId] = useState("");
+  const { editSubscription } = useSubscriptionStore();
 
 
-  const handleSave = async () => {
-    if (!name || !fee) return;
+  const handleEdit = async () => {
+    if(id === "" || name ==="" || fee ==="") return;
 
-    const today = new Date().toLocaleDateString("en-PH", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-
-  const data = await createSubscription({name,fee: parseInt(fee)})
-
-    setSessions([...sessions, { name, fee: parseFloat(fee), dateAdded: today }]);
-    setName("");
-    console.log(data);
-    setFee("");
-  };
-
-  const handleDelete = (index: number) => {
-    setSessions(sessions.filter((_, i) => i !== index));
+    try {
+      await editSubscription({
+        name: name,
+        fee: parseInt(fee),
+      }, id)
+      toast.success('Successfully Updated')
+    } catch (error) {
+      console.log(error);
+      toast.error('Error Updating, Try Again Later')
+    }
   };
 
   return (
     <div className="mx-auto p-4">
-
       <Typography variant="h6" fontWeight={700} gutterBottom>
         Add Session Subscription
       </Typography>
@@ -76,6 +63,7 @@ export default function Session({data} : SessionTableProps) {
             "& .MuiInputBase-root": { height: 50, fontSize: "16px" },
             "& .MuiInputLabel-root": { fontSize: "16px" },
           }}
+          disabled
         />
 
         <TextField
@@ -94,7 +82,7 @@ export default function Session({data} : SessionTableProps) {
 
         <Button
           variant="outlined"
-          onClick={handleSave}
+          onClick={handleEdit}
           sx={{
             height: 50,
             fontSize: "16px",
@@ -112,7 +100,7 @@ export default function Session({data} : SessionTableProps) {
       {/* Table Section */}
       <TableContainer
         component={Paper}
-        elevation={0}                  
+        elevation={0}
         sx={{ border: "1px solid #e0e0e0", borderRadius: 2, mt: 2 }}
       >
         <Table>
@@ -123,10 +111,7 @@ export default function Session({data} : SessionTableProps) {
               <TableCell sx={{ fontWeight: 700, fontSize: 14 }}>
                 Date Added
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{ fontWeight: 700, fontSize: 14 }}
-              >
+              <TableCell align="center" sx={{ fontWeight: 700, fontSize: 14 }}>
                 Actions
               </TableCell>
             </TableRow>
@@ -139,14 +124,18 @@ export default function Session({data} : SessionTableProps) {
                   <TableCell>{s.name}</TableCell>
                   <TableCell>₱{s.amount?.toFixed(2)}</TableCell>
                   <TableCell>{s.createdAt}</TableCell>
-                  <TableCell align="center">
-                    <IconButton
-                      onClick={() => handleDelete(index)}
-                      color="error"
-                      size="small"
-                    >
-                      <DeleteIcon fontSize="small" />
-                    </IconButton>
+                  <TableCell>
+                    <Edit
+                      onClick={() => {
+                        setName(s.name);
+                        setId(s.id)
+                        setFee(
+                          s.amount !== undefined && s.amount !== null
+                            ? String(s.amount)
+                            : ""
+                        );
+                      }}
+                    />
                   </TableCell>
                 </TableRow>
               ))
