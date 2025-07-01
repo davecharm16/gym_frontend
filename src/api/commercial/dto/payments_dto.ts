@@ -6,8 +6,8 @@ export interface PaymentRequestDto {
   payment_type: string;
   payment_method: string;
   amount_to_pay: number;
+  discount_value: number;
 }
-
 
 export interface PaymentResponseDto {
   id: string;
@@ -18,10 +18,11 @@ export interface PaymentResponseDto {
   payment_method: string;
   amount_to_pay: number;
   change: number;
-};
+  discount_value: number;
+}
 export interface PaymentAverageDTO {
-  average_per_week: number,
-  average_per_month: number
+  average_per_week: number;
+  average_per_month: number;
 }
 
 export interface PaymentStudentSubscriptionTypeDTO {
@@ -44,6 +45,7 @@ export interface PaymentRecordDTO {
   amount_to_pay: number;
   change: number;
   payment_type: string;
+  discount_value: number | null;
   payment_method: string;
   paid_at: string;
   student: PaymentStudentDTO | null;

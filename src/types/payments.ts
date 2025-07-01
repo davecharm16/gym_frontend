@@ -9,6 +9,7 @@ export interface PaymentModel {
   paymentMethod: string;
   amountToPay: number;
   change: number;
+  discountValue: number;
 }
 
 export interface PaymentAverageModel {
@@ -35,6 +36,7 @@ export interface PaymentRecord {
   amount_to_pay: number;
   change: number;
   payment_type: string;
+  discountValue: string;
   payment_method: string;
   paid_at: string;
   student: PaymentStudent | null;

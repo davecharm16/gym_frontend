@@ -61,6 +61,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
       paymentDate: "",
       paymentMethod: "cash",
       change: "",
+      discountValue:"",
     },
     resolver: yupResolver(paymentSchema as never),
   });
@@ -68,7 +69,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   const selectedPaymentFor = useWatch({ control, name: "paymentFor" });
   const amountGiven = parseFloat(watch("amount") || "0");
   const amountToPay = parseFloat(watch("amountToPay") || "0");
-  const discount = parseFloat(watch("discount") || "0");
+  const discount = parseFloat(watch("discountValue") || "0");
   const netAmountToPay = Math.max(amountToPay - discount, 0);
 
   
@@ -143,6 +144,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
       amount_to_pay: Number(data.amountToPay),
       payment_method: data.paymentMethod,
       payment_type,
+      discount_value: data.discountValue,
     };
 
     const result = await createPayment(payload);
@@ -271,7 +273,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
               />
 
               <Controller
-                name="discount"
+                name="discountValue"
                 control={control}
                 render={({ field }) => (
                   <TextField
@@ -279,8 +281,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                     label="Discount"
                     type="number"
                     fullWidth
-                    error={!!errors.discount}
-                    helperText={errors.discount?.message}
+                    error={!!errors.discountValue}
+                    helperText={errors.discountValue?.message}
                   />
                 )}
               />

@@ -14,6 +14,7 @@ export type TransactionData = {
   name: string;
   payFor: string;           // e.g. "Monthly Subscription"
   paymentDate: string;      // ISO string or yyyy‑mm‑dd
+  change: number;
   paymentMethod: string;    // e.g. "Cash", "GCash"
   amount: number;           // single payment amount
   totalPayment: number;     // running total / balance after this tx
@@ -93,8 +94,15 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, transaction }) => 
             <Divider sx={{ my: 1 }} />
 
             <ReceiptRow
-              label="Amount:"
+              label="Amount Given:"
               value={`₱${transaction.amount.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+              })}`}
+            />
+
+            <ReceiptRow
+              label="Change Given:"
+              value={`₱${transaction.change.toLocaleString(undefined, {
                 minimumFractionDigits: 2,
               })}`}
             />

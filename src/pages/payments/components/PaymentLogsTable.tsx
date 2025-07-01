@@ -53,7 +53,8 @@ const PaymentLogsTable: React.FC<Props> = ({ data }) => {
       paymentDate: row.paid_at,
       paymentMethod: row.payment_method,
       amount: row.amount,
-      totalPayment: row.amount,
+      change: row.change,
+      totalPayment: row.amount_to_pay,
     };
     setSelectedTx(tx);
     setOpenModal(true);
@@ -65,6 +66,8 @@ const PaymentLogsTable: React.FC<Props> = ({ data }) => {
     { label: "Name", value: "student_full_name" },
     { label: "Given Amount", value: "amount" },
     { label: "Amount to Pay", value: "amount_to_pay" },
+    { label: "Discount", value: "discount_value" },
+    { label: "Change", value: "change" },
     { label: "Paid For", value: "payment_type" },
     { label: "Paid At", value: "paid_at" },
     { label: "Payment Method", value: "payment_method" },
@@ -118,6 +121,8 @@ const PaymentLogsTable: React.FC<Props> = ({ data }) => {
                   "Name",
                   "Given Amount",
                   "Amount to Pay",
+                  "Discount",
+                  "Change",
                   "Paid For",
                   "Paid At",
                   "Payment Method",
@@ -134,7 +139,7 @@ const PaymentLogsTable: React.FC<Props> = ({ data }) => {
               {delayedLoading ? (
                 [...Array(rowsPerPage)].map((_, i) => (
                   <TableRow key={`skeleton-${i}`}>
-                    {Array.from({ length: 7 }).map((_, j) => (
+                    {Array.from({ length: 9 }).map((_, j) => (
                       <TableCell key={j}>
                         <Skeleton variant="text" height={28} />
                       </TableCell>
@@ -161,7 +166,10 @@ const PaymentLogsTable: React.FC<Props> = ({ data }) => {
                         minimumFractionDigits: 2,
                       })}
                     </TableCell>
+                        <TableCell>{row.discountValue}</TableCell>
+                        <TableCell>{row.change}</TableCell>
                     <TableCell>{row.payment_type}</TableCell>
+                    
                     <TableCell>
                       {new Date(row.paid_at).toLocaleString("en-PH")}
                     </TableCell>
