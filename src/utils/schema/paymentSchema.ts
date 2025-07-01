@@ -39,4 +39,6 @@ export const paymentSchema = yup.object().shape({
   change: yup
     .string()
     .notRequired(),
+
+  discountValue: yup.number().min(0).max(100).required(),
 });

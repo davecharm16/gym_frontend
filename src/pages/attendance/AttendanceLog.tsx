@@ -18,7 +18,7 @@ export default function AttendanceLog() {
   const { fetchAttendances, attendances, loading } = useAttendanceStore();
 
   useEffect(() => {
-    fetchAttendances(undefined, dayjs(selectedDate).format('YYYY-MM-DD'));
+    fetchAttendances(undefined, dayjs(selectedDate).format("YYYY-MM-DD"));
   }, [fetchAttendances, selectedDate]);
 
   return (
@@ -40,17 +40,16 @@ export default function AttendanceLog() {
             slotProps={{
               textField: {
                 variant: "outlined",
-                size: "medium",
+                size: "small",
                 sx: {
                   width: 220,
-                  height: 50,
-                  fontSize: "18px",
+
+                  fontSize: "12px",
                   "& .MuiInputBase-root": {
-                    height: 50,
-                    fontSize: "16px",
+                    fontSize: "14px",
                   },
                   "& .MuiInputLabel-root": {
-                    fontSize: "16px",
+                    fontSize: "14px",
                   },
                 },
               },
@@ -59,19 +58,18 @@ export default function AttendanceLog() {
           <TextField
             label="Search Name"
             variant="outlined"
-            size="medium"
+            size="small"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             sx={{
               width: 300,
-              height: 50,
-              fontSize: "18px",
+
+              fontSize: "12px",
               "& .MuiInputBase-root": {
-                height: 50,
-                fontSize: "16px",
+                fontSize: "14px",
               },
               "& .MuiInputLabel-root": {
-                fontSize: "16px",
+                fontSize: "14px",
               },
             }}
             InputProps={{
@@ -82,20 +80,20 @@ export default function AttendanceLog() {
           <TextField
             label="Filter by Type"
             variant="outlined"
-            size="medium"
+            size="small"
             select
             value={selectedType}
             onChange={(e) => setSelectedType(e.target.value)}
             sx={{
               width: 200,
-              height: 50,
-              fontSize: "18px",
+           
+              fontSize: "12px",
               "& .MuiInputBase-root": {
-                height: 50,
-                fontSize: "16px",
+                
+                fontSize: "14px",
               },
               "& .MuiInputLabel-root": {
-                fontSize: "16px",
+                fontSize: "14px",
               },
             }}
           >
