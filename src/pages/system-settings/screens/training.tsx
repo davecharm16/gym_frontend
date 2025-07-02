@@ -11,58 +11,87 @@ import {
   TableCell,
   TableBody,
   Paper,
-  IconButton,
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { Edit } from "@mui/icons-material";
 import { useTrainingStore } from "../../../store/trainings/trainings";
-
+import { toast } from "react-toastify";
 
 export default function Training() {
-  const [name, setName] = useState("");
+  const [title, setName] = useState("");
   const [fee, setFee] = useState("");
+  const [id, setId] = useState("");
 
-  const { trainings, fetchTrainings } = useTrainingStore();
+  const { trainings, getTrainings, editTraining } = useTrainingStore();
 
   useEffect(() => {
-    fetchTrainings();
-  }, [fetchTrainings]);
+    getTrainings();
+  }, [getTrainings]);
 
-  const handleSave = () => {
-    // Future implementation: createTraining API call
-    console.log("Saving:", { name, fee });
-  };
+  const handleEdit = async () => {
+    if (!id || !title || !fee) return;
 
-  const handleDelete = (idx: number) => {
-    // Future implementation: deleteTraining API call
-    console.log("Deleting index:", idx);
+    try {
+      await editTraining(
+        {
+          title: title,
+          fee: parseFloat(fee),
+        },
+        id
+      );
+      toast.success("Training updated successfully");
+
+      // Clear form
+      setName("");
+      setFee("");
+      setId("");
+
+      // Refresh data
+      getTrainings();
+    } catch (error) {
+      console.error("Update failed:", error);
+      toast.error("Failed to update training. Try again later.");
+    }
   };
 
   return (
     <div className="mx-auto p-4">
       <Typography variant="h6" fontWeight={700} gutterBottom>
-        Add Training
+        Edit Training
       </Typography>
 
-      {/* --- form --- */}
-      <Stack direction="column" spacing={3} sx={{ maxWidth: 530 }} mb={6}>
+      {/* Form Section */}
+      <Stack direction="column" spacing={3} mb={6} sx={{ maxWidth: 530 }}>
         <TextField
           label="Training Name"
-          value={name}
+          value={title}
           onChange={(e) => setName(e.target.value)}
+          placeholder="Enter training name"
           fullWidth
           size="medium"
+          sx={{
+            "& .MuiInputBase-root": { height: 50, fontSize: "16px" },
+            "& .MuiInputLabel-root": { fontSize: "16px" },
+          }}
+          disabled
         />
+
         <TextField
           label="Fee"
           type="number"
           value={fee}
           onChange={(e) => setFee(e.target.value)}
+          placeholder="Enter fee"
           fullWidth
           size="medium"
+          sx={{
+            "& .MuiInputBase-root": { height: 50, fontSize: "16px" },
+            "& .MuiInputLabel-root": { fontSize: "16px" },
+          }}
         />
+
         <Button
           variant="outlined"
-          onClick={handleSave}
+          onClick={handleEdit}
           sx={{
             height: 50,
             fontSize: "16px",
@@ -77,11 +106,11 @@ export default function Training() {
         </Button>
       </Stack>
 
-      {/* --- table --- */}
+      {/* Table Section */}
       <TableContainer
         component={Paper}
         elevation={0}
-        sx={{ border: "1px solid #e0e0e0", borderRadius: 2 }}
+        sx={{ border: "1px solid #e0e0e0", borderRadius: 2, mt: 2 }}
       >
         <Table>
           <TableHead sx={{ backgroundColor: "#f5f5f5" }}>
@@ -96,20 +125,23 @@ export default function Training() {
           </TableHead>
 
           <TableBody>
-            {trainings?.length ? (
-              trainings.map((r, idx) => (
-                <TableRow key={idx} hover>
-                  <TableCell>{r.title}</TableCell>
-                  <TableCell>₱{r.baseFee.toFixed(2)}</TableCell>
-                  <TableCell>{r.createdAt.format("MMM DD, YYYY")}</TableCell>
+            {trainings?.length > 0 ? (
+              trainings.map((training, index) => (
+                <TableRow key={index} hover>
+                  <TableCell>{training.title}</TableCell>
+                  <TableCell>₱{training.baseFee.toFixed(2)}</TableCell>
+                  <TableCell>
+                    {training.createdAt.format("MMM DD, YYYY")}
+                  </TableCell>
                   <TableCell align="center">
-                    <IconButton
-                      size="small"
-                      color="error"
-                      onClick={() => handleDelete(idx)}
-                    >
-                      <DeleteIcon fontSize="small" />
-                    </IconButton>
+                    <Edit
+                      onClick={() => {
+                        setName(training.title);
+                        setFee(String(training.baseFee));
+                        setId(training.id);
+                      }}
+                      style={{ cursor: "pointer" }}
+                    />
                   </TableCell>
                 </TableRow>
               ))

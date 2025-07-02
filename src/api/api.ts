@@ -11,6 +11,7 @@ export const endPoint = {
   checkIn: `/checkIn`,
   attendance: `/attendance`,
   trainings: '/trainings',
+  training: (id: string) => `/trainings/${id}`,
   payment: '/payment',
   paymentAverage: '/payment/average',
   totalRegistered: '/dashboard/total-registered',

@@ -2,8 +2,8 @@ import { apiClient } from '../apiClient';
 import { endPoint } from '../api';
 import type { ApiResponse } from '../../types/api_response';
 import type { TrainingDto } from '../commercial/dto/training_dto';
-import type { TrainingModel } from '../../types/training';
-import { trainingAdapterDTOtoModel } from '../commercial/adapter/training_adapter';
+import type { EditTrainingModel, TrainingModel } from '../../types/training';
+import { editTrainingAdapterModelToDTO, trainingAdapterDTOtoModel } from '../commercial/adapter/training_adapter';
 
 export const getTrainings = async (): Promise<ApiResponse<TrainingModel[]>> => {
   try {
@@ -17,4 +17,27 @@ export const getTrainings = async (): Promise<ApiResponse<TrainingModel[]>> => {
     console.error('getTrainings failed:', error);
     throw error;
   }
+};
+
+
+/**
+ * Create a new subscription type
+ */
+
+
+
+export const editTraining = async (
+  payload: EditTrainingModel, 
+  id: string
+): Promise<ApiResponse<null>> => {
+  try {
+    const res = await apiClient.put<null>(endPoint.training(id), editTrainingAdapterModelToDTO(payload));
+     return res
+
+     
+  } catch (error) {
+    console.error("edit training failed:", error);
+    throw error;
+  }
+  
 };

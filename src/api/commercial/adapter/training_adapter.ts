@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
-import type { TrainingModel } from '../../../types/training';
-import type { TrainingDto } from '../dto/training_dto';
+import type { EditTrainingModel, TrainingModel } from '../../../types/training';
+import type {  EditTrainingTypeRequestDTO, TrainingDto } from '../dto/training_dto';
 
 export const trainingAdapterDTOtoModel = (dto: TrainingDto): TrainingModel => ({
   id: dto.id,
@@ -18,4 +18,11 @@ export const trainingAdapterModelToDTO = (model: TrainingModel): TrainingDto => 
   instructor_id: model.instructorId,
   base_fee: model.baseFee,
   created_at: model.createdAt.toISOString(),
+});
+
+export const editTrainingAdapterModelToDTO = (model: EditTrainingModel): EditTrainingTypeRequestDTO => ({
+
+  title: model.title,
+  base_fee: model.fee,
+
 });
