@@ -21,11 +21,11 @@ export default function Training() {
   const [fee, setFee] = useState("");
   const [id, setId] = useState("");
 
-  const { trainings, getTrainings, editTraining } = useTrainingStore();
+  const { trainings, fetchTrainings, editTraining } = useTrainingStore();
 
   useEffect(() => {
-    getTrainings();
-  }, [getTrainings]);
+    fetchTrainings();
+  }, [fetchTrainings]);
 
   const handleEdit = async () => {
     if (!id || !title || !fee) return;
@@ -46,7 +46,7 @@ export default function Training() {
       setId("");
 
       // Refresh data
-      getTrainings();
+      fetchTrainings();
     } catch (error) {
       console.error("Update failed:", error);
       toast.error("Failed to update training. Try again later.");

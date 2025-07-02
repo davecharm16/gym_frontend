@@ -8,7 +8,7 @@ interface TrainingState {
   loading: boolean;
   error: string | null;
 
-  getTrainings: () => Promise<void>;
+  fetchTrainings: () => Promise<void>;
   resetTrainings: () => void;
   editTraining: (payload: EditTrainingModel, id: string) => Promise<null | undefined> | null;
 }
@@ -18,7 +18,7 @@ export const useTrainingStore = create<TrainingState>((set, get) => ({
   loading: false,
   error: null,
 
-  getTrainings: async () => {
+  fetchTrainings: async () => {
     set({ loading: true, error: null });
     try {
       const res = await getTrainings();
@@ -41,7 +41,7 @@ export const useTrainingStore = create<TrainingState>((set, get) => ({
     try {
       const res = await editTraining(payload, id);
       if (res.success) {
-        get().getTrainings();
+        get().fetchTrainings();
         return res.data;
       } else {
         set({ error: res.message || "Failed to edit training" });
@@ -52,7 +52,7 @@ export const useTrainingStore = create<TrainingState>((set, get) => ({
     } finally {
       set({ loading: false });
     }
-    get().getTrainings();
+    get().fetchTrainings();
   },
 
   resetTrainings: () => set({ trainings: [], error: null, loading: false }),

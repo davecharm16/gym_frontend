@@ -11,17 +11,15 @@ import {
   TableCell,
   TableBody,
   Paper,
-  IconButton,
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
+
 import type { InstructorType } from "../../../types/instructor";
 
-
-interface InstructorTableProp  {
+interface InstructorTableProp {
   instructors: InstructorType[];
 }
 
-export default function Instructor({instructors} : InstructorTableProp) {
+export default function Instructor({ instructors }: InstructorTableProp) {
   const [instructor, setInstructor] = useState("");
   const [training, setTraining] = useState("");
   const [rows, setRows] = useState<InstructorType[]>(instructors);
@@ -33,15 +31,10 @@ export default function Instructor({instructors} : InstructorTableProp) {
       month: "short",
       day: "numeric",
     });
-    setRows([...rows, { name:instructor, createdAt:dateAdded }]);
+    setRows([...rows, { name: instructor, createdAt: dateAdded }]);
     setInstructor("");
     setTraining("");
   };
-
-  const handleDelete = (idx: number) =>
-    setRows(rows.filter((_, i) => i !== idx));
-
-  
 
   return (
     <div className="mx-auto p-4">
@@ -102,9 +95,7 @@ export default function Instructor({instructors} : InstructorTableProp) {
               <TableCell sx={{ fontWeight: 700 }}>Instructor</TableCell>
 
               <TableCell sx={{ fontWeight: 700 }}>Date Added</TableCell>
-              <TableCell align="center" sx={{ fontWeight: 700 }}>
-                Actions
-              </TableCell>
+              
             </TableRow>
           </TableHead>
           <TableBody>
@@ -113,15 +104,7 @@ export default function Instructor({instructors} : InstructorTableProp) {
                 <TableRow key={idx} hover>
                   <TableCell>{r.name}</TableCell>
                   <TableCell>{r.createdAt}</TableCell>
-                  <TableCell align="center">
-                    <IconButton
-                      size="small"
-                      color="error"
-                      onClick={() => handleDelete(idx)}
-                    >
-                      <DeleteIcon fontSize="small" />
-                    </IconButton>
-                  </TableCell>
+                  <TableCell align="center"></TableCell>
                 </TableRow>
               ))
             ) : (
