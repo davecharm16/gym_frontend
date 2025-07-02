@@ -16,7 +16,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { registerStudentSchema } from "../../../utils/schema/registerStudentSchema";
 import type { RegisterStudentFormSchema } from "../../../utils/schema/registerStudentSchema";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+
 import { useStudentStore } from "../../../store/student/studentStore";
 import { useSubscriptionStore } from "../../../store/subscriptions/subscriptionsStore";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
@@ -237,32 +237,6 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
             />
           </Stack>
 
-          <Box
-            sx={{
-              border: "1px solid #ccc",
-              padding: 2,
-              textAlign: "center",
-              borderRadius: 1,
-              mb: 3,
-            }}
-          >
-            <input
-              type="file"
-              accept="image/*"
-              style={{ display: "none" }}
-              id="upload-avatar"
-            />
-            <label
-              htmlFor="upload-avatar"
-              style={{
-                cursor: "pointer",
-                display: "inline-flex",
-                alignItems: "center",
-              }}
-            >
-              <CloudUploadIcon color="action" fontSize="large" />
-            </label>
-          </Box>
 
           <Stack direction="row" spacing={2} justifyContent="flex-end">
             <Button
