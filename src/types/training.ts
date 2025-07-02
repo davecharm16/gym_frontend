@@ -1,4 +1,4 @@
-import { Dayjs } from 'dayjs';
+import { Dayjs } from "dayjs";
 
 export interface TrainingModel {
   id: string;
@@ -7,4 +7,9 @@ export interface TrainingModel {
   instructorId: string | null;
   baseFee: number;
   createdAt: Dayjs;
+}
+
+export interface EditTrainingModel {
+  title: string;
+  fee: number;
 }

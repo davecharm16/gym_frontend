@@ -47,7 +47,7 @@ export default function Session({ data }: SessionTableProps) {
   return (
     <div className="mx-auto p-4">
       <Typography variant="h6" fontWeight={700} gutterBottom>
-        Add Session Subscription
+        Edit Subscription
       </Typography>
 
       {/* Form Section */}
