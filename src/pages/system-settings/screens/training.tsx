@@ -11,10 +11,11 @@ import {
   TableCell,
   TableBody,
   Paper,
+  IconButton,
 } from "@mui/material";
 import { Edit } from "@mui/icons-material";
-import { useTrainingStore } from "../../../store/trainings/trainings";
 import { toast } from "react-toastify";
+import { useTrainingStore } from "../../../store/trainings/trainings";
 
 export default function Training() {
   const [title, setName] = useState("");
@@ -39,13 +40,9 @@ export default function Training() {
         id
       );
       toast.success("Training updated successfully");
-
-      // Clear form
       setName("");
       setFee("");
       setId("");
-
-      // Refresh data
       fetchTrainings();
     } catch (error) {
       console.error("Update failed:", error);
@@ -115,10 +112,12 @@ export default function Training() {
         <Table>
           <TableHead sx={{ backgroundColor: "#f5f5f5" }}>
             <TableRow>
-              <TableCell sx={{ fontWeight: 700 }}>Name</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Fee</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Date Added</TableCell>
-              <TableCell align="center" sx={{ fontWeight: 700 }}>
+              <TableCell sx={{ fontWeight: 700, fontSize: 14 }}>Name</TableCell>
+              <TableCell sx={{ fontWeight: 700, fontSize: 14 }}>Fee</TableCell>
+              <TableCell sx={{ fontWeight: 700, fontSize: 14 }}>
+                Date Added
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: 700, fontSize: 14 }}>
                 Actions
               </TableCell>
             </TableRow>
@@ -129,19 +128,29 @@ export default function Training() {
               trainings.map((training, index) => (
                 <TableRow key={index} hover>
                   <TableCell>{training.title}</TableCell>
-                  <TableCell>₱{training.baseFee.toFixed(2)}</TableCell>
                   <TableCell>
-                    {training.createdAt.format("MMM DD, YYYY")}
+                    ₱{Number(training.baseFee ?? 0).toFixed(2)}
+                  </TableCell>
+                  <TableCell>
+                    {training.createdAt
+                      ? training.createdAt.format("MMM DD, YYYY")
+                      : "N/A"}
                   </TableCell>
                   <TableCell align="center">
-                    <Edit
+                    <IconButton
+                      size="small"
                       onClick={() => {
                         setName(training.title);
                         setFee(String(training.baseFee));
                         setId(training.id);
                       }}
-                      style={{ cursor: "pointer" }}
-                    />
+                      sx={{
+                        color: "#3C3D37",
+                        "&:hover": { backgroundColor: "#E6E6E6" },
+                      }}
+                    >
+                      <Edit fontSize="small" />
+                    </IconButton>
                   </TableCell>
                 </TableRow>
               ))
