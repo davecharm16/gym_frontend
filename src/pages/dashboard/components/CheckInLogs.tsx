@@ -74,7 +74,7 @@ export default function CheckInLogs() {
             display="flex"
             justifyContent="center"
             alignItems="center"
-            height="46em"
+            height="46  em"
             py={5}
           >
             <Typography variant="body2" color="text.secondary">
