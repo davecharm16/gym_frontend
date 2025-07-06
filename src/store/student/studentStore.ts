@@ -19,7 +19,7 @@ interface StudentState {
 
   /* actions */
   getStudents: (subscriptionName?: string) => Promise<Student[] | null>;
-  registerStudent: (payload: RegisterStudentFormSchema) => Promise<void>;
+  registerStudent: (payload: RegisterStudentFormSchema) => Promise<ApiResponse<Partial<Student>>>;
   setSearchQuery: (query: string) => void;
   setSelectedCategory: (category: string) => void;
   deleteStudent: (id: string) => void;
@@ -66,6 +66,7 @@ export const useStudentStore = create<StudentState>((set, get) => ({
       if (res.success) {
        console.log("Student registered successfully:", res.data);
        get().getStudents(); // Refresh student list after registration
+       return res
       } else {
         set({ error: res.message || "Registration failed" });
         throw new Error(res.message || "Registration failed");

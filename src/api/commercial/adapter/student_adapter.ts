@@ -1,7 +1,8 @@
+import type { ApiResponse } from "@/types/api_response";
 import type { StudentData } from "../../../pages/profile-management/components/ViewModal";
 import type { Student, StudentCheckIn } from "../../../types/students";
 import type { RegisterStudentFormSchema } from "../../../utils/schema/registerStudentSchema";
-import type { CreateStudentRequestDTO, CreateStudentResponseDTO, StudentCheckInDTO, UpdateStudentDTO } from "../dto/student_dto";
+import type { CreateStudentRequestDTO, CreateStudentResponseDTO, StudentCheckInDTO, UpdateStudentDTO, UploadProfileImageResponse } from "../dto/student_dto";
 import { format } from "date-fns";
 
 export const toStudentModel = (dto: CreateStudentResponseDTO): Partial<Student> => ({
@@ -65,3 +66,22 @@ export const toUpdateStudentDTO = (formData: StudentData): UpdateStudentDTO => (
   address: formData.address,
   birthdate: formData.birthdate,
 });
+
+
+export function toUploadProfileImageResponse(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  apiResponse: ApiResponse<any>
+): UploadProfileImageResponse {
+  if (
+    !apiResponse ||
+    !apiResponse.success ||
+    !apiResponse.data ||
+    typeof apiResponse.data.imageUrl !== "string"
+  ) {
+    throw new Error("Invalid API response format");
+  }
+
+  return {
+    imageUrl: apiResponse.data.imageUrl,
+  }
+}

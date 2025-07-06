@@ -39,3 +39,11 @@ export type UpdateStudentDTO = {
 };
 
 
+export interface UploadProfileImageFormData {
+  image: File;
+}
+
+export interface UploadProfileImageResponse {
+  imageUrl: string;
+}
+

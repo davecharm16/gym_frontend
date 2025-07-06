@@ -21,6 +21,7 @@ import { useStudentStore } from "../../../store/student/studentStore";
 import { useSubscriptionStore } from "../../../store/subscriptions/subscriptionsStore";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import UploadProfile from "./UploadProfile";
+import { uploadProfileImage } from "@/api/student/students";
 
 export type RegisterModalProps = {
   open: boolean;
@@ -31,6 +32,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
   const registerStudent = useStudentStore((state) => state.registerStudent);
   const subscriptions = useSubscriptionStore((state) => state.subscriptions);
   const [showPassword, setShowPassword] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const {
     register,
     handleSubmit,
@@ -42,17 +44,32 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
   });
 
   const onSubmit = async (data: RegisterStudentFormSchema) => {
+    if (!selectedFile) {
+      toast.error("Profile image is required.");
+      return;
+    }
+  
     try {
-      await registerStudent(data);
+      // 1) Register the student (returns student ID)
+      const res = await registerStudent(data);
+  
+      // We expect `res.data.id` to contain the student ID
+      if (!res?.data?.id) {
+        throw new Error("No student ID returned from registration.");
+      }
+  
+      // 2) Upload the profile image
+      await uploadProfileImage(res.data.id, selectedFile);
+  
       toast.success("Registration successful!");
       onClose();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Registration failed:", error);
-      toast.error("Registration failed. Please try again." + error?.message);
-      
+      toast.error("Registration failed. " + error?.message);
     }
   };
+  
 
   useEffect(() => {
     // Fetch subscriptions when the modal opens
@@ -239,7 +256,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
           </Stack>
           
           <Stack>
-              <UploadProfile editable={true} />
+           <UploadProfile editable={true} onFileSelected={(file) => setSelectedFile(file)} />
           </Stack>
 
 
