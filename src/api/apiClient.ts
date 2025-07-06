@@ -7,10 +7,8 @@ import { base_url } from "./api";
 
 const instance = axios.create({
   baseURL: base_url,
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
+
 
 // Dynamically attach token before each request
 instance.interceptors.request.use(

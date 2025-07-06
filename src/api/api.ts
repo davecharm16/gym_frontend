@@ -18,5 +18,6 @@ export const endPoint = {
   paymentReport: '/payment/all-with-student',
   enroll: "/enroll",
   requestPasswordReset : "/auth/reset-password",
-  forceResetPassword : "/auth/admin-reset-password"
+  forceResetPassword : "/auth/admin-reset-password",
+  uploadProfile : (id: string) => `/upload/${id}/upload-profile-image`,
 };

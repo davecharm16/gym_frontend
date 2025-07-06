@@ -6,9 +6,9 @@ import type { RegisterStudentFormSchema } from "../../utils/schema/registerStude
 import { endPoint } from "../api";
 import { apiClient } from "../apiClient";
 import { toStudentAttendanceModel } from "../commercial/adapter/attendance_adapter";
-import { toCreateStudentDTO, toStudentCheckInDTO, toStudentModel, toUpdateStudentDTO } from "../commercial/adapter/student_adapter";
+import { toCreateStudentDTO, toStudentCheckInDTO, toStudentModel, toUpdateStudentDTO, toUploadProfileImageResponse } from "../commercial/adapter/student_adapter";
 import type { AttendanceDTO } from "../commercial/dto/attendance_dto";
-import type { CreateStudentRequestDTO, CreateStudentResponseDTO, UpdateStudentDTO } from "../commercial/dto/student_dto";
+import type { CreateStudentRequestDTO, CreateStudentResponseDTO, UpdateStudentDTO, UploadProfileImageResponse } from "../commercial/dto/student_dto";
 
 
 export const getStudents = async ({
@@ -112,4 +112,24 @@ export const updateStudent = async (
     // or handle it here (e.g. set an error state / show toast).
     throw error;
   }
+};
+
+export const uploadProfileImage = async (
+  userId: string,
+  file: File
+): Promise<UploadProfileImageResponse> => {
+  const formData = new FormData();
+  formData.append("image", file);
+
+  const response = await apiClient.post<ApiResponse<UploadProfileImageResponse>>(
+    endPoint.uploadProfile(userId),
+    formData
+  );
+
+
+  if (!response?.data) {
+    throw new Error("No response data received.");
+  }
+
+  return toUploadProfileImageResponse(response);
 };

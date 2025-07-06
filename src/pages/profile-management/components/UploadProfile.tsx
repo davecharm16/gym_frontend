@@ -10,7 +10,13 @@ import {
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
-const UploadProfile = ({ editable }: { editable: boolean }) => {
+const UploadProfile = ({
+  editable,
+  onFileSelected,
+}: {
+  editable: boolean;
+  onFileSelected?: (file: File) => void;
+}) => {
   const [image, setImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const theme = useTheme();
@@ -21,6 +27,9 @@ const UploadProfile = ({ editable }: { editable: boolean }) => {
       const reader = new FileReader();
       reader.onloadend = () => setImage(reader.result as string);
       reader.readAsDataURL(file);
+
+      // notify parent
+      onFileSelected?.(file);
     }
   };
 
