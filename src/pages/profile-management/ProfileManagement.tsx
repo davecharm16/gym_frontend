@@ -3,8 +3,9 @@ import RegisterModal from "./components/RegisterModal";
 import { Stack, TextField, MenuItem, Button, Box } from "@mui/material";
 import { useStudentStore } from "../../store/student/studentStore";
 import { useSubscriptionStore } from "../../store/subscriptions/subscriptionsStore";
-import ProfileTable from "./components/ProfileTable";
+
 import { Search } from "@mui/icons-material";
+import ProfileTable from "@/pages/profile-management/components/ProfileTable";
 
 const ProfileManagement = () => {
   const [openRegisterModal, setOpenRegisterModal] = useState(false);

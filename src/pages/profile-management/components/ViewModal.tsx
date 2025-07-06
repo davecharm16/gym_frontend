@@ -21,7 +21,8 @@ import { useTrainingStore } from "../../../store/trainings/trainings";
 import { useSubscriptionStore } from "../../../store/subscriptions/subscriptionsStore";
 import MultiSelectCheckbox from "../../../components/common/MultiSelect";
 import { useStudentStore } from "../../../store/student/studentStore";
-import PasswordManagement from "./PasswordReset";
+import PasswordManagement from "../../profile-management/components/PasswordReset";
+import UploadProfile from "../components/UploadProfile";
 
 export type StudentData = {
   id: string;
@@ -267,6 +268,21 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
               size="small"
               InputLabelProps={{ shrink: true }}
             />
+
+            <Stack direction="row" spacing={2} alignItems="center">
+  <UploadProfile editable={editable} />
+  <Box>
+    <Typography variant="h5" fontWeight={700}>
+      {formData
+        ? `${formData.first_name} ${formData.middle_name ?? ""} ${formData.last_name}`
+        : "No data"}
+    </Typography>
+    <Typography variant="body2" color="text.secondary">
+      Student Profile
+    </Typography>
+  </Box>
+</Stack>
+
           </Box>
         ) : (
           <Typography color="text.secondary">
@@ -299,7 +315,13 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
           email={student?.email ?? ""}
           userId={student?.user_id ?? ""}
         />
+
+       
+      
       </Box>
+
+      
+       
     </Modal>
   );
 };

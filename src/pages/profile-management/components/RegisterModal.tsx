@@ -20,6 +20,7 @@ import type { RegisterStudentFormSchema } from "../../../utils/schema/registerSt
 import { useStudentStore } from "../../../store/student/studentStore";
 import { useSubscriptionStore } from "../../../store/subscriptions/subscriptionsStore";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import UploadProfile from "./UploadProfile";
 
 export type RegisterModalProps = {
   open: boolean;
@@ -235,6 +236,10 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
                 ),
               }}
             />
+          </Stack>
+          
+          <Stack>
+              <UploadProfile editable={true} />
           </Stack>
 
 
