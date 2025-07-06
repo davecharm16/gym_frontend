@@ -2,7 +2,8 @@
 
 This project follows a clean and scalable architecture for frontend applications using **React**, **Zustand** for state management, **Axios** for API calls, and a clear separation between **DTOs**, **Models**, and **Adapters**.
 
-![image](https://github.com/user-attachments/assets/85bcba0f-64a3-460b-974e-58ef47a269e6)
+![architecturegymapp-Copy of Page-1 drawio](https://github.com/user-attachments/assets/bb950441-3b73-4a37-a384-aecbc1565939)
+
 
 
 ---
