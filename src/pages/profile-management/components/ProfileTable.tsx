@@ -19,9 +19,10 @@ import { useEffect, useState } from "react";
 import { Visibility, Delete } from "@mui/icons-material";
 
 import { useStudentStore } from "../../../store/student/studentStore";
-import ViewModal, { type StudentData } from "./ViewModal";
-import DeleteModal from "./DeleteModal";
+
 import { useToastStore } from "../../../store/toastStore";
+import DeleteModal from "./DeleteModal";
+import ViewModal, { type StudentData } from "./ViewModal";
 
 export default function ProfileTable() {
   const {

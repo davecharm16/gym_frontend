@@ -1,20 +1,19 @@
-import StatCard from "./components/StatCard";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import EventRepeatIcon from "@mui/icons-material/EventRepeat";
 import PersonIcon from "@mui/icons-material/Person";
-import WelcomeBanner from "./components/WelcomeBanner";
+
 import { useAuthStore } from "../../store/auth/authStore";
-import MonthlySubscription from "./components/MonthlySubscription";
-import SessionSubscription from "./components/SessionSubscription";
+
 import CheckInLogs from "./components/CheckInLogs";
 import { useState, useEffect } from "react";
 import { useStatsStore } from "../../store/dashboard/useDashboardStore";
 import { usePaymentReportStore } from "../../store/payments/paymentReports";
 import dayjs from "dayjs";
-
-
-
+import MonthlySubscription from "./screens/MonthlySubscription";
+import SessionSubscription from "./screens/SessionSubscription";
+import StatCard from "./screens/StatCard";
+import WelcomeBanner from "./screens/WelcomeBanner";
 
 export default function Dashboard() {
   const { user } = useAuthStore();
@@ -66,6 +65,7 @@ export default function Dashboard() {
       </div>
 
       {/* ───── Stats Row ───── */}
+
       <div className="w-full px-4 mx-auto mt-2 mb-4">
         <div className="row gy-4">
           <div className="col-6 col-md-4 col-lg-3">
@@ -77,12 +77,10 @@ export default function Dashboard() {
           </div>
           <div className="col-6 col-md-4 col-lg-3">
             <StatCard
-            
               icon={<AttachMoneyIcon sx={{ fontSize: 42 }} />}
               label="Daily Earned"
               value={report?.summary.total_amount_to_pay.toFixed(2) ?? 0}
             />
-            
           </div>
           <div className="col-6 col-md-4 col-lg-3">
             <StatCard
@@ -104,7 +102,6 @@ export default function Dashboard() {
       {/* ───── Main Content ───── */}
       <div className="w-full px-4 mx-auto mt-2">
         <div className="row gy-4">
-          
           {/* Left column */}
           <div className="col-12 col-lg-8">
             <div className="mb-4">
