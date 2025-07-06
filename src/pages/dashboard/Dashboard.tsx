@@ -13,6 +13,9 @@ import { useStatsStore } from "../../store/dashboard/useDashboardStore";
 import { usePaymentReportStore } from "../../store/payments/paymentReports";
 import dayjs from "dayjs";
 
+
+
+
 export default function Dashboard() {
   const { user } = useAuthStore();
 
@@ -74,10 +77,12 @@ export default function Dashboard() {
           </div>
           <div className="col-6 col-md-4 col-lg-3">
             <StatCard
+            
               icon={<AttachMoneyIcon sx={{ fontSize: 42 }} />}
               label="Daily Earned"
               value={report?.summary.total_amount_to_pay.toFixed(2) ?? 0}
             />
+            
           </div>
           <div className="col-6 col-md-4 col-lg-3">
             <StatCard
@@ -99,6 +104,7 @@ export default function Dashboard() {
       {/* ───── Main Content ───── */}
       <div className="w-full px-4 mx-auto mt-2">
         <div className="row gy-4">
+          
           {/* Left column */}
           <div className="col-12 col-lg-8">
             <div className="mb-4">
