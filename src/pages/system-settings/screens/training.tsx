@@ -14,8 +14,8 @@ import {
   IconButton,
 } from "@mui/material";
 import { Edit } from "@mui/icons-material";
-import { toast } from "react-toastify";
 import { useTrainingStore } from "../../../store/trainings/trainings";
+import { toast } from "sonner";
 
 export default function Training() {
   const [title, setName] = useState("");
@@ -39,7 +39,7 @@ export default function Training() {
         },
         id
       );
-      toast.success("Training updated successfully");
+      toast.success("Successfully Updated");
       setName("");
       setFee("");
       setId("");

@@ -21,7 +21,8 @@ import { paymentSchema } from "../../../utils/schema/paymentSchema";
 import Dropdown from "./Dropdown";
 import SearchDropdown from "../../../components/common/SearchableDropdown";
 import type { PaymentRequestDto } from "../../../api/commercial/dto/payments_dto";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
+
 
 export type PaymentModalProps = {
   open: boolean;

@@ -12,7 +12,7 @@ import {
   TableBody,
   Paper,
 } from "@mui/material";
-
+import { toast } from "sonner"; // ✅ Import toast from Sonner
 import type { InstructorType } from "../../../types/instructor";
 
 interface InstructorTableProp {
@@ -26,12 +26,17 @@ export default function Instructor({ instructors }: InstructorTableProp) {
 
   const handleSave = () => {
     if (!instructor || !training) return;
+
     const dateAdded = new Date().toLocaleDateString("en-PH", {
       year: "numeric",
       month: "short",
       day: "numeric",
     });
+
     setRows([...rows, { name: instructor, createdAt: dateAdded }]);
+
+    toast.success("Successfully Updated");
+
     setInstructor("");
     setTraining("");
   };
@@ -93,9 +98,7 @@ export default function Instructor({ instructors }: InstructorTableProp) {
           <TableHead sx={{ backgroundColor: "#f5f5f5" }}>
             <TableRow>
               <TableCell sx={{ fontWeight: 700 }}>Instructor</TableCell>
-
               <TableCell sx={{ fontWeight: 700 }}>Date Added</TableCell>
-              
             </TableRow>
           </TableHead>
           <TableBody>
@@ -104,7 +107,6 @@ export default function Instructor({ instructors }: InstructorTableProp) {
                 <TableRow key={idx} hover>
                   <TableCell>{r.name}</TableCell>
                   <TableCell>{r.createdAt}</TableCell>
-                  <TableCell align="center"></TableCell>
                 </TableRow>
               ))
             ) : (

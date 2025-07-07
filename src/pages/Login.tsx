@@ -10,8 +10,8 @@ import {
   Button,
   CircularProgress,
 } from "@mui/material";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+
+import { toast } from "sonner";
 
 const Login = () => {
   const login = useAuthStore((s) => s.login);
@@ -26,23 +26,26 @@ const Login = () => {
       const res = await login({ email, password });
 
       if (!res) {
-        toast.error("Invalid email or password");
+         toast.error("Something went wrong, please try again.")
         return;
       }
 
-      toast.success("Login successful!");
+       toast.success("successfully Logged in!");
 
       if (res.role === "admin") navigate("/");
       else if (res.role === "student") navigate("/student");
-      else toast.error("Unauthorized role");
+      else toast.warning("Unauthorized role. Contact admin.");
+      
     } catch {
-      toast.error("Login failed. Please try again.");
+      toast.warning("Login failed. Please try again.");
+
+      
     }
   };
 
   return (
     <div className="flex h-screen overflow-hidden">
-      {/* ───── Background Image ───── */}
+      {/* Background Image */}
       <div className="w-1/2 hidden md:block relative">
         <img
           src={backgroundImage}
@@ -51,7 +54,7 @@ const Login = () => {
         />
       </div>
 
-      {/* ───── Login Form ───── */}
+      {/* Login Form */}
       <div className="w-full md:w-1/2 flex items-center justify-center px-6 bg-white">
         <form className="w-full max-w-md">
           <h1 className="text-4xl font-black text-center mb-8 tracking-tight">
@@ -117,9 +120,6 @@ const Login = () => {
           </Button>
         </form>
       </div>
-
-      {/* ───── Toast Container ───── */}
-      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
     </div>
   );
 };

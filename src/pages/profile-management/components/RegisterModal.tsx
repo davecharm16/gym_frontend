@@ -10,7 +10,7 @@ import {
   InputAdornment,
   IconButton,
 } from "@mui/material";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
