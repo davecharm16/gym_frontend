@@ -14,10 +14,11 @@ import {
   IconButton,
 } from "@mui/material";
 import { Edit } from "@mui/icons-material";
-import { toast } from "react-toastify";
+
 import dayjs from "dayjs";
 import { useSubscriptionStore } from "../../../store/subscriptions/subscriptionsStore";
 import type { SubscriptionType } from "../../../types/subscription";
+import { toast } from "sonner";
 
 interface SessionTableProps {
   data: SubscriptionType[];
@@ -35,7 +36,7 @@ export default function Session({ data }: SessionTableProps) {
 
     try {
       await editSubscription({ name, fee: parseFloat(fee) }, id);
-      toast.success("Successfully Updated");
+      toast.success("Successfully Updated.");
       setId("");
       setName("");
       setFee("");

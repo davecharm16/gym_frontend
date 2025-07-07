@@ -9,7 +9,7 @@ import {
   MenuItem,
   Tooltip,
 } from "@mui/material";
-import { toast } from "react-toastify";
+
 
 import InfoOutlined from "@mui/icons-material/InfoOutlined";
 import EditIcon from "@mui/icons-material/Edit";
@@ -22,6 +22,7 @@ import { useStudentStore } from "../../../store/student/studentStore";
 import PasswordManagement from "./PasswordReset";
 import UploadProfile from "./UploadProfile";
 import { uploadProfileImage } from "@/api/student/students";
+import { toast } from "sonner";
 
 export type StudentData = {
   id: string;
@@ -101,7 +102,7 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err:any) {
         console.error("Update failed", err);
-        toast.error("Failed to update student");
+        toast.error("Failed to update user.")
         return;
       }
     }
@@ -114,11 +115,11 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
       const { ...studentForm } = formData;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await updateStudent(formData.id, studentForm as any, trainingsPayload);
-        toast.success("Student updated successfully");
+        toast.success("successfully updated.");
         onClose();
       } catch (err) {
         console.error("Update failed", err);
-        toast.error("Failed to update student");
+        toast.error("Failed to update user");
       }
     }
     setEditable((prev) => !prev);

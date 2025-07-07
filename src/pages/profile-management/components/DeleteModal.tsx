@@ -8,6 +8,7 @@ import {
   Box,
 } from "@mui/material";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import { toast } from "sonner";
 
 type Props = {
   open: boolean;
@@ -17,6 +18,12 @@ type Props = {
 };
 
 const DeleteModal: React.FC<Props> = ({ open, onClose, onConfirm, name }) => {
+  const handleDelete = () => {
+    onConfirm(); // trigger parent delete logic
+    toast.success(`${name} was successfully deleted`);
+    onClose(); // close modal
+  };
+
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogContent sx={{ textAlign: "center", px: 6, py: 4 }}>
@@ -52,7 +59,7 @@ const DeleteModal: React.FC<Props> = ({ open, onClose, onConfirm, name }) => {
           Cancel
         </Button>
         <Button
-          onClick={onConfirm}
+          onClick={handleDelete}
           variant="contained"
           sx={{
             minWidth: 120,
