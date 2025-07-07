@@ -1,23 +1,21 @@
 "use client";
 
-import React, { useState, useRef } from "react";
-import {
-  Avatar,
-  Box,
-  Typography,
-  Stack,
-  useTheme,
-} from "@mui/material";
+import React, { useRef, useState } from "react";
+import { Avatar, Box, Typography, useTheme, Stack } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
-const UploadProfile = ({
-  editable,
-  onFileSelected,
-}: {
+interface UploadProfileProps {
   editable: boolean;
   onFileSelected?: (file: File) => void;
+  defaultImage?: string;
+}
+
+const UploadProfile: React.FC<UploadProfileProps> = ({
+  editable,
+  onFileSelected,
+  defaultImage,
 }) => {
-  const [image, setImage] = useState<string | null>(null);
+  const [image, setImage] = useState<string | null>(defaultImage ?? null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const theme = useTheme();
 
@@ -27,9 +25,7 @@ const UploadProfile = ({
       const reader = new FileReader();
       reader.onloadend = () => setImage(reader.result as string);
       reader.readAsDataURL(file);
-
-      // notify parent
-      onFileSelected?.(file);
+      if (onFileSelected) onFileSelected(file);
     }
   };
 
@@ -43,33 +39,31 @@ const UploadProfile = ({
     <Box
       onClick={triggerFileSelect}
       sx={{
-        width: "100%",
-        height: 200,
-        borderRadius: 2,
+        width: 150,
+        height: 150,
+        borderRadius: "50%",
         border: `2px dashed ${theme.palette.divider}`,
-        position: "relative",
+        overflow: "hidden",
         cursor: editable ? "pointer" : "default",
         transition: "border 0.3s",
         "&:hover": {
-          borderColor: editable ? theme.palette.primary.main : theme.palette.divider,
+          borderColor: editable
+            ? theme.palette.primary.main
+            : theme.palette.divider,
         },
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        overflow: "hidden",
-        mx: "auto",
+        mx: "auto", // centers horizontally
         mb: 2,
       }}
     >
       {image ? (
         <Avatar
           src={image}
-          variant="square"
           sx={{
-            width: 180,
-            height: 180,
-            objectFit: "cover",
-            borderRadius: 1,
+            width: "100%",
+            height: "100%",
           }}
         />
       ) : (
@@ -77,7 +71,9 @@ const UploadProfile = ({
           <CloudUploadIcon
             sx={{
               fontSize: 36,
-              color: editable ? theme.palette.text.secondary : theme.palette.text.disabled,
+              color: editable
+                ? theme.palette.text.secondary
+                : theme.palette.text.disabled,
             }}
           />
           <Typography
