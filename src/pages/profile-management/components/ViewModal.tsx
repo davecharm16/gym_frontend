@@ -4,11 +4,9 @@ import {
   Box,
   Typography,
   Stack,
-  Avatar,
   TextField,
   IconButton,
   MenuItem,
-  Divider,
   Tooltip,
 } from "@mui/material";
 import { toast } from "react-toastify";
@@ -21,8 +19,9 @@ import { useTrainingStore } from "../../../store/trainings/trainings";
 import { useSubscriptionStore } from "../../../store/subscriptions/subscriptionsStore";
 import MultiSelectCheckbox from "../../../components/common/MultiSelect";
 import { useStudentStore } from "../../../store/student/studentStore";
-import PasswordManagement from "../../profile-management/components/PasswordReset";
-import UploadProfile from "../components/UploadProfile";
+import PasswordManagement from "./PasswordReset";
+import UploadProfile from "./UploadProfile";
+import { uploadProfileImage } from "@/api/student/students";
 
 export type StudentData = {
   id: string;
@@ -32,6 +31,7 @@ export type StudentData = {
   last_name: string;
   address: string;
   age: number;
+  picture_url: string;
   email: string;
   birthdate: string;
   training_category: {
@@ -50,15 +50,18 @@ type ViewModalProps = {
 const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
   const [editable, setEditable] = useState(false);
   const [formData, setFormData] = useState<StudentData | null>(student);
-
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const { trainings, fetchTrainings } = useTrainingStore();
   const { subscriptions, getSubscriptionTypes } = useSubscriptionStore();
   const { updateStudent } = useStudentStore();
+
+  
 
   const trainingOptions = trainings.map((t) => t.title);
   const subscriptionOptions = subscriptions.map((s) => s.name);
 
   useEffect(() => {
+    console.error(student?.picture_url);
     setFormData(student);
     if (open) {
       fetchTrainings();
@@ -89,33 +92,44 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
     return Object.keys(newErrors).length === 0;
   };
 
+  
   const handleToggleEdit = async () => {
-  if (editable && formData) {
-    if (!validateForm()) return;
-    const trainingsPayload = formData.training_category.map((tc) => ({
-      training_id: tc.training.id,
-    }));
-    const { ...studentForm } = formData;
-    try {
+    if(selectedFile){
+      try {
+        await uploadProfileImage(student?.id ?? '', selectedFile);
+        
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await updateStudent(formData.id, studentForm as any, trainingsPayload);
-      toast.success("Student updated successfully");
-      onClose();
-    } catch (err) {
-      console.error("Update failed", err);
-      toast.error("Failed to update student");
+      } catch (err:any) {
+        console.error("Update failed", err);
+        toast.error("Failed to update student");
+        return;
+      }
     }
-  }
-  setEditable((prev) => !prev);
-};
-
+    if (editable && formData) {
+      try {
+      if (!validateForm()) return;
+      const trainingsPayload = formData.training_category.map((tc) => ({
+        training_id: tc.training.id,
+      }));
+      const { ...studentForm } = formData;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await updateStudent(formData.id, studentForm as any, trainingsPayload);
+        toast.success("Student updated successfully");
+        onClose();
+      } catch (err) {
+        console.error("Update failed", err);
+        toast.error("Failed to update student");
+      }
+    }
+    setEditable((prev) => !prev);
+  };
 
   return (
     <Modal open={open} onClose={onClose}>
       <Box
         sx={{
           position: "absolute",
-          top: "50%",
+          top: "54%",
           left: "50%",
           transform: "translate(-50%, -50%)",
           width: "95%",
@@ -138,23 +152,27 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
           direction="row"
           justifyContent="space-between"
           alignItems="center"
-          mb={3}
+          mb={4}
         >
-          <Stack direction="row" spacing={2} alignItems="center">
-            <Avatar sx={{ width: 72, height: 72, fontSize: 28 }}>
-              {student
-                ? student.first_name[0] + (student.last_name?.[0] ?? "")
-                : "?"}
-            </Avatar>
-            <Box>
-              <Typography variant="h5" fontWeight={700}>
+          <Stack direction="row" spacing={3} alignItems="center">
+            <Box sx={{ width: 150}}>
+              <UploadProfile
+  editable={editable}
+  defaultImage={formData?.picture_url}
+  onFileSelected={(file) => setSelectedFile(file)}
+/>
+
+            </Box>
+
+            <Box sx={{ width: 350 }}>
+              <Typography variant="h5" fontWeight={700} noWrap>
                 {formData
                   ? `${formData.first_name} ${formData.middle_name ?? ""} ${
                       formData.last_name
                     }`
                   : "No data"}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" color="text.secondary" noWrap>
                 Student Profile
               </Typography>
             </Box>
@@ -173,8 +191,6 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
             </IconButton>
           </Tooltip>
         </Stack>
-
-        <Divider sx={{ mb: 3 }} />
 
         {formData ? (
           <Box
@@ -268,21 +284,6 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
               size="small"
               InputLabelProps={{ shrink: true }}
             />
-
-            <Stack direction="row" spacing={2} alignItems="center">
-  <UploadProfile editable={editable} />
-  <Box>
-    <Typography variant="h5" fontWeight={700}>
-      {formData
-        ? `${formData.first_name} ${formData.middle_name ?? ""} ${formData.last_name}`
-        : "No data"}
-    </Typography>
-    <Typography variant="body2" color="text.secondary">
-      Student Profile
-    </Typography>
-  </Box>
-</Stack>
-
           </Box>
         ) : (
           <Typography color="text.secondary">
@@ -315,13 +316,7 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
           email={student?.email ?? ""}
           userId={student?.user_id ?? ""}
         />
-
-       
-      
       </Box>
-
-      
-       
     </Modal>
   );
 };

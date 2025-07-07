@@ -9,6 +9,7 @@ export interface Student {
   created_at: string;
   subscription_type_id: string;
   paid_until: string | null;
+  picture_url: string | null;
   subscription_type: {
     name: string;
   };

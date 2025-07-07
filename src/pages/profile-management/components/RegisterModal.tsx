@@ -63,13 +63,12 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
   
       toast.success("Registration successful!");
       onClose();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Registration failed:", error);
       toast.error("Registration failed. " + error?.message);
     }
   };
-  
 
   useEffect(() => {
     // Fetch subscriptions when the modal opens
@@ -254,11 +253,13 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
               }}
             />
           </Stack>
-          
-          <Stack>
-           <UploadProfile editable={true} onFileSelected={(file) => setSelectedFile(file)} />
-          </Stack>
 
+          <Stack>
+            <UploadProfile
+              editable={true}
+              onFileSelected={(file) => setSelectedFile(file)}
+            />
+          </Stack>
 
           <Stack direction="row" spacing={2} justifyContent="flex-end">
             <Button
