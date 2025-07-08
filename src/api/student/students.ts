@@ -103,7 +103,7 @@ export const updateStudent = async (
   form: StudentData
 ): Promise<void> => {
   try {
-    console.log(form)
+    console.log(form.subscription_type_id)
     const dto: UpdateStudentDTO = toUpdateStudentDTO(form);
     await apiClient.put(`${endPoint.students}/${id}`, dto); // or whatever you need to return
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

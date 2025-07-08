@@ -80,6 +80,10 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
     }
   }, [student, subscriptions]);
 
+  useEffect(() => {
+    console.log(selectedSubscriptionId)
+  }, [selectedSubscriptionId])
+
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -120,9 +124,9 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
         if (!validateForm()) return;
         const trainingsPayload = formData.training_category.map((tc) => ({
           training_id: tc.training.id,
-          subscription_type_id: selectedSubscriptionId,
         }));
-        const { ...studentForm } = formData;
+        const { ...studentForm} = formData;
+        studentForm.subscription_type_id = selectedSubscriptionId
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await updateStudent(formData.id, studentForm as any, trainingsPayload);
         toast.success("successfully updated.");
