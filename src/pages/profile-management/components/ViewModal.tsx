@@ -62,22 +62,22 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
   const subscriptionOptions = subscriptions.map((s) => s.name);
 
   useEffect(() => {
-    console.error(student?.picture_url);
-    setFormData(student);
+    if (open) {
+      fetchTrainings();
+      getSubscriptionTypes();
+    }
+  }, [open, fetchTrainings, getSubscriptionTypes]);
 
+  useEffect(() => {
+    setFormData(student);
+  
     if (student && subscriptions.length) {
-      // Find subscription matching the student subscription name
       const match = subscriptions.find(
         (s) => s.name === student.subscription_type_name
       );
       setSelectedSubscriptionId(match?.id ?? null);
     }
-
-    if (open) {
-      fetchTrainings();
-      getSubscriptionTypes();
-    }
-  }, [student, open, fetchTrainings, getSubscriptionTypes, subscriptions]);
+  }, [student, subscriptions]);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
