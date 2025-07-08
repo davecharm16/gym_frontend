@@ -33,7 +33,7 @@ export type UpdateStudentDTO = {
   address?: string;
   birthdate?: string;
   sex?: 'male' | 'female' | 'other';
-  subscription_type_id?: string | null;
+  subscription_type_id: string | null;
   picture_url?: string | null;
   paid_until?: string;
 };
