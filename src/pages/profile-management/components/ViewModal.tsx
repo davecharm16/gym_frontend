@@ -63,22 +63,26 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
   const subscriptionOptions = subscriptions.map((s) => s.name);
 
   useEffect(() => {
-    console.error(student?.picture_url);
-    setFormData(student);
+    if (open) {
+      fetchTrainings();
+      getSubscriptionTypes();
+    }
+  }, [open, fetchTrainings, getSubscriptionTypes]);
 
+  useEffect(() => {
+    setFormData(student);
+  
     if (student && subscriptions.length) {
-      // Find subscription matching the student subscription name
       const match = subscriptions.find(
         (s) => s.name === student.subscription_type_name
       );
       setSelectedSubscriptionId(match?.id ?? null);
     }
+  }, [student, subscriptions]);
 
-    if (open) {
-      fetchTrainings();
-      getSubscriptionTypes();
-    }
-  }, [student, open, fetchTrainings, getSubscriptionTypes, subscriptions]);
+  useEffect(() => {
+    console.log(selectedSubscriptionId)
+  }, [selectedSubscriptionId])
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -120,9 +124,9 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
         if (!validateForm()) return;
         const trainingsPayload = formData.training_category.map((tc) => ({
           training_id: tc.training.id,
-          subscription_type_id: selectedSubscriptionId,
         }));
-        const { ...studentForm } = formData;
+        const { ...studentForm} = formData;
+        studentForm.subscription_type_id = selectedSubscriptionId
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await updateStudent(formData.id, studentForm as any, trainingsPayload);
         toast.success("successfully updated.");
