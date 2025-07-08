@@ -10,7 +10,6 @@ import {
   Tooltip,
 } from "@mui/material";
 
-
 import InfoOutlined from "@mui/icons-material/InfoOutlined";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
@@ -55,8 +54,9 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
   const { trainings, fetchTrainings } = useTrainingStore();
   const { subscriptions, getSubscriptionTypes } = useSubscriptionStore();
   const { updateStudent } = useStudentStore();
-
-  
+  const [selectedSubscriptionId, setSelectedSubscriptionId] = useState<
+    string | null
+  >(null);
 
   const trainingOptions = trainings.map((t) => t.title);
   const subscriptionOptions = subscriptions.map((s) => s.name);
@@ -64,11 +64,20 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
   useEffect(() => {
     console.error(student?.picture_url);
     setFormData(student);
+
+    if (student && subscriptions.length) {
+      // Find subscription matching the student subscription name
+      const match = subscriptions.find(
+        (s) => s.name === student.subscription_type_name
+      );
+      setSelectedSubscriptionId(match?.id ?? null);
+    }
+
     if (open) {
       fetchTrainings();
       getSubscriptionTypes();
     }
-  }, [student, open, fetchTrainings, getSubscriptionTypes]);
+  }, [student, open, fetchTrainings, getSubscriptionTypes, subscriptions]);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -93,26 +102,26 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  
   const handleToggleEdit = async () => {
-    if(selectedFile){
+    if (selectedFile) {
       try {
-        await uploadProfileImage(student?.id ?? '', selectedFile);
-        
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (err:any) {
+        await uploadProfileImage(student?.id ?? "", selectedFile);
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (err: any) {
         console.error("Update failed", err);
-        toast.error("Failed to update user.")
+        toast.error("Failed to update user.");
         return;
       }
     }
     if (editable && formData) {
       try {
-      if (!validateForm()) return;
-      const trainingsPayload = formData.training_category.map((tc) => ({
-        training_id: tc.training.id,
-      }));
-      const { ...studentForm } = formData;
+        if (!validateForm()) return;
+        const trainingsPayload = formData.training_category.map((tc) => ({
+          training_id: tc.training.id,
+          subscription_type_id: selectedSubscriptionId,
+        }));
+        const { ...studentForm } = formData;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await updateStudent(formData.id, studentForm as any, trainingsPayload);
         toast.success("successfully updated.");
@@ -156,13 +165,12 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
           mb={4}
         >
           <Stack direction="row" spacing={3} alignItems="center">
-            <Box sx={{ width: 150}}>
+            <Box sx={{ width: 150 }}>
               <UploadProfile
-  editable={editable}
-  defaultImage={formData?.picture_url}
-  onFileSelected={(file) => setSelectedFile(file)}
-/>
-
+                editable={editable}
+                defaultImage={formData?.picture_url}
+                onFileSelected={(file) => setSelectedFile(file)}
+              />
             </Box>
 
             <Box sx={{ width: 350 }}>
@@ -262,9 +270,15 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
               select
               label="Subscription Type"
               value={formData.subscription_type_name}
-              onChange={(e) =>
-                handleChange("subscription_type_name", e.target.value)
-              }
+              onChange={(e) => {
+                const selectedName = e.target.value;
+                handleChange("subscription_type_name", selectedName);
+                // Find and set the subscription id
+                const found = subscriptions.find(
+                  (s) => s.name === selectedName
+                );
+                setSelectedSubscriptionId(found?.id ?? null);
+              }}
               disabled={!editable}
               size="small"
             >
