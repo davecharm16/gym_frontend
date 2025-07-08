@@ -39,6 +39,7 @@ export type StudentData = {
   }[];
   subscription_type_name: string;
   due_date: string;
+  subscription_type_id: string | null;
 };
 
 type ViewModalProps = {

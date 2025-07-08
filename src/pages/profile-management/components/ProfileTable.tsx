@@ -239,6 +239,7 @@ export default function ProfileTable() {
                               email: student.email,
                               user_id: student.users.id,
                               picture_url: student.picture_url ?? '',
+                              subscription_type_id: student.subscription_type_id,
                             });
 
                             setOpenViewModal(true);
