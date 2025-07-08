@@ -65,6 +65,7 @@ export const toUpdateStudentDTO = (formData: StudentData): UpdateStudentDTO => (
   middle_name: formData.middle_name ?? null,
   address: formData.address,
   birthdate: formData.birthdate,
+  subscription_type_id: formData.subscription_type_id,
 });
 
 
