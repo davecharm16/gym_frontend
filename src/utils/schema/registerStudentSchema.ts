@@ -35,10 +35,10 @@ export const registerStudentSchema = yup.object({
 
   subscription_type_id: yup.string().nullable(), // Can be null
 
-  // picture_url: yup
-  //   .string()
-  //   .url("Must be a valid URL")
-  //   .required("Picture URL is required"),
+  picture_url: yup
+    .string()
+    .url("Must be a valid URL")
+    .optional(),
 });
 
 

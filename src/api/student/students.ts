@@ -116,7 +116,7 @@ export const updateStudent = async (
 };
 
 export const uploadProfileImage = async (
-  userId: string,
+  userId: string | undefined,
   file: File
 ): Promise<UploadProfileImageResponse> => {
   const formData = new FormData();

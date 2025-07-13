@@ -52,7 +52,12 @@ export default function ProfileTable() {
 
   useEffect(() => {
     getStudents();
+
   }, [getStudents]);
+
+  useEffect(()=>{
+    console.log(students);
+  },[students])
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -164,6 +169,8 @@ export default function ProfileTable() {
                   const subscriptionDate = student.created_at;
                   const paymentStatus =
                     isMonthly && student.paid_until ? student.paid_until : "-";
+                  const student_picture_url = student.picture_url;
+                  // console.log(student_picture_url);
 
                   return (
                     <TableRow key={student.id} hover>
@@ -238,7 +245,7 @@ export default function ProfileTable() {
                               age: calculateAge(student.birthdate),
                               email: student.email,
                               user_id: student.users.id,
-                              picture_url: student.picture_url ?? '',
+                              picture_url:  student_picture_url ?? '',
                               subscription_type_id: student.subscription_type_id,
                             });
 

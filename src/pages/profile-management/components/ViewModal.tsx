@@ -59,6 +59,8 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
     string | null
   >(null);
 
+  const [image, setImage ] = useState('');
+
   const trainingOptions = trainings.map((t) => t.title);
   const subscriptionOptions = subscriptions.map((s) => s.name);
 
@@ -71,6 +73,8 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
 
   useEffect(() => {
     setFormData(student);
+    // eslint-disable-next-line no-constant-binary-expression
+    setImage(`${student?.picture_url}?t=${Date.now()}`)
 
     if (student && subscriptions.length) {
       const match = subscriptions.find(
@@ -79,6 +83,10 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
       setSelectedSubscriptionId(match?.id ?? null);
     }
   }, [student, subscriptions]);
+
+  useEffect(()=>{
+    console.log('Imageee View Modal' + student?.email, image);
+  },[image])
 
   useEffect(() => {
     console.log(selectedSubscriptionId);
@@ -174,9 +182,11 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
         >
           <Stack direction="row" spacing={2} alignItems="center">
             <Box sx={{ width: { xs: "100%", sm: 150 } }}>
+                {/* { console.log("Debugging student picture URL:", student?.picture_url ?? '')} */}
               <UploadProfile
                 editable={editable}
-                defaultImage={formData?.picture_url}
+                // defaultImage={student?.picture_url}
+                defaultImage={image}
                 onFileSelected={(file) => setSelectedFile(file)}
               />
             </Box>
