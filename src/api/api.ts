@@ -19,5 +19,8 @@ export const endPoint = {
   enroll: "/enroll",
   requestPasswordReset : "/auth/reset-password",
   forceResetPassword : "/auth/admin-reset-password",
-  uploadProfile : (id: string) => `/upload/${id}/upload-profile-image`,
+  uploadProfile: (id?: string) =>
+    id
+      ? `/upload/${id}/upload-profile-image`
+      : `/upload/upload-profile-image`,
 };

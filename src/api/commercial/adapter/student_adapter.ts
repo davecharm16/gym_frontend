@@ -32,7 +32,7 @@ export const toCreateStudentDTO = (
   birthdate: format(form.birthdate, 'yyyy-MM-dd'),
   enrollment_date: format(form.enrollment_date, 'yyyy-MM-dd'),
   subscription_type_id: form.subscription_type_id ?? undefined,
-  picture_url: "",
+  picture_url: form.picture_url,
 });
 
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Avatar, Box, Typography, useTheme, Stack } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
@@ -34,6 +34,10 @@ const UploadProfile: React.FC<UploadProfileProps> = ({
       fileInputRef.current.click();
     }
   };
+
+  useEffect(() => {
+    console.log('Uploadddd', image)
+  }, [image])
 
   return (
     <Box

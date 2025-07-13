@@ -50,16 +50,18 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
     }
   
     try {
-      // 1) Register the student (returns student ID)
+
+      // 2) Upload the profile image
+      const resuplaod = await uploadProfileImage(undefined, selectedFile);
+      console.log(resuplaod.imageUrl);
+      data.picture_url = resuplaod.imageUrl;
+      
       const res = await registerStudent(data);
   
       // We expect `res.data.id` to contain the student ID
       if (!res?.data?.id) {
         throw new Error("No student ID returned from registration.");
       }
-  
-      // 2) Upload the profile image
-      await uploadProfileImage(res.data.id, selectedFile);
   
       toast.success("Registration successful!");
       onClose();
