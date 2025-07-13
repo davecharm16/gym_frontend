@@ -66,6 +66,7 @@ export const toUpdateStudentDTO = (formData: StudentData): UpdateStudentDTO => (
   address: formData.address,
   birthdate: formData.birthdate,
   subscription_type_id: formData.subscription_type_id,
+  paid_until: formData.due_date,
 });
 
 

@@ -41,8 +41,6 @@ interface AttendanceTableProps {
 type SortKey = keyof AttendanceRow;
 type SortOrder = "asc" | "desc";
 
-
-
 const AttendanceLog = ({
   searchQuery,
   selectedType,
@@ -244,8 +242,16 @@ const AttendanceLog = ({
                   <TableRow key={idx} hover>
                     <TableCell>
                       <Box display="flex" alignItems="center" gap={1}>
-                        <Avatar sx={{ width: 32, height: 32 }}>
-                          {row.name.split(" ").map((item) => item[0])}
+                        <Avatar
+                          src={row.avatarUrl}
+                          alt={row.name}
+                          sx={{ width: 32, height: 32, fontSize: 14 }}
+                        >
+                          {row.name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")
+                            .toUpperCase()}
                         </Avatar>
                         <Typography variant="body2">{row.name}</Typography>
                       </Box>

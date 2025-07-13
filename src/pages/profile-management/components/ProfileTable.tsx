@@ -151,7 +151,7 @@ export default function ProfileTable() {
             {loading || delayedLoading
               ? Array.from({ length: 10 }).map((_, idx) => (
                   <TableRow key={idx}>
-                    {Array.from({ length: 7 }).map((__, cellIdx) => (
+                    {Array.from({ length: 8 }).map((__, cellIdx) => (
                       <TableCell key={cellIdx}>
                         <Skeleton variant="text" height={28} />
                       </TableCell>
