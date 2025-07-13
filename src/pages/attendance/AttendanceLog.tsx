@@ -31,7 +31,8 @@ export default function AttendanceLog() {
           direction={{ xs: "column", sm: "row" }}
           spacing={2}
           mb={4}
-          alignItems="flex-start"
+          alignItems={{ xs: "stretch", sm: "center" }}
+          width="100%"
         >
           <DatePicker
             label="Filter by Date"
@@ -41,9 +42,9 @@ export default function AttendanceLog() {
               textField: {
                 variant: "outlined",
                 size: "small",
+                fullWidth: true,
                 sx: {
-                  width: 220,
-
+                  width: { xs: "100%", sm: 220 },
                   fontSize: "12px",
                   "& .MuiInputBase-root": {
                     fontSize: "14px",
@@ -55,15 +56,16 @@ export default function AttendanceLog() {
               },
             }}
           />
+
           <TextField
             label="Search Name"
             variant="outlined"
             size="small"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            fullWidth
             sx={{
-              width: 300,
-
+              width: { xs: "100%", sm: 300 },
               fontSize: "12px",
               "& .MuiInputBase-root": {
                 fontSize: "14px",
@@ -84,12 +86,11 @@ export default function AttendanceLog() {
             select
             value={selectedType}
             onChange={(e) => setSelectedType(e.target.value)}
+            fullWidth
             sx={{
-              width: 200,
-           
+              width: { xs: "100%", sm: 200 },
               fontSize: "12px",
               "& .MuiInputBase-root": {
-                
                 fontSize: "14px",
               },
               "& .MuiInputLabel-root": {

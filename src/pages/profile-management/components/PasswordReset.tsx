@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Box, TextField, Button, CircularProgress } from "@mui/material";
 import { requestResetPassword, resetPassword } from "../../../api/auth/auth";
-import { useToastStore } from "../../../store/toastStore";
+import { toast } from "sonner";
 
 type PasswordManagementProps = {
   email: string;
@@ -14,11 +14,10 @@ export default function PasswordManagement({
 }: PasswordManagementProps) {
   const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState<"reset" | "email" | null>(null);
-  const { showToast } = useToastStore();
 
   const handleResetPassword = async () => {
     if (!newPassword || newPassword.length < 6) {
-      showToast("Password must be at least 6 characters.", "error");
+      toast.error("Password must be at least 6 characters.");
       return;
     }
 
@@ -26,15 +25,15 @@ export default function PasswordManagement({
     try {
       const res = await resetPassword({ user_id: userId, newPassword });
       if (res.success) {
-        showToast("Password reset successfully.", "success");
+        toast.success("Password reset successfully.");
         setNewPassword("");
       } else {
-        showToast(res.message || "Something went wrong.", "error");
+        toast.error(res.message || "Something went wrong.");
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       console.error(err);
-      showToast("Unexpected error. Please try again.", "error");
+      toast.error("Unexpected error. Please try again.");
     } finally {
       setLoading(null);
     }
@@ -45,14 +44,14 @@ export default function PasswordManagement({
     try {
       const res = await requestResetPassword({ email });
       if (res.success) {
-        showToast("Password reset email sent. Check the inbox.", "success");
+        toast.success("Password reset email sent. Check the inbox.");
       } else {
-        showToast(res.message || "Something went wrong.", "error");
+        toast.success(res.message || "Something went wrong.");
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       console.error(err);
-      showToast("Unexpected error. Please try again.", "error");
+      toast.error("Unexpected error. Please try again.");
     } finally {
       setLoading(null);
     }
@@ -113,3 +112,4 @@ export default function PasswordManagement({
     </Box>
   );
 }
+  

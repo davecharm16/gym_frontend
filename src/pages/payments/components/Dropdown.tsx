@@ -21,7 +21,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   value,
   onChange,
   options,
-  width = 165,
+  width = "100%",
   height = 40,
   ...rest
 }) => {
