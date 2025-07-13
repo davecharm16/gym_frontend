@@ -103,30 +103,31 @@ const PaymentsLogs = () => {
         backgroundColor: "#fff", // Match dashboard background
         minHeight: "100vh",
         pt: "40px", // adjust if you have a fixed header
-      
       }}
     >
       <div className=" flex flex-col px-6  pt-4 ">
         <h2 className="text-sm font-extrabold pb-8">Payment Logs</h2>
 
         {/* Filters & Button Container */}
-        <div className="flex flex-col sm:flex-row justify-between items-end gap-4 w-full mb-4">
+        <div className="flex flex-col lg:flex-row justify-between items-end gap-4 w-full mb-4">
           {/* Filters Group */}
-          <div className="flex flex-col sm:flex-row flex-wrap gap-4 w-full lg:w-auto items-end">
-            <div className="w-full sm:w-auto">
+          <div className="flex flex-col lg:flex-row flex-wrap gap-4 w-full lg:w-auto items-end">
+            <div className="w-full lg:w-auto">
               <Typography gutterBottom className="mb-3">
                 Filter by Date Range
               </Typography>
-              <DateRangePicker
-                startDate={startDate}
-                endDate={endDate}
-                onStartDateChange={setStartDate}
-                onEndDateChange={setEndDate}
-                enforceBidirectionalConstraint
-              />
+              <div className="w-full">
+                <DateRangePicker
+                  startDate={startDate}
+                  endDate={endDate}
+                  onStartDateChange={setStartDate}
+                  onEndDateChange={setEndDate}
+                  enforceBidirectionalConstraint
+                />
+              </div>
             </div>
 
-            <div className="w-full sm:w-[165px]">
+            <div className="w-full lg:w-[165px]">
               <Dropdown
                 label="Payment Type"
                 value={paymentType}
@@ -135,7 +136,7 @@ const PaymentsLogs = () => {
               />
             </div>
 
-            <div className="w-full sm:w-[165px]">
+            <div className="w-full lg:w-[165px]">
               <Dropdown
                 label="Payment Category"
                 value={paymentCategory}
@@ -146,14 +147,14 @@ const PaymentsLogs = () => {
           </div>
 
           {/* Button aligned to bottom */}
-          <div className="w-full sm:w-auto mt-2 sm:mt-0">
+          <div className="w-full lg:w-auto mt-2 lg:mt-0">
             <Button
               variant="outlined"
               onClick={() => setOpenPaymentModal(true)}
+              fullWidth
               sx={{
                 fontSize: "12px",
                 height: 40,
-                width: 130,
                 textTransform: "none",
                 backgroundColor: "#3C3D37",
                 color: "#fff",

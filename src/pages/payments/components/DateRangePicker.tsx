@@ -26,6 +26,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
 }) => {
   const commonTextFieldProps: Partial<TextFieldProps> = {
     size: 'small',
+    fullWidth: true,
     sx: {
       backgroundColor: '#fff',
       '& .MuiInputBase-input': {

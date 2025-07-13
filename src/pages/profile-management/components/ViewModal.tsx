@@ -71,7 +71,7 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
 
   useEffect(() => {
     setFormData(student);
-  
+
     if (student && subscriptions.length) {
       const match = subscriptions.find(
         (s) => s.name === student.subscription_type_name
@@ -81,8 +81,8 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
   }, [student, subscriptions]);
 
   useEffect(() => {
-    console.log(selectedSubscriptionId)
-  }, [selectedSubscriptionId])
+    console.log(selectedSubscriptionId);
+  }, [selectedSubscriptionId]);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -125,8 +125,8 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
         const trainingsPayload = formData.training_category.map((tc) => ({
           training_id: tc.training.id,
         }));
-        const { ...studentForm} = formData;
-        studentForm.subscription_type_id = selectedSubscriptionId
+        const { ...studentForm } = formData;
+        studentForm.subscription_type_id = selectedSubscriptionId;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await updateStudent(formData.id, studentForm as any, trainingsPayload);
         toast.success("successfully updated.");
@@ -144,14 +144,16 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
       <Box
         sx={{
           position: "absolute",
-          top: "54%",
+          top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
           width: "95%",
           maxWidth: 900,
+          maxHeight: "90vh",
+          overflowY: "auto",
           bgcolor: "background.paper",
           borderRadius: 3,
-          p: 4,
+          p: { xs: 2, sm: 4 },
           pt: 7,
           boxShadow: 24,
         }}
@@ -164,29 +166,29 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
         </IconButton>
 
         <Stack
-          direction="row"
+          direction={{ xs: "column", sm: "row" }}
+          spacing={3}
+          alignItems={{ xs: "flex-start", sm: "center" }}
           justifyContent="space-between"
-          alignItems="center"
           mb={4}
         >
-          <Stack direction="row" spacing={3} alignItems="center">
-            <Box sx={{ width: 150 }}>
+          <Stack direction="row" spacing={2} alignItems="center">
+            <Box sx={{ width: { xs: "100%", sm: 150 } }}>
               <UploadProfile
                 editable={editable}
                 defaultImage={formData?.picture_url}
                 onFileSelected={(file) => setSelectedFile(file)}
               />
             </Box>
-
-            <Box sx={{ width: 350 }}>
-              <Typography variant="h5" fontWeight={700} noWrap>
+            <Box sx={{ width: { xs: "100%", sm: 350 } }}>
+              <Typography variant="h6" fontWeight={700}>
                 {formData
                   ? `${formData.first_name} ${formData.middle_name ?? ""} ${
                       formData.last_name
                     }`
                   : "No data"}
               </Typography>
-              <Typography variant="body2" color="text.secondary" noWrap>
+              <Typography variant="body2" color="text.secondary">
                 Student Profile
               </Typography>
             </Box>
@@ -199,6 +201,8 @@ const ViewModal: React.FC<ViewModalProps> = ({ open, onClose, student }) => {
                 bgcolor: editable ? "primary.main" : "grey.200",
                 color: editable ? "common.white" : "text.primary",
                 "&:hover": { bgcolor: editable ? "primary.dark" : "grey.300" },
+                mt: { xs: 2, sm: 0 },
+                alignSelf: { xs: "flex-start", sm: "center" },
               }}
             >
               {editable ? <SaveIcon /> : <EditIcon />}

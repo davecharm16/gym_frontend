@@ -30,27 +30,32 @@ const ProfileManagement = () => {
         <h2 className="text-sm font-extrabold pb-8">Profile Management</h2>
 
         <Stack
-          direction={{ xs: "column", sm: "row" }}
-          spacing={2}
+          direction="row"
+          
           justifyContent="space-between"
-          alignItems="center"
+          alignItems="flex-start"
+          flexWrap="wrap"
+          rowGap={2}
           mb={4}
         >
-          <Stack direction="row" spacing={2}>
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            spacing={2}
+            flex={1}
+            sx={{ width: "100%" }}
+          >
             <TextField
-             
               label="Search"
               variant="outlined"
               size="small"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              fullWidth
               sx={{
-                background:"#fff",
-                width: 250,
-               
+                background: "#fff",
+                maxWidth: { xs: "100%", sm: 250 },
                 fontSize: "14px",
                 "& .MuiInputBase-root": {
-             
                   fontSize: "14px",
                 },
                 "& .MuiInputLabel-root": {
@@ -67,13 +72,12 @@ const ProfileManagement = () => {
               size="small"
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
+              fullWidth
               sx={{
-                 background:"#fff",
-                width: 150,
-               
+                background: "#fff",
+                maxWidth: { xs: "100%", sm: 150 },
                 fontSize: "14px",
                 "& .MuiInputBase-root": {
-               
                   fontSize: "14px",
                 },
                 "& .MuiInputLabel-root": {
@@ -91,13 +95,14 @@ const ProfileManagement = () => {
               ))}
             </TextField>
           </Stack>
+
           <Button
             variant="outlined"
             onClick={() => setOpenRegisterModal(true)}
+            fullWidth={true}
             sx={{
-             
               fontSize: "14px",
-              width: 100,
+              maxWidth: { xs: "100%", sm: 120 },
               textTransform: "none",
               backgroundColor: "#3C3D37",
               color: "#fff",
