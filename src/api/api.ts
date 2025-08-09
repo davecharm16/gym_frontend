@@ -1,4 +1,4 @@
-export const base_url = 'https://gym-node-backend.onrender.com/api'
+export const base_url = 'https://vercel.com/davecharm16s-projects/gym-backend/api'
 
 export const endPoint = {
   login : '/auth/login',
