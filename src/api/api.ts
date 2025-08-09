@@ -1,5 +1,4 @@
-export const base_url = 'https://gym-backend-ashen.vercel.app/api'
-// export const base_url = 'https://gym-node-backend.onrender.com/api'
+export const base_url = import.meta.env.VITE_API_BASE_URL || 'https://gym-backend-ashen.vercel.app/api'
 
 export const endPoint = {
   login : '/auth/login',
