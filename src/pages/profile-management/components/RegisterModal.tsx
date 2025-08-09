@@ -33,6 +33,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
   const subscriptions = useSubscriptionStore((state) => state.subscriptions);
   const [showPassword, setShowPassword] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     register,
     handleSubmit,
@@ -49,6 +50,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
       return;
     }
   
+    setIsSubmitting(true);
     try {
 
       // 2) Upload the profile image
@@ -69,6 +71,8 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
     } catch (error: any) {
       console.error("Registration failed:", error);
       toast.error("Registration failed. " + error?.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -283,6 +287,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
             <Button
               type="submit"
               variant="contained"
+              disabled={isSubmitting}
               sx={{
                 backgroundColor: "#414545",
                 color: "white",
@@ -290,7 +295,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ open, onClose }) => {
                 "&:hover": { backgroundColor: "#333" },
               }}
             >
-              Register
+              {isSubmitting ? "Registering..." : "Register"}
             </Button>
           </Stack>
         </form>

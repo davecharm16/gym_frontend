@@ -17,6 +17,7 @@ interface CheckInModalProps {
   onClose: () => void;
   onConfirm: (data: { email: string; date: string; time: string }) => void;
   email: string;
+  isLoading?: boolean;
 }
 
 // ✅ Format date as yyyy-MM-dd using local time
@@ -39,6 +40,7 @@ export default function CheckInModal({
   onClose,
   onConfirm,
   email,
+  isLoading = false,
 }: CheckInModalProps) {
   const [formData, setFormData] = useState({
     email: email,
@@ -125,6 +127,7 @@ export default function CheckInModal({
         <Button
           variant="contained"
           onClick={handleConfirm}
+          disabled={isLoading}
           sx={{
             textTransform: "none",
             width: 120,
@@ -132,7 +135,7 @@ export default function CheckInModal({
             "&:hover": { backgroundColor: "#333a3a" },
           }}
         >
-          Confirm
+          {isLoading ? "Checking in..." : "Confirm"}
         </Button>
       </DialogActions>
     </Dialog>

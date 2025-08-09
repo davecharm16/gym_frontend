@@ -8,9 +8,7 @@ export default function StudentDashboard() {
   const { fetchProfile, profile, loading, error } = useProfileStore();
 
   useEffect(() => {
-    fetchProfile().catch(() => {
-      // already handled in store; no need to do anything here
-    });
+    fetchProfile()
   }, []);
 
   if (loading) {
