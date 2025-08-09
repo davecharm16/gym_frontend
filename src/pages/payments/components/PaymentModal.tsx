@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   Box,
@@ -43,6 +43,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
     loading: isLoadingStudents,
   } = useStudentStore();
   const { createPayment } = usePaymentStore();
+  const [isSubmitting, setIsSubmitting] = useState(false);
  
 
   const {
@@ -127,35 +128,40 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = async (data: any) => {
-    let payment_type = "misc";
-    const foundTraining = trainings.find((t) => t.id === data.paymentFor);
-    const foundSubscription = subscriptions.find(
-      (s) => s.id === data.paymentFor
-    );
+    setIsSubmitting(true);
+    try {
+      let payment_type = "misc";
+      const foundTraining = trainings.find((t) => t.id === data.paymentFor);
+      const foundSubscription = subscriptions.find(
+        (s) => s.id === data.paymentFor
+      );
 
-    if (foundTraining) {
-      payment_type = foundTraining.title;
-    } else if (foundSubscription) {
-      payment_type = foundSubscription.name;
-    }
+      if (foundTraining) {
+        payment_type = foundTraining.title;
+      } else if (foundSubscription) {
+        payment_type = foundSubscription.name;
+      }
 
-    const payload: PaymentRequestDto = {
-      student_id: data.studentId,
-      amount: Number(data.amount),
-      amount_to_pay: Number(data.amountToPay),
-      payment_method: data.paymentMethod,
-      payment_type,
-      discount_value: data.discountValue,
-    };
+      const payload: PaymentRequestDto = {
+        student_id: data.studentId,
+        amount: Number(data.amount),
+        amount_to_pay: Number(data.amountToPay),
+        payment_method: data.paymentMethod,
+        payment_type,
+        discount_value: data.discountValue,
+      };
 
-    const result = await createPayment(payload);
+      const result = await createPayment(payload);
 
-    if (result) {
-      toast.success("Payment successfully recorded!");
-      onClose();
-      onSuccess?.();
-    } else {
-      toast.error("Failed to record payment");
+      if (result) {
+        toast.success("Payment successfully recorded!");
+        onClose();
+        onSuccess?.();
+      } else {
+        toast.error("Failed to record payment");
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -317,9 +323,10 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
             <Button
               variant="contained"
               type="submit"
+              disabled={isSubmitting}
               sx={{ backgroundColor: "#414545", color: "white" }}
             >
-              Save
+              {isSubmitting ? "Saving..." : "Save"}
             </Button>
           </Stack>
         </form>
