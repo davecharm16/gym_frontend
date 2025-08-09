@@ -26,7 +26,7 @@ const Login = () => {
       const res = await login({ email, password });
 
       if (!res) {
-         toast.error("Something went wrong, please try again.")
+         toast.error("Incorrect Credentials, please try again.")
         return;
       }
 
