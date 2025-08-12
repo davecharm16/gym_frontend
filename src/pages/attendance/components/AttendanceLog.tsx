@@ -77,7 +77,7 @@ const AttendanceLog = ({
       hour: "2-digit",
       minute: "2-digit",
     }),
-    avatarUrl: `https://randomuser.me/api/portraits/men/${item.studentId[3]}${item.studentId[4]}.jpg`,
+    avatarUrl: item.student.picture_url || `https://randomuser.me/api/portraits/men/${item.studentId[3]}${item.studentId[4]}.jpg`,
   }));
 
   const filteredRows = useMemo(() => {

@@ -14,4 +14,5 @@ export interface StudentDTO {
   first_name: string;
   subscription_type_id: string | null;
   age: number;
+  picture_url: string | null;
 }

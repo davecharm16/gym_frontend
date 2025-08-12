@@ -16,6 +16,7 @@ export function toStudentAttendanceModel(dto: AttendanceDTO): StudentAttendance 
       firstName: dto.students.first_name,
       subscriptionTypeId: dto.students.subscription_type_id,
       age: dto.students.age,
+      picture_url: dto.students.picture_url,
     }
   };
 }

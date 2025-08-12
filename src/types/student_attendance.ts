@@ -14,4 +14,5 @@ export interface StudentProfile {
   firstName: string;
   subscriptionTypeId: string | null;
   age: number;
+  picture_url: string | null;
 }
