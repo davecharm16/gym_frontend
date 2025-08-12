@@ -77,7 +77,7 @@ const AttendanceLog = ({
       hour: "2-digit",
       minute: "2-digit",
     }),
-    avatarUrl: item.student.picture_url || `https://randomuser.me/api/portraits/men/${item.studentId[3]}${item.studentId[4]}.jpg`,
+    avatarUrl: item.student.picture_url || "",
   }));
 
   const filteredRows = useMemo(() => {
@@ -243,7 +243,7 @@ const AttendanceLog = ({
                     <TableCell>
                       <Box display="flex" alignItems="center" gap={1}>
                         <Avatar
-                          src={row.avatarUrl}
+                          src={row.avatarUrl && row.avatarUrl.trim() !== "" ? row.avatarUrl : undefined}
                           alt={row.name}
                           sx={{ width: 32, height: 32, fontSize: 14 }}
                         >
