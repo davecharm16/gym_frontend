@@ -38,6 +38,10 @@ export const paymentAdapterModelToDTO = (
   payment_method: model.paymentMethod,
   amount_to_pay: model.amountToPay,
   discount_value: model.discountValue,
+  // Only include paid_at if it's different from today
+  ...(model.paidAt && !model.paidAt.isSame(new Date(), 'day') && {
+    paid_at: model.paidAt.toISOString(),
+  }),
 });
 
 export const paymentAverageDtoToModel = (

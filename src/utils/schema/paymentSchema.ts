@@ -30,7 +30,29 @@ export const paymentSchema = yup.object().shape({
 
   paymentDate: yup
     .string()
-    .required('Payment date is required'),
+    .required('Payment date is required')
+    .test(
+      'not-future',
+      'Payment date cannot be in the future',
+      function (value) {
+        if (!value) return true; // Let required validation handle empty values
+        const paymentDate = new Date(value);
+        const today = new Date();
+        today.setHours(23, 59, 59, 999); // End of today
+        return paymentDate <= today;
+      }
+    )
+    .test(
+      'not-too-old',
+      'Payment date cannot be more than 1 year in the past',
+      function (value) {
+        if (!value) return true; // Let required validation handle empty values
+        const paymentDate = new Date(value);
+        const oneYearAgo = new Date();
+        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+        return paymentDate >= oneYearAgo;
+      }
+    ),
 
   paymentMethod: yup
     .string()

@@ -7,6 +7,7 @@ export interface PaymentRequestDto {
   payment_method: string;
   amount_to_pay: number;
   discount_value: number;
+  paid_at?: string; // Optional ISO date string for flexible payment dates
 }
 
 export interface PaymentResponseDto {

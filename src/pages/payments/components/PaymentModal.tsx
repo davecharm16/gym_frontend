@@ -149,6 +149,10 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
         payment_method: data.paymentMethod,
         payment_type,
         discount_value: data.discountValue,
+        // Only include paid_at if it's different from today
+        ...(data.paymentDate !== new Date().toISOString().split("T")[0] && {
+          paid_at: new Date(data.paymentDate).toISOString(),
+        }),
       };
 
       const result = await createPayment(payload);
@@ -252,9 +256,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                     type="date"
                     InputLabelProps={{ shrink: true }}
                     fullWidth
-                    disabled
                     error={!!errors.paymentDate}
-                    helperText={errors.paymentDate?.message}
+                    helperText={errors.paymentDate?.message || "Select payment date (can be historical)"}
                   />
                 )}
               />
