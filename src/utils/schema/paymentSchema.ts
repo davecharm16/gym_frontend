@@ -63,4 +63,17 @@ export const paymentSchema = yup.object().shape({
     .notRequired(),
 
   discountValue: yup.number().min(0).max(100).required(),
+  
+  discountAmount: yup
+    .number()
+    .min(0, 'Discount amount must be at least 0')
+    .test(
+      'not-more-than-amount-to-pay',
+      'Discount amount cannot be more than amount to pay',
+      function (value) {
+        const { amountToPay } = this.parent;
+        return value !== undefined && value <= parseFloat(amountToPay || '0');
+      }
+    )
+    .optional(),
 });

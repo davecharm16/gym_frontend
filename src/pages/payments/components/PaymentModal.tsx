@@ -63,6 +63,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
       paymentMethod: "cash",
       change: "",
       discountValue: 0,
+      discountAmount: 0,
     },
     resolver: yupResolver(paymentSchema as never),
   });
@@ -70,8 +71,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   const selectedPaymentFor = useWatch({ control, name: "paymentFor" });
   const amountGiven = parseFloat(watch("amount") || "0");
   const amountToPay = parseFloat(watch("amountToPay") || "0");
-  const discount =  watch("discountValue") || 0;
-  const discountAmount = amountToPay* watch("discountValue") / 100;
+  const discountAmount = parseFloat(String(watch("discountAmount") || "0"));
+  const discountPercentage = parseFloat(String(watch("discountValue") || "0"));
   const netAmountToPay = Math.max(amountToPay - discountAmount, 0);
 
   
@@ -88,11 +89,14 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
     }
   }, [open]);
 
-  useEffect(() => {
-    const change =
-      amountGiven > amountToPay ? (amountGiven - amountToPay).toFixed(2) : "0";
-    setValue("change", change);
-  }, [amountGiven, amountToPay, setValue]);
+  // Handle discount field synchronization
+  const handleDiscountAmountChange = (value: number) => {
+    if (amountToPay > 0) {
+      const calculatedPercentage = (value / amountToPay) * 100;
+      setValue("discountValue", Math.min(calculatedPercentage, 100)); // Cap at 100%
+    }
+  };
+
 
   useEffect(() => {
     const change =
@@ -148,7 +152,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
         amount_to_pay: Number(data.amountToPay),
         payment_method: data.paymentMethod,
         payment_type,
-        discount_value: data.discountValue,
+        discount_value: data.discountValue, // Send the percentage field as before
         // Only include paid_at if it's different from today
         ...(data.paymentDate !== new Date().toISOString().split("T")[0] && {
           paid_at: new Date(data.paymentDate).toISOString(),
@@ -283,16 +287,22 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
               />
 
               <Controller
-                name="discountValue"
+                name="discountAmount"
                 control={control}
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    label="Discount"
+                    label="Discount Amount"
                     type="number"
                     fullWidth
-                    error={!!errors.discountValue}
-                    helperText={errors.discountValue?.message}
+                    placeholder="Enter discount amount"
+                    onChange={(e) => {
+                      const value = parseFloat(e.target.value) || 0;
+                      field.onChange(e);
+                      handleDiscountAmountChange(value);
+                    }}
+                    error={!!errors.discountAmount}
+                    helperText={errors.discountAmount?.message}
                   />
                 )}
               />
@@ -301,7 +311,9 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
 
           <Box sx={{ borderTop: "1px solid #e0e0e0", my: 4 }} />
           <Stack spacing={1.5} sx={{ mt: 3 }}>
-            <Typography sx={{ fontSize: 18 }}>Discount: {discount}%</Typography>
+            <Typography sx={{ fontSize: 18 }}>
+              Discount: ₱{discountAmount.toFixed(2)} ({discountPercentage.toFixed(1)}%)
+            </Typography>
 
             <Typography sx={{ fontSize: 18 }}>
               Total Payment: ₱{netAmountToPay.toFixed(2)}
